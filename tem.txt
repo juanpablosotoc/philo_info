@@ -1,225 +1,65 @@
 
 
+https://platform.openai.com/docs/assistants/tools/file-search/supported-files
 
-Give me a detailed summary of the text denoted by [[[ ]]].
 
-[[[ Good foods to help your digestion
 
-To avoid problems such as constipation, heartburn and symptoms of irritable bowel syndrome (IBS), it's important to eat the right foods. Here's a tummy friendly diet to aim for.
+00:02
 
-Fill up on fibre to prevent constipation
+0:06
 
-It's a good idea to try to eat more fibre or roughage, as most people in the UK do not get enough. A diet rich in fibre can help digestion and prevent constipation.
+0:25
 
-Aim for the recommended dietary intake of 30g of fibre a day.
+0:34
 
-For a healthy bowel, you need fibre from a variety of sources, such as:
+0:47
 
-wholemeal bread
+1:01
 
-brown rice
+1:11
 
-fruit and veg
+1:23
 
-beans
+1:53
 
-oats
+2:28
 
-Some people find cereals and grains bring on bloating and irritable bowel syndrome. If that's the case, get your fibre from fruit and vegetables instead.
+2:38
 
-Drink plenty of fluids to aid digestion
+3:02
 
-It's important to keep drinking, especially water. It encourages the passage of waste through your digestive system and helps soften poo.
+3:15
 
-Fibre acts like a sponge, absorbing water. Without fluid, the fibre cannot do its job and you'll get constipation.
+3:27
 
-A good way to make sure you're getting enough fluids is to drink a glass of water with every meal. Avoid caffeine drinks as they can cause heartburn.
+3:38
 
-Read about water, drinks and your health
+3:52
 
-Cut down on fat for a healthy gut
+4:02
 
-Fatty foods, such as chips, burgers and fried foods, are harder to digest and can cause stomach pain and heartburn.
+4:31
 
-Cut back on greasy fried foods to ease your stomach's workload.
+5:10
 
-Try to eat more lean meat and fish, drink skimmed or semi-skimmed milk, and grill rather than fry foods.
+5:24
 
-Go easy on spice to avoid tummy troubles
+5:45
 
-Many people love spicy food and it does not bother their digestive system. Others find their tummy is upset when they have spicy food.
+5:58
 
-It's not just scorching hot foods like chillies that trigger heartburn. Milder but flavourful foods like garlic and onion can also bring it on.
+6:11
 
-If spicy foods give you heartburn, stomach pain or diarrhoea, go easy on them in future.
+6:26
 
-If you already have a problem like heartburn or an irritable bowel, avoid them completely.
+6:44
 
-Beware gut symptom triggers
+7:00
 
-Some people find particular foods cause them problems. Acidic foods, such as tomatoes, citrus fruits, salad dressings and fizzy drinks, can trigger heartburn, while wheat and onions may cause irritable bowel syndrome.
+7:30
 
-And if you cannot digest lactose (lactose intolerance), the sugar in milk, you'll develop wind and diarrhoea after drinking milk or eating dairy products, including cream, cheese, yoghurt and chocolate.
+8:10
 
-Try to stay away from foods and drinks that trigger your digestive symptoms. Keep a food diary to work out which foods cause your symptoms.
+8:30
 
-Choose the right drinks to ease digestion
-
-Drinks with caffeine, such as coffee, colas, tea and some fizzy drinks, boost acid in the stomach, leading to heartburn in some people.
-
-Fizzy drinks in general tend to bloat the tummy, which can also lead to heartburn.
-
-To make digestive problems less likely, choose drinks that are not fizzy and do not contain caffeine, such as herbal teas, milk and plain water.
-
-If you cannot do without your coffee or tea, limit your intake to 1 or 2 cups a day.
-
-Probiotics
-
-Probiotics are so-called "friendly bacteria" that are also found naturally in the gut.
-
-There's some evidence that they may be helpful for some conditions, including helping irritable bowel syndrome. But there's little evidence to support some other health claims made about them.
-
-Probiotics are available as supplements from health food shops, or in live yoghurt, which is a good natural source.
-
-If you want to try them, it's best to take them every day for at least 4 weeks to see if they work for you.
-
-If you have an existing health condition or a weakened immune system, talk to a doctor before taking any probiotic supplements.
-
-Find out more about probiotics ]]]
-
-
-
-
-
-
-
-
-
-
-
-
-
-The text provides detailed advice on dietary choices to promote healthy digestion and prevent common digestive issues such as constipation, heartburn, and irritable bowel syndrome (IBS). Here's a summary of the key points:
-
-
-
-1. **Increase Fiber Intake**:
-
-   - Most people in the UK do not consume enough fiber.
-
-   - Aim for 30 grams of fiber daily to aid digestion and prevent constipation.
-
-   - Good sources include wholemeal bread, brown rice, fruits, vegetables, beans, and oats.
-
-   - For those who experience bloating or IBS from cereals and grains, focus on fruits and vegetables for fiber.
-
-
-
-2. **Stay Hydrated**:
-
-   - Drinking plenty of fluids, especially water, helps move waste through the digestive system and softens stool.
-
-   - Fiber needs water to function effectively; otherwise, it can cause constipation.
-
-   - Drink a glass of water with each meal and avoid caffeine as it can cause heartburn.
-
-
-
-3. **Reduce Fat Intake**:
-
-   - Fatty foods like chips, burgers, and fried foods are difficult to digest and may cause stomach pain and heartburn.
-
-   - Opt for lean meats, fish, skimmed or semi-skimmed milk, and grilling instead of frying foods.
-
-
-
-4. **Moderate Spicy Foods**:
-
-   - Spicy foods can cause heartburn, stomach pain, or diarrhea in some people.
-
-   - If you experience these symptoms, reduce or avoid spicy foods, including milder flavorful foods like garlic and onion.
-
-
-
-5. **Identify and Avoid Trigger Foods**:
-
-   - Certain foods may trigger digestive symptoms for some individuals, such as acidic foods, wheat, onions, and dairy for those with lactose intolerance.
-
-   - Keeping a food diary can help identify and avoid these trigger foods.
-
-
-
-6. **Choose the Right Drinks**:
-
-   - Caffeine-containing drinks can increase stomach acid, causing heartburn.
-
-   - Fizzy drinks can cause bloating and heartburn.
-
-   - Opt for non-fizzy, caffeine-free drinks like herbal teas, milk, and water.
-
-   - Limit coffee or tea to 1-2 cups a day if you can't avoid them.
-
-
-
-7. **Probiotics**:
-
-   - Probiotics are beneficial bacteria found in the gut and available in supplements and live yogurt.
-
-   - They might help with conditions like IBS, though evidence is limited for other health claims.
-
-   - To see if they work, take probiotics daily for at least four weeks.
-
-   - Consult a doctor before taking probiotics if you have a health condition or a weakened immune system.
-
-
-
-By following these guidelines, individuals can improve their digestive health and manage symptoms more effectively.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-The webpage from the NHS (National Health Service) titled "Good foods to help your digestion" focuses on providing guidance for maintaining and improving digestive health through dietary choices. It offers an in-depth look at various foods and nutrients that can promote a healthy digestive system.
-
-
-
-Key points covered include:
-
-
-
-1. **Fibre-Rich Foods**: The article emphasizes the importance of consuming adequate fibre, which aids in regulating the digestive system and preventing constipation. It highlights different types of fibre (soluble and insoluble) and their respective benefits. Foods like whole grains, fruits, vegetables, and legumes are recommended.
-
-
-
-2. **Probiotics and Fermented Foods**: The webpage discusses the role of probiotics—beneficial bacteria that support gut health. It suggests incorporating fermented foods such as yogurt, kefir, sauerkraut, and miso into the diet to promote a balanced gut microbiome.
-
-
-
-3. **Hydration**: The significance of staying well-hydrated is addressed, as water is crucial for digestion and helps dissolve fats and soluble fibre, allowing these substances to pass through more easily.
-
-
-
-4. **Healthy Fats**: The article touches on the necessity of healthy fats for digestion, particularly in aiding the absorption of vitamins. Sources of healthy fats include avocados, olive oil, and oily fish.
-
-
-
-5. **Ginger and Herbal Teas**: Ginger is noted for its ability to stimulate digestion and alleviate issues like nausea. Herbal teas, such as peppermint and chamomile, are recommended for their soothing effects on the digestive tract.
-
-
-
-6. **Foods to Limit or Avoid**: The webpage also advises on foods that may hinder digestion, such as excessive fatty foods, and recommends reducing the intake of caffeine and alcohol due to their potential to cause digestive discomfort.
-
-
-
-Overall, the NHS page provides a comprehensive guide for those looking to improve their digestive health through mindful eating and dietary choices. It combines practical advice with specific food recommendations to support a well-functioning digestive system.
+9:01
