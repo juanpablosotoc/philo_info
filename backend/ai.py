@@ -27,15 +27,6 @@ class Prompts:
         # ???????????????????????????????????????????????????????????? dont think we should do this,, rather split into images, handle docs, etc
         return messages
     
-    @staticmethod
-    def key_frames_time_stamps_messages(transcript: str) -> list:
-        human_message_str = f"""
-        I am going to extract pictures from a video. I need the timestamps of the pictures that are most important. The text denoted by [[[ ]]] is the transcript of the video.
-        [[[ 
-            {transcript} 
-        ]]]
-        """
-        return [{"role": "user", "content": human_message_str}]
     
 class Chat(Prompts):
     def __init__(self) -> None:
