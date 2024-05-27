@@ -87,7 +87,7 @@ class Document(InformationInput):
             with open(self.__file_path, "rb") as image_file:
                 base64_image = base64.b64encode(image_file.read()).decode('utf-8')
             self.handle(base64_image=base64_image)
-        return self.__inf
+        return self.__info
 
     def handle_image(self, base64_image: str):
         # downsizr images to 720 p check out doc, (It isnt useful to have more size, just increases latency)
