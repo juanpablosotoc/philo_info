@@ -9,7 +9,7 @@ serializer = Serializer(app.secret_key)
 class Solo(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(50), unique=True, nullable=False)
-    hashed_password = db.Column(db.String(255), nullable=False)
+    __hashed_password = db.Column(db.String(255), nullable=False)
 
         # owner = db.relationship('Owners', backref='puppy', cascade='all, delete', uselist=False)
 
@@ -17,10 +17,13 @@ class Solo(db.Model):
     def __init__(self, email: str, password: str) -> None:
         super().__init__()
         self.email = email
-        self.hashed_password = bcrypt.generate_password_hash(password)
+        self.__hashed_password = self.set_password(password)
     
     def check_password(self, password) -> bool:
-        return bcrypt.check_password_hash(self.hashed_password, password)
+        return bcrypt.check_password_hash(self.__hashed_password, password)
+    
+    def set_password(self, password) -> None:
+        self.__hashed_password = bcrypt.generate_password_hash(password)
 
 
 class Threads(db.Model):

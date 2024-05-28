@@ -1,14 +1,9 @@
 from myproject.ai import chat, Prompts
 from youtube_transcript_api import YouTubeTranscriptApi
 import base64
-from myproject import db
-from ..models import ThreadMessages, Threads, Solo
 import os
 
-"""
-make sure youtube class works
 
-"""
 class InformationInput:
     def __init__(self) -> None:
         super().__init__()
@@ -23,7 +18,7 @@ class Text(InformationInput):
   
     def handle(self):
         self.handled = True
-        self.__info = chat.ask_no_stream(Prompts.process_text_messages(self.__text))
+        self.__info = chat.ask.no_stream(Prompts.process_text_messages(self.__text))
 
     @property
     def info(self):
@@ -42,7 +37,7 @@ class Link(InformationInput):
         self.handle_website_link()
 
     def handle_website_link(self):
-        self.__info = chat.ask_no_stream(Prompts.process_link_messages(self.__link))
+        self.__info = chat.ask.no_stream(Prompts.process_link_messages(self.__link))
     
     @property
     def info(self):
@@ -64,7 +59,7 @@ class YoutubeVideo():
     def handle(self):
         self.handled = True
         handle4_youtube_video_prompt = Prompts.process_transcript_messages(self.transcript)
-        self.__info = chat.ask_no_stream(handle4_youtube_video_prompt)
+        self.__info = chat.ask.no_stream(handle4_youtube_video_prompt)
 
     @property
     def info(self):
@@ -104,7 +99,7 @@ class Documents(InformationInput):
 
     def handle_image(self, base64_image: str):
         # downsizr images to 720 p check out doc, (It isnt useful to have more size, just increases latency)
-        self.__info.append(chat.ask_no_stream(Prompts.process_image_messages(base64_image=base64_image)))
+        self.__info.append(chat.ask.no_stream(Prompts.process_image_messages(base64_image=base64_image)))
     
     def handle_doc(self, file_paths: list = []):
         upload_new_file_paths = [file_path for file_path in file_paths if not file_path.startswith("openai")]
@@ -112,7 +107,7 @@ class Documents(InformationInput):
         for file_path_id in file_paths_ids:
             extention = file_path_id['file_path'].split('.')[-1]
             os.rename(file_path_id['file_path'], f"uploads/openai_{file_path_id['id']}.{extention}")
-        self.__info.append(chat.ask_assistant_file_search(thread_id=None, file_ids=[file_path_id['id'] for file_path_id in file_paths_ids]))
+        self.__info.append(chat.ask_assistant_file_search(file_ids=[file_path_id['id'] for file_path_id in file_paths_ids]))
 
 
 class InformationBundle:
@@ -129,5 +124,4 @@ class InformationBundle:
         full_info += [text.info for text in self.__texts]
         full_info += [link.info for link in self.__links]
         full_info += [youtuber_link.info for youtuber_link in self.__youtuber_links]
-        print(full_info)
         return full_info

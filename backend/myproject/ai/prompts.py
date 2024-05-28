@@ -54,7 +54,6 @@ class Prompts:
             { "file_id": message_file.id, "tools": [{"type": "file_search"}] }
         ],
         }]
-        print(mes)
         return mes
     
     @staticmethod
