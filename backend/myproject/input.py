@@ -1,8 +1,17 @@
-from ai import chat, Prompts
+from myproject.ai import chat, Prompts
 from youtube_transcript_api import YouTubeTranscriptApi
 import base64
 
+"""
 
+
+
+mAKE YOUTUBE VIDEO CLASS EXTEND FROM THE LINK CLASS
+
+
+
+
+"""
 class YoutubeVideo():
     def __init__(self, url: str) -> None:
         self.video_url = url
@@ -71,22 +80,21 @@ class Document(InformationInput):
     def __init__(self, file_path: str) -> None:
         super().__init__()
         self.__file_path = file_path
-        self.file_type = None
         self.file_type = "document"
         if self.__file_path.endswith(".jpg") or self.__file_path.endswith(".jpeg") or self.__file_path.endswith(".png") or self.__file_path.endswith(".gif"): self.file_type = "image"
         self.__info = None
     
-    def handle(self, base64_image=None):
+    def handle(self):
         self.handled = True
-        if self.file_type == 'image': self.handle_image(base64_image=base64_image)
+        if self.file_type == 'image': 
+            with open(self.__file_path, "rb") as image_file:
+                base64_image = base64.b64encode(image_file.read()).decode('utf-8')
+            self.handle_image(base64_image=base64_image)
         else: self.handle_doc()
     
     @property
     def info(self):
-        if not self.handled: 
-            with open(self.__file_path, "rb") as image_file:
-                base64_image = base64.b64encode(image_file.read()).decode('utf-8')
-            self.handle(base64_image=base64_image)
+        if not self.handled: self.handle()
         return self.__info
 
     def handle_image(self, base64_image: str):
