@@ -1,11 +1,13 @@
 from openai import OpenAI
-from prompts import Prompts
+from .prompts import Prompts
 
 
 class Chat(Prompts):
     def __init__(self) -> None:
         super().__init__()
         self.client = OpenAI()
+        self.default_assistant_id = 'asst_rREgGseo2wATsN8VQI8MsdxL'
+
     def ask(self, messages: list):
         stream = self.client.chat.completions.create(
             model="gpt-4o",
@@ -15,6 +17,13 @@ class Chat(Prompts):
         for chunk in stream:
             if chunk.choices[0].delta.content is not None:
                 yield chunk.choices[0].delta.content
+
+    def ask_no_stream(self, messages: list):
+            resp = self.client.chat.completions.create(
+                model="gpt-4o",
+                messages=messages,
+            )
+            return resp.choices[0].message.content
     def create_assistant(self, name: str, file_search: bool = True, assistant_instr = Prompts.create_file_search_assistant_instr):
         """If you want file_seacrh enabled you need to pass the vector_store_id 
         of the vector store you want to search in."""
@@ -53,15 +62,13 @@ class Chat(Prompts):
     def create_thread(self, messages: list):
         return self.client.beta.threads.create(messages=messages)
     
-    def ask_assistant_file_search(self, assistant_id_name:dict, thread_id:str=None, upload_new_file_path: str = None):
+    def ask_assistant_file_search(self, thread_id:str=None, upload_new_file_path: str = None):
         """assistant_id_name: dict with old 'id' or 'name' of new assistant."""
         message_file = None
         if upload_new_file_path: 
             message_file = self.upload_file(upload_new_file_path)
         messages = self.ask_assistant_file_search_messages(message_file=message_file)
-        assistant_id = assistant_id_name.get('id', None)
-        if not assistant_id: assistant = self.create_assistant(assistant_id_name['name'])
-        else: assistant = self.get_assistant(assistant_id)
+        assistant = self.get_assistant(self.default_assistant_id)
         if thread_id is None: thread = self.create_thread(messages=messages)
         run = self.client.beta.threads.runs.create_and_poll(
             thread_id=thread.id, assistant_id=assistant.id
