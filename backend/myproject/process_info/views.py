@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 import json
 from ..input import InformationBundle
 import uuid
-
+from myproject.ai import chat
 
 process_info_blueprint = Blueprint('process_info', __name__,)
 
@@ -16,8 +16,12 @@ def index():
             file_path = f"./uploads/{str(uuid.uuid4())}.{file_extention}"
             file_store_obj.save(file_path)
             file_paths.append(file_path)
-        form_links = json.loads(request.form.get('links', type=str))
-        form_texts = json.loads(request.form.get('texts', type=str))
+        form_links_str = request.form.get('links', type=str)
+        form_texts_str = request.form.get('texts', type=str)
+        form_links = []
+        form_texts = []
+        if form_links_str: form_links = json.loads(form_links_str)
+        if form_texts_str: form_texts = json.loads(form_texts_str)
         new_info_bundle = InformationBundle(texts=form_texts, links=form_links, file_paths=file_paths)
         print(new_info_bundle.info)
         return jsonify({'info': new_info_bundle.info})

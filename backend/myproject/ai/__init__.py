@@ -54,14 +54,6 @@ class Chat(Prompts):
     def ask_assistant_file_search(self, thread_id:str=None, file_ids: list = []):
         """assistant_id_name: dict with old 'id' or 'name' of new assistant."""
         thread_messages = self.ask_assistant_file_search_messages(file_ids=file_ids)
-        print(thread_messages)
-        print()
-        print()
-        print()
-        print('file_ids', file_ids)
-        print()
-        print()
-        print()
         if thread_id is None: 
             thread = self.create_thread(messages=thread_messages)
         else: 
@@ -74,12 +66,19 @@ class Chat(Prompts):
         )
         messages = list(self.client.beta.threads.messages.list(thread_id=thread.id, run_id=run.id))
         message_content = messages[0].content[0].text
+
+        # The citations refer to the ai making references to the files that were uploaded.
+        # EX: 
+        # citations": [
+        #             "[0] d6f6b32c-31dc-4c9a-9b59-5565eff002ac.pdf", 
+        #             "[1] d6f6b32c-31dc-4c9a-9b59-5565eff002ac.pdf"
+        #         ],
         annotations = message_content.annotations
         citations = []
         for index, annotation in enumerate(annotations):
             message_content.value = message_content.value.replace(annotation.text, f"[{index}]")
             if file_citation := getattr(annotation, "file_citation", None):
-                cited_file = self.files.retrieve(file_citation.file_id)
+                cited_file = self.client.files.retrieve(file_citation.file_id)
                 citations.append(f"[{index}] {cited_file.filename}")
         return {'content': message_content.value, 'citations': citations}
     
