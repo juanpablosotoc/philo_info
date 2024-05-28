@@ -58,12 +58,13 @@ class Prompts:
         return mes
     
     @staticmethod
-    def ask_assistant_file_search_messages(message_file = None) -> list:
+    def ask_assistant_file_search_messages(file_ids: list = []) -> list:
         messages = [{
             "role": "user",
             "content": "Give me a very detailed description of the information in the documents that I have uploaded.",
         }]
         # Attach a new file to the message.
-        if message_file: 
-            messages[0]['attachments'] = [{ "file_id": message_file.id, "tools": [{"type": "file_search"}] }]
+        if len(file_ids) > 0: messages[0]['attachments'] = []
+        for file_id in file_ids:
+            messages[0]['attachments'].append({ "file_id": file_id, "tools": [{"type": "file_search"}] })
         return messages

@@ -1,6 +1,9 @@
 from myproject.ai import chat, Prompts
 from youtube_transcript_api import YouTubeTranscriptApi
 import base64
+from myproject import db
+from ..models import ThreadMessages, Threads, Solo
+import os
 
 """
 make sure youtube class works
@@ -94,8 +97,14 @@ class Document(InformationInput):
         # downsizr images to 720 p check out doc, (It isnt useful to have more size, just increases latency)
         self.__info = chat.ask_no_stream(Prompts.process_image_messages(base64_image=base64_image))
     
-    def handle_doc(self):
-        pass
+    def handle_doc(self, file_paths: list = [], thread_id: str = None):
+        print('file_paths', file_paths)
+        upload_new_file_paths = [file_path for file_path in file_paths if not file_path.startswith("openai")]
+        file_paths_ids = [{'id': chat.upload_file(file_path=file_path).id, 'file_path': file_path} for file_path in upload_new_file_paths]
+        for file_path_id in file_paths_ids:
+            os.rename(file_path_id['file_path'], f"openai_{file_path_id['id']}")
+        print(file_paths_ids, 'file_paths_ids')
+        self.__info = chat.ask_assistant_file_search(thread_id=thread_id, file_ids=[file_path_id['id'] for file_path_id in file_paths_ids])
 
 
 class InformationBundle:

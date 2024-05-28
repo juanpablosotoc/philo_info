@@ -11,6 +11,9 @@ class Solo(db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     hashed_password = db.Column(db.String(255), nullable=False)
 
+        # owner = db.relationship('Owners', backref='puppy', cascade='all, delete', uselist=False)
+
+
     def __init__(self, email: str, password: str) -> None:
         super().__init__()
         self.email = email

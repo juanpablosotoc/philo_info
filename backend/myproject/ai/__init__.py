@@ -24,6 +24,7 @@ class Chat(Prompts):
                 messages=messages,
             )
             return resp.choices[0].message.content
+    
     def create_assistant(self, name: str, file_search: bool = True, assistant_instr = Prompts.create_file_search_assistant_instr):
         """If you want file_seacrh enabled you need to pass the vector_store_id 
         of the vector store you want to search in."""
@@ -35,25 +36,10 @@ class Chat(Prompts):
         model="gpt-4o",
         tools=tools,
         )
+    
     def get_assistant(self, assistant_id:str):
         return self.client.beta.assistants.retrieve(assistant_id)
-    def update_assistant_resource(self, tool_resources: dict, assistant_id:str):
-        return self.client.beta.assistants.update(
-        assistant_id=assistant_id,
-        tool_resources=tool_resources,
-        )
-    def create_vector_store(self, name:str):
-        return self.client.beta.vector_stores.create(name=name)
-    def get_vector_store(self, vector_store_id:str):
-        return self.client.beta.vector_stores.retrieve(vector_store_id)
-    def upload_files(self, vector_store_id:str, file_paths: list):
-        file_streams = [open(path, "rb") for path in file_paths]
-        # Use the upload and poll SDK helper to upload the files, add them to the vector store,
-        # and poll the status of the file batch for completion.
-        return self.client.beta.vector_stores.file_batches.upload_and_poll(
-        vector_store_id=vector_store_id, files=file_streams
-        )
-    
+
     def upload_file(self, file_path:str):
         return self.client.files.create(
         file=open(file_path, "rb"), purpose="assistants"
@@ -62,14 +48,27 @@ class Chat(Prompts):
     def create_thread(self, messages: list):
         return self.client.beta.threads.create(messages=messages)
     
-    def ask_assistant_file_search(self, thread_id:str=None, upload_new_file_path: str = None):
+    def get_thread(self, thread_id:str):
+        pass
+
+    def ask_assistant_file_search(self, thread_id:str=None, file_ids: list = []):
         """assistant_id_name: dict with old 'id' or 'name' of new assistant."""
-        message_file = None
-        if upload_new_file_path: 
-            message_file = self.upload_file(upload_new_file_path)
-        messages = self.ask_assistant_file_search_messages(message_file=message_file)
+        thread_messages = self.ask_assistant_file_search_messages(file_ids=file_ids)
+        print(thread_messages)
+        print()
+        print()
+        print()
+        print('file_ids', file_ids)
+        print()
+        print()
+        print()
+        if thread_id is None: 
+            thread = self.create_thread(messages=thread_messages)
+        else: 
+            thread = self.get_thread(thread_id)
+
         assistant = self.get_assistant(self.default_assistant_id)
-        if thread_id is None: thread = self.create_thread(messages=messages)
+
         run = self.client.beta.threads.runs.create_and_poll(
             thread_id=thread.id, assistant_id=assistant.id
         )
