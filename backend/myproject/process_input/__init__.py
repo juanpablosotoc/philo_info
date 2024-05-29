@@ -75,7 +75,7 @@ class YoutubeVideo():
 
 
 class Documents(InformationInput):
-    def __init__(self, file_paths: str) -> None:
+    def __init__(self, file_paths: str, thread_id: str) -> None:
         super().__init__()
         self.__file_paths_types = {'images': [], 'documents': []}
         for file_path in file_paths:
@@ -83,6 +83,7 @@ class Documents(InformationInput):
                 self.__file_paths_types['images'].append(file_path)
             else: self.__file_paths_types['documents'].append(file_path)
         self.__info = []
+        self.thread_id = thread_id
     
     def handle(self):
         self.handled = True
@@ -107,15 +108,15 @@ class Documents(InformationInput):
         for file_path_id in file_paths_ids:
             extention = file_path_id['file_path'].split('.')[-1]
             os.rename(file_path_id['file_path'], f"uploads/openai_{file_path_id['id']}.{extention}")
-        self.__info.append(chat.ask_assistant_file_search(file_ids=[file_path_id['id'] for file_path_id in file_paths_ids]))
+        self.__info.append(chat.ask_assistant_file_search(file_ids=[file_path_id['id'] for file_path_id in file_paths_ids], thread_id=self.thread_id))
 
 
 class InformationBundle:
-    def __init__(self, texts: list[str], links: list[str], file_paths: list[str]):
+    def __init__(self, texts: list[str], links: list[str], file_paths: list[str], thread_id: str) -> None:
         youtube_start_link = 'https://www.youtube.com/watch?v='
         self.__links = [Link(link) for link in links if not link.startswith(youtube_start_link)]
         self.__youtuber_links = [YoutubeVideo(link) for link in links if link.startswith(youtube_start_link)]
-        self.__documents = Documents(file_paths)
+        self.__documents = Documents(file_paths, thread_id=thread_id)
         self.__texts = [Text(text) for text in texts]
 
     @property

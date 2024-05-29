@@ -38,13 +38,18 @@ class Chat(Prompts):
         file=open(file_path, "rb"), purpose="assistants"
         )
     
+    def get_thread(self, thread_id: str):
+        return self.client.beta.threads.retrieve(thread_id)
+    
     def create_thread(self, messages: list):
         return self.client.beta.threads.create(messages=messages)
     
-    def ask_assistant_file_search(self, file_ids: list = []):
-        """assistant_id_name: dict with old 'id' or 'name' of new assistant."""
+    def ask_assistant_file_search(self, file_ids: list = [], thread_id: str = ''):
         thread_messages = self.ask_assistant_file_search_messages(file_ids=file_ids)
-        thread = self.create_thread(messages=thread_messages)
+        if thread_id:
+            thread = self.get_thread(thread_id)
+        else:
+            thread = self.create_thread(messages=thread_messages)
         assistant = self.get_assistant(self.default_assistant_id)
 
         run = self.client.beta.threads.runs.create_and_poll(
