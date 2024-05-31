@@ -1,0 +1,33 @@
+.card {
+    border: 1px solid var(--shades_white_200);
+    border-radius: 5px;
+    padding: 0 16px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.label {
+    font: var(--font_m);
+    color: var(--shades_white_200);
+    transition: all 0.1s ease;
+}
+
+.card.active .label, .card:focus-within .label {
+    font: var(--font_s);
+    margin-top: -32px;
+}
+
+.input {
+    position: absolute;
+    width: 100%;
+    background-color: transparent;
+    font: var(--font_m);
+    color: var(--main_black);
+}
+
+.input, .input:focus {
+    border: none;
+    outline: none;
+}
