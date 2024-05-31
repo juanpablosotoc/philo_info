@@ -1,16 +1,20 @@
 :root {
     /* Color variables */
-    --main-primary: #F2045D;
-    --main-white: #F7F7F7;
+    --main_primary: #F2045D;
+    --main_white: #F7F7F7;
     --main_black: #202123;
-    --main-secondary: #02F3DB;
+    --main_secondary: #02F3DB;
+
     --shades_white_100: #CCCACB;
     --shades_white_200: #999697;
     --shades_black_100: #1A1A1D;
     --shades_black_200: #000000;
+    --shades_primary_200: #BF0449;
 
+    /* For now tint is unused !!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+    --tints_black_100: #2F2F2F;
     /* Font variables */
-    --font_family: 'San Francisco Pro', sans-serif;
+    --font_family: 'SF Pro Display', sans-serif;
     --font_s: 12px var(--font_family);
     --font_m: 18px var(--font_family);
     --font_m_b: bold 18px var(--font_family);
@@ -18,3 +22,26 @@
     --font_xl_b: bold 40px var(--font_family);
     --font_xxl_b: bold 70px var(--font_family);
 }
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--main_white);
+}
+
+input, input:focus {
+    border: none;
+    outline: none;
+}
+
+/* remove thesee!!!!!!!!!!!!!!!!!!!!!! */
+
+.black {
+    background-color: var(--main_black);
+    padding: 20px 0;
+}
+
+/* ----------------------------------------*/

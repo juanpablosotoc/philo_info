@@ -1,0 +1,19 @@
+.div {
+    width: 320px;
+    display: flex;
+    align-items: center;
+}
+
+.hr {
+    width: 50%;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--main_black);
+    height: 2px;
+}
+
+.label {
+    font: var(--font_m_b);
+    padding: 0 4px;
+    color: var(--main_black);
+}

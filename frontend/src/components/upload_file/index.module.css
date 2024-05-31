@@ -1,0 +1,31 @@
+.btn {
+    background-color: transparent;
+    border: 2px solid var(--shades_white_200);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    color: var(--shades_white_200);
+    font: var(--font_m_b);
+    padding: 12.75px;
+}
+
+.btn:hover {
+    color: var(--main_white);
+    border-color: var(--main_white);
+}
+
+.uploadDiv {
+    display: flex;
+}
+
+.whiteUpload, .btn:hover .greyUpload {
+    display: none;
+}
+
+.btn:hover .whiteUpload {
+    display: inline;
+}
+
+.btn span {
+    padding-left: 8px;
+}

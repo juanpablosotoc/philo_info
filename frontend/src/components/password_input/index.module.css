@@ -4,8 +4,10 @@
     padding: 0 16px;
     height: 54px;
     display: flex;
-    align-items: center;
-    flex-direction: row;
+    flex-direction: column;
+    justify-content: center;    
+    width: 286px;
+    background-color: var(--main_white);
 }
 
 .label {
@@ -16,15 +18,31 @@
 
 .card.active .label, .card:focus-within .label {
     font: var(--font_s);
-    margin-top: -32px;
+    margin-top: -36px;
+}
+
+.eye {
+    align-self: flex-end;
+    z-index: 1;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+.eye:hover {
+    cursor: pointer;
+    background-color: var(--shades_white_100);
+}
+
+.label, .eye {
+    position: absolute;
 }
 
 .input {
-    position: absolute;
-    width: 100%;
     background-color: transparent;
     font: var(--font_m);
     color: var(--main_black);
+    height: 100%;
+    position: relative;
 }
 
 .input, .input:focus {

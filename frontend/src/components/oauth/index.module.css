@@ -1,0 +1,43 @@
+.card {
+    border: 1px solid var(--shades_white_200);
+    border-radius: 5px;
+    display: flex;
+    padding: 15px 16px;
+    align-items: center;
+    width: 286px;
+    background-color: var(--main_white);
+    cursor: pointer;
+}
+
+.card:hover {
+    border-color: var(--shades_black_200);
+}
+
+.label {
+    padding-left: 16px;
+    font: var(--font_m_b);
+}
+
+.label, .label span {
+    color: var(--shades_white_200);
+}
+
+.card:hover .label,.card:hover .label span {
+    color: var(--shades_black_200);
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.brandDiv {
+    display: flex;
+}
+
+.blackBrand, .card:hover .greyBrand {
+    display: none;
+}
+
+.card:hover .blackBrand {
+    display: inline;
+}

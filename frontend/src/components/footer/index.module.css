@@ -1,0 +1,8 @@
+.footer {
+    color: var(--main_black);
+    font: var(--font_s);
+}
+
+.footer span {
+    padding: 16px;
+}

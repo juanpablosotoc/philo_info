@@ -4,11 +4,14 @@
     padding: 0 16px;
     height: 54px;
     display: flex;
-    align-items: center;
-    flex-direction: row;
+    flex-direction: column;
+    justify-content: center;
+    width: 286px;
+    background-color: var(--main_white);
 }
 
 .label {
+    position: absolute;
     font: var(--font_m);
     color: var(--shades_white_200);
     transition: all 0.1s ease;
@@ -16,18 +19,13 @@
 
 .card.active .label, .card:focus-within .label {
     font: var(--font_s);
-    margin-top: -32px;
+    margin-top: -36px;
 }
 
 .input {
-    position: absolute;
-    width: 100%;
+    position: relative;
     background-color: transparent;
     font: var(--font_m);
     color: var(--main_black);
-}
-
-.input, .input:focus {
-    border: none;
-    outline: none;
+    height: 100%;
 }
