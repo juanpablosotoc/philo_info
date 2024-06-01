@@ -3,9 +3,16 @@
     gap: 16px;
 }
 
-.circle {
+.filledCircle {
     border-radius: 50%;
-    background-color: black;
+    background-color: var(--main_primary);
+    width: 35px;
+    height: 35px;
+}
+
+.donut {
+    border-radius: 50%;
+    background-color: var(--main_white);
     width: 35px;
     height: 35px;
 }

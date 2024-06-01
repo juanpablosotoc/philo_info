@@ -1,5 +1,5 @@
 import { OutputTypes } from "../../utils/types";
-import eye from '../../SVG/icons/eye_open.svg';
+import camera from '../../SVG/icons/camera.svg';
 
 type props = {
     className?: string;
@@ -9,7 +9,7 @@ type props = {
 function OutputTypeCard(props: props) {
   return (
     <div>
-        <img src={eye} alt="" />
+        <img src={camera} alt="" />
         <p>{props.type}</p>
     </div>
   );

@@ -1,6 +1,30 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 90vh;
+    padding: 5vh 0;
+}
+
+.upperWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 80px;
+}
+
+.questionOutputWrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.questionWrapper > p {
+    font: var(--font_xxl_b);
+    color: var(--main_white);
+}
+
 .inputWrapper {
     display: flex;
-    margin-top: 20px;
     gap: 8px;
     justify-content: center;
 }

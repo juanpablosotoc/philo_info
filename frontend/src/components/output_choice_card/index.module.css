@@ -1,0 +1,12 @@
+.wrapper {
+    color: var(--main_white);
+    font: var(--font_m_b);
+
+}
+
+.choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns with equal width */
+    gap: 16px;
+    padding-top: 16px;
+}

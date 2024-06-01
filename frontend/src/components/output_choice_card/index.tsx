@@ -9,12 +9,14 @@ type Props = {
 
 function OutputChoiceCard (props: Props) {
     return (
-        <div>
+        <div className={styles.wrapper}>
             <p>Explain with:</p>
             <hr />
+            <div className={styles.choices}>
             {props.types.map((type, index) => {
                 return <OutputTypeCard key={index} type={type} />
             })}
+            </div>
         </div>
     )
 };

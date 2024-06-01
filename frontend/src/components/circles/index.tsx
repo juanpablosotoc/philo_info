@@ -3,12 +3,17 @@ import styles from './index.module.css';
 type props = {
     className?: string;
     number: number;
+    filledNumber: number;
 }
 
 function Circles(props: props) {
     const circles = [];
     for (let i = 0; i < props.number; i++) {
-        circles.push(<div key={i} className={styles.circle}></div>);
+        let className;
+        if (i === props.filledNumber - 1) className = styles.filledCircle
+        else className = styles.donut;
+        const element = <div key={i} className={className}></div>;
+        circles.push(element);
     }
     return (
         <div className={styles.circles}>

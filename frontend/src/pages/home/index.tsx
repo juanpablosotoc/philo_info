@@ -6,19 +6,20 @@ import SubmitBtn from "../../components/submit_btn";
 import styles from './index.module.css';
 import ShortTextInput from "../../components/short_text_input";
 import Circles from "../../components/circles";
+import OutputChoiceCard from "../../components/output_choice_card";
 
 function Home () {
     return (
-        <div>
-            <div>
+        <div className={styles.wrapper}>
+            <div className={styles.upperWrapper}>
                 <ShortTextInput name="text" label="Topic"/>
-                <div>
+                <div className={styles.questionOutputWrapper}>
                     <div className={styles.questionWrapper}>
                         <p>Question?</p>
-                        <Circles number={5}/>
+                        <Circles number={5} filledNumber={2}/>
                     </div>
                     <div className={styles.outputWrapper}>
-
+                        <OutputChoiceCard types={["text", "speech", "timeline"]}/>
                     </div>
                 </div>
             </div>

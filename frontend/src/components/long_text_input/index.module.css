@@ -5,8 +5,8 @@
     border: 2px solid var(--shades_white_200);
     resize: none;
     border-radius: 5px;
-    padding: 13px;
-    height: 26px;
+    padding: 14px;
+    height: 24px;
 }
 
 .input::placeholder {
