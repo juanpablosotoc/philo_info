@@ -1,0 +1,10 @@
+.inputWrapper {
+    display: flex;
+    margin-top: 20px;
+    gap: 8px;
+    justify-content: center;
+}
+
+.longTextInput {
+    width: 50%;
+}

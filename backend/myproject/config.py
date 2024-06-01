@@ -5,4 +5,5 @@ class Config:
     SECRET_KEY = os.getenv('demo_password')
     SQLALCHEMY_DATABASE_URI = f"mysql://root:{os.getenv('demo_password')}@localhost:3306/philo_info"
     SQLALCHEMY_TRACK_MODIFICATION = False
+    CORS_HEADERS = 'Content-Type'
     

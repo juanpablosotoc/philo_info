@@ -6,6 +6,7 @@ import eye_closed from '../../SVG/icons/eye_closed.svg';
 type Props = PropsWithChildren<{
     className?: string;
     label?: string;
+    name: string;
 }>
 
 function PasswordInput(props: Props) {
@@ -39,9 +40,9 @@ function PasswordInput(props: Props) {
     };
     return (
         <div className={`${styles.card} ${props.className ? props.className : ''}`} ref={div}>
-            <label htmlFor="short_text_input" className={styles.label}>{props.label ? props.label : 'Password'}</label>
+            <label htmlFor={props.name} className={styles.label}>{props.label ? props.label : 'Password'}</label>
             <img src={eye_closed} onClick={handleClick} className={styles.eye} alt="SVG Image" ref={eye}/>
-            <input type="password" className={styles.input} name={'short_text_input'} value={value} onChange={handleChange} ref={passwordInput}/>
+            <input type="password" className={styles.input} name={props.name} value={value} onChange={handleChange} ref={passwordInput}/>
         </div>
     );
 }

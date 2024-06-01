@@ -22,6 +22,14 @@ h1 {
     gap: 16px;
 }
 
+.formWrapper form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    align-items: center;
+}
+
 .formWrapper > p {
     font: var(--font_s);
 }

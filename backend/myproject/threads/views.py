@@ -3,10 +3,12 @@ import json
 from ..process_input import InformationBundle
 import uuid
 from myproject.ai import chat
+from flask_cors import cross_origin
 
 threads_blueprint = Blueprint('threads', __name__,)
 
 @threads_blueprint.route('/message', methods=['POST'])
+@cross_origin()
 def message():
     thread_id = request.args.get('thread_id', type=str, default='')
     if len(thread_id) == 0:

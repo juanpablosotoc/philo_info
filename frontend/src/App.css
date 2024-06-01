@@ -29,7 +29,7 @@
 }
 
 body {
-    background-color: var(--main_white);
+    background-color: red;
 }
 
 input, input:focus {

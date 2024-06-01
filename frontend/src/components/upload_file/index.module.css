@@ -7,11 +7,13 @@
     color: var(--shades_white_200);
     font: var(--font_m_b);
     padding: 12.75px;
+    height: 100%;
 }
 
 .btn:hover {
     color: var(--main_white);
     border-color: var(--main_white);
+    cursor: pointer;
 }
 
 .uploadDiv {

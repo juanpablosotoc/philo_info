@@ -1,0 +1,11 @@
+.circles {
+    display: flex;
+    gap: 16px;
+}
+
+.circle {
+    border-radius: 50%;
+    background-color: black;
+    width: 35px;
+    height: 35px;
+}

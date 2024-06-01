@@ -4,6 +4,7 @@ import styles from './index.module.css';
 type Props = PropsWithChildren<{
     className?: string;
     label?: string;
+    name: string;
 }>
 
 function ShortTextInput(props: Props) {
@@ -20,8 +21,8 @@ function ShortTextInput(props: Props) {
 
     return (
         <div className={`${styles.card} ${props.className ? props.className : ''}`} ref={div}>
-            <label htmlFor="short_text_input" className={styles.label}>{props.label ? props.label : 'Email address'}</label>
-            <input type="text" className={styles.input} name={'short_text_input'} value={value} onChange={handleChange} />
+            <label htmlFor={props.name} className={styles.label}>{props.label ? props.label : 'Email address'}</label>
+            <input type="text" className={styles.input} name={props.name} value={value} onChange={handleChange} />
         </div>
     );
 }

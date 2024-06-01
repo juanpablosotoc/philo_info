@@ -6,15 +6,29 @@ import OAuth from "../../components/oauth";
 import Footer from "../../components/footer";
 import black_anaglyphic_logo from '../../SVG/logo/black_anaglyphic.svg';
 import styles from './index.module.css';
-import {Link} from "react-router-dom";
+import {Link, Form, redirect, useSearchParams, useRouteError} from "react-router-dom";
+import {getToken, post, saveToken} from "../../utils/http";
+import { useEffect } from "react";
+import { ErrorType } from "../../utils/types";
 
 type props = {
     type: "login" | "signup"
 }
 
+// const location = useLocation();
+// const error = new URLSearchParams(location.search).get("error");
+
 function LoginSignup (props: props) {
+    let error_message;
     let welcome_message;
     let invitation_message;
+    let error = (useRouteError() as ErrorType);
+    const [searchParams, setSearchParams] = useSearchParams();
+    if (error) {
+        error_message = error.statusText;
+    } else {
+        error_message = searchParams.get("error") as string;
+    }
     if (props.type === "login") {
         welcome_message = <h1>Welcome back</h1>
         invitation_message = <p>Don't have an account? <Link to='/signup'>Sign up</Link></p>
@@ -23,14 +37,22 @@ function LoginSignup (props: props) {
         welcome_message = <h1>Create an account</h1>
         invitation_message = <p>Already have an account? <Link to='/login'>Log in</Link></p>
     };
+    if (error_message) {
+        welcome_message = <h1>{error_message}</h1>
+    };
+    useEffect(() => {
+        setSearchParams({}); // Clear the error message
+    }, []);
     return (
         <div className={styles.wrapper}>
             <img src={black_anaglyphic_logo} alt="Factic logo" />
             <div className={styles.formWrapper}>
                 {welcome_message}
-                <ShortTextInput />
-                <PasswordInput />
-                <SubmitBtn />
+                <Form method="post">
+                    <ShortTextInput name="email"/>
+                    <PasswordInput name="password"/>
+                    <SubmitBtn label="Continue" />
+                </Form>
                 {invitation_message}
                 <OrLine />
                 <OAuth type="apple" />
@@ -40,6 +62,46 @@ function LoginSignup (props: props) {
             <Footer />
         </div>
     )
+};
+
+export async function loader() {
+    const token = getToken();
+    if (token && token.length > 0) {
+        return redirect("/")
+    };
+    return null;
+}
+
+export async function signupAction({ params, request }: any) {
+    try {
+        const formData = await request.formData();
+        const sendData = {
+            email: formData.get("email"),
+            password: formData.get("password"),
+        };
+        const data = await post("users/create_user", false, sendData);
+        const token = data.token;
+        saveToken(token);
+        return redirect("/");
+    } catch (e) {
+        return redirect("/signup?error=" + (e as ErrorType).statusText);
+    }
+};
+
+export async function loginAction({ params, request }: any) {
+    try {
+        const formData = await request.formData();
+        const sendData = {
+            email: formData.get("email"),
+            password: formData.get("password"),
+        };
+        const data = await post("users/login", false, sendData);
+        const token = data.token;
+        saveToken(token);
+        return redirect("/");
+    } catch (e) {
+        return redirect("/login?error=" + (e as ErrorType).statusText);
+    }
 };
 
 export default LoginSignup;

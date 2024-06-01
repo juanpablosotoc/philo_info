@@ -1,0 +1,23 @@
+.input {
+    background-color: transparent;
+    color: var(--main_black);
+    font: var(--font_m);
+    border: 2px solid var(--shades_white_200);
+    resize: none;
+    border-radius: 5px;
+    padding: 13px;
+    height: 26px;
+}
+
+.input::placeholder {
+    color: var(--shades_white_200);
+}
+
+.input:focus {
+    border-color: var(--main_white);
+    outline: none;
+}
+
+.input:focus, .input:focus::placeholder, .active {
+    color: var(--main_white);
+}

@@ -2,12 +2,13 @@ from flask import Blueprint, request, jsonify
 from ..models import Solo
 from myproject import db
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-
+from flask_cors import cross_origin
 
 users_blueprint = Blueprint('users', __name__,)
 
 @users_blueprint.route('/', methods=['PUT', 'DELETE'])
 @jwt_required()
+@cross_origin()
 def index():
     current_user_alternative_token = get_jwt_identity()
     current_user = Solo.query.filter_by(alternative_token=current_user_alternative_token).first()
@@ -26,6 +27,7 @@ def index():
         return jsonify({'message': 'user deleted'})
 
 @users_blueprint.route('/login', methods=['POST'])
+@cross_origin()
 def login():
     email = request.json['email']
     password = request.json['password']
@@ -35,6 +37,7 @@ def login():
     return jsonify({'error': 'invalid credentials'}), 401
 
 @users_blueprint.route('/create_user', methods=['POST'])
+@cross_origin()
 def create_user():
     email = request.json['email']
     password = request.json['password']

@@ -5,11 +5,15 @@ const BASE_URL = "http://127.0.0.1:5000/";
 
 export function saveToken(token: string) {
   localStorage.setItem("token", token);
-}
+};
 
 export function getToken() {
   return localStorage.getItem("token");
-}
+};
+
+export function clearToken() {
+  localStorage.removeItem("token");
+};
 
 async function fetch_(
   endpoint: endpoint,
@@ -33,7 +37,12 @@ async function fetch_(
     body,
   });
   if (!response.ok) {
-    throw json({ message: response.statusText }, { status: response.status });
+    let message = response.statusText || "Something went wrong";
+    if (response.status === 401) {
+      clearToken();
+      message = "Invalid email or password";
+    }
+    throw json({}, { status: response.status, statusText: message})
   }
   return await response.json();
 };
@@ -45,13 +54,13 @@ export function get(endpoint: endpoint) {
 export function post(
   endpoint: endpoint,
   auth: boolean = false,
-  body: BodyInit
+  body: object
 ) {
-  return fetch_(endpoint, auth, "POST", body);
+  return fetch_(endpoint, auth, "POST", JSON.stringify(body));
 };
 
-export function put(endpoint: endpoint, body: BodyInit) {
-  return fetch_(endpoint, true, "PUT", body);
+export function put(endpoint: endpoint, body: object) {
+  return fetch_(endpoint, true, "PUT", JSON.stringify(body));
 };
 
 export function del(endpoint: endpoint) {

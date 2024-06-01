@@ -1,24 +1,17 @@
 import React from 'react';
 import './App.css';
-import Assets from './pages/Assets';
 
-// import Root from "./pages/Root";
-import Home from "./pages/home";
+import Home, { loader as homeLoader} from "./pages/home";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-// import About from "./pages/About";
-import Error from "./pages/Error";
-// import Product from "./pages/Product";
-// import Products from "./pages/Products";
-import LoginSignup from './pages/LoginSignup';
-
+import LoginSignup, { loginAction, loader as loginSignupLoader, signupAction } from './pages/LoginSignup';
 const router = createBrowserRouter([
   {
     path: "/",
-    errorElement: <Error></Error>,
+    errorElement: <LoginSignup type='login'/>,
     children: [
-      { index: true,element: <Home></Home>},
-      { path: 'login', element: <LoginSignup type="login" />},
-      { path: 'signup', element: <LoginSignup type="signup" />}
+      { index: true, element: <Home />, loader: homeLoader},
+      { path: 'login', element: <LoginSignup type="login" />, action: loginAction, loader: loginSignupLoader},
+      { path: 'signup', element: <LoginSignup type="signup" />, loader: loginSignupLoader, action: signupAction},
     ],
   },
 ]);
