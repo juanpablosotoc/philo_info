@@ -12,15 +12,15 @@ function Home () {
     return (
         <div className={styles.wrapper}>
             <div className={styles.upperWrapper}>
-                <ShortTextInput name="text" label="Topic"/>
-                <div className={styles.questionOutputWrapper}>
-                    <div className={styles.questionWrapper}>
-                        <p>Question?</p>
-                        <Circles number={5} filledNumber={2}/>
-                    </div>
-                    <div className={styles.outputWrapper}>
-                        <OutputChoiceCard types={["text", "speech", "timeline"]}/>
-                    </div>
+                <div className={styles.topicQuestionWrapper}>
+                    <ShortTextInput name="text" label="Topic"/>
+                    <p className={styles.question}>Question?</p>
+                    <Circles number={5} filledNumber={2}/>
+                </div>
+                <div className={styles.outputWrapper}>
+                    <OutputChoiceCard types={["text", "speech", "timeline"]} className={styles.output_choice + ' ' + styles.first}/>
+                    <OutputChoiceCard types={["text", "speech", "timeline"]} className={styles.output_choice + ' ' + styles.middle}/>
+                    <OutputChoiceCard types={["text", "speech", "timeline"]} className={styles.output_choice + ' ' + styles.last} first={true}/>
                 </div>
             </div>
             <div className={styles.inputWrapper}>

@@ -1,5 +1,5 @@
 import { json } from "react-router-dom";
-import type { endpoint, methods } from "./types";
+import type { ErrorType, endpoint, methods } from "./types";
 
 const BASE_URL = "http://127.0.0.1:5000/";
 
@@ -31,20 +31,26 @@ async function fetch_(
     }
     headers["Authorization"] = `Bearer ${token}`;
   }
-  const response = await fetch(BASE_URL + endpoint, {
-    method,
-    headers,
-    body,
-  });
+  try {
+    const response = await fetch(BASE_URL + endpoint, {
+      method,
+      headers,
+      body,
+    });
   if (!response.ok) {
     let message = response.statusText || "Something went wrong";
-    if (response.status === 401) {
-      clearToken();
-      message = "Invalid email or password";
-    }
     throw json({}, { status: response.status, statusText: message})
   }
   return await response.json();
+  } catch (e) {
+    const status = (e as ErrorType).status || 500;
+    let statusText = (e as ErrorType).statusText || "Connection refused";
+    if (status === 401) {
+      clearToken()
+      statusText = "Invalid email or password";
+    };
+    throw json({}, { status: status, statusText: statusText });
+  }
 };
 
 export function get(endpoint: endpoint) {

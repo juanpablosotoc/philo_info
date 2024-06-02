@@ -11,6 +11,8 @@
     --shades_black_200: #000000;
     --shades_primary_200: #BF0449;
 
+    --mixed_primary_black: #562638;
+
     /* For now tint is unused !!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
     --tints_black_100: #2F2F2F;
     /* Font variables */
@@ -29,19 +31,10 @@
 }
 
 body {
-    background-color: var(--main_black);
+    background-color: var(--main_white);
 }
 
 input, input:focus {
     border: none;
     outline: none;
 }
-
-/* remove thesee!!!!!!!!!!!!!!!!!!!!!! */
-
-.black {
-    background-color: var(--main_black);
-    padding: 20px 0;
-}
-
-/* ----------------------------------------*/

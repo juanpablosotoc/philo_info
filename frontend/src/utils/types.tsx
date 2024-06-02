@@ -4,7 +4,7 @@ export interface UserState {
     email?: string;
 }
 export interface ErrorType {
-    message?: string;
-    statusText?: number;
+    status: number;
+    statusText?: string;
 };
 export type OutputTypes = 'timeline' | 'text' | 'speech'
