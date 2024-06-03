@@ -8,7 +8,7 @@ import black_anaglyphic_logo from '../../SVG/logo/black_anaglyphic.svg';
 import styles from './index.module.css';
 import {Link, Form, redirect, useSearchParams, useRouteError} from "react-router-dom";
 import {getToken, post, saveToken} from "../../utils/http";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ErrorType } from "../../utils/types";
 
 type props = {
@@ -43,13 +43,14 @@ function LoginSignup (props: props) {
     useEffect(() => {
         setSearchParams({}); // Clear the error message
     }, []);
+    const [email, setEmail] = useState('');
     return (
         <div className={styles.wrapper}>
             <img src={black_anaglyphic_logo} alt="Factic logo" />
             <div className={styles.formWrapper}>
                 {welcome_message}
                 <Form method="post">
-                    <ShortTextInput name="email"/>
+                    <ShortTextInput value={email} setValue={setEmail} name="email"/>
                     <PasswordInput name="password"/>
                     <SubmitBtn label="Continue" />
                 </Form>

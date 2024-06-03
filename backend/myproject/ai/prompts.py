@@ -1,5 +1,6 @@
 class Prompts:
     create_file_search_assistant_instr = "You are a very helpful assistant who will give me a detailed summary of the information in the documents that I have uploaded."
+
     @staticmethod
     def process_link_messages(link: str) -> list:
         human_message_str = f"""
@@ -67,3 +68,75 @@ class Prompts:
         for file_id in file_ids:
             messages[0]['attachments'].append({ "file_id": file_id, "tools": [{"type": "file_search"}] })
         return messages
+    
+    @staticmethod
+    def get_questions_topics(n_topics: int, n_questions: int) -> list:
+        messages = [
+            {
+                'role': 'system',
+                'content': 'You are a very useful assistant who will respond only using json.'
+            },
+            {
+                'role': 'user',
+                'content': f'Give me a list of 2 topics along with 3 short and interesting questions related to each topic.'
+            },
+            {
+                'role': 'assistant',
+                'content': """{
+                    "topics": [
+                        {
+                            "topic": "Topic 1",
+                            "questions": [
+                                "Question 1",
+                                "Question 2",
+                                "Question 3"
+                            ]
+                        },
+                        {
+                            "topic": "Topic 2",
+                            "questions": [
+                                "Question 1",
+                                "Question 2",
+                                "Question 3"
+                            ]
+                        }
+                    ]
+                }"""
+            },
+            {
+                'role': 'user',
+                'content': f'Give me a list of {n_topics} topics along with {n_questions} short and interesting questions related to each topic.'
+            },
+        ]
+        return messages
+    
+    @staticmethod
+    def get_questions_for_topic(topic: str, n_questions: int) -> list:
+        messages = [
+            {
+                'role': 'system',
+                'content': 'You are a very useful assistant who will respond only using json. Do not prefix your responses with ```json'
+            },
+            {
+                'role': 'user',
+                'content': f'Give me a list of 3 short and interesting questions related to the topic "topic".'
+            },
+            {
+                'role': 'assistant',
+                'content': """
+                    {
+                        "questions": [
+                        "Question 1",
+                        "Question 2",
+                        "Question 3"
+                    ]
+                    }
+                """
+            },
+            {
+                'role': 'user',
+                'content': f'Give me a list of {n_questions} short and interesting questions related to the topic "{topic}".'
+            },
+        ]
+        return messages
+    

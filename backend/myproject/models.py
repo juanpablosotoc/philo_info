@@ -49,3 +49,24 @@ class ThreadMessages(db.Model):
         self.thread_id = thread_id
         self.content = content
         self.type = type
+
+
+class Topics(db.Model):
+    __name__ = 'Topics'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    topic = db.Column(db.String(50), unique=True)
+
+    def __init__(self, topic: str) -> None:
+        super().__init__()
+        self.topic = topic
+    
+
+class Questions(db.Model):
+    topic_id = db.Column(db.Integer, db.ForeignKey(Topics.id), nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    question = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, topic_id: int, question: str) -> None:
+        super().__init__()
+        self.topic_id = topic_id
+        self.question = question

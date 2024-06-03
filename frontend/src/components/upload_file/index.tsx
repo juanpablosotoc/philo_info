@@ -11,9 +11,12 @@ type Props = PropsWithChildren<{
 
 function UploadFile(props: Props) {
     const input = useRef<HTMLInputElement>(null);
+    const handleClick = () => {
+        input.current!.click();
+    }
     return (
-        <div>
-            <button className={styles.btn}>
+        <div className={props.className ? props.className : ''}>
+            <button className={styles.btn} onClick={handleClick}>
                 <div className={styles.uploadDiv}>
                     <img src={upload_white} alt="upload icon" className={styles.whiteUpload} />
                     <img src={upload_grey} alt="upload icon" className={styles.greyUpload} />

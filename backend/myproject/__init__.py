@@ -15,6 +15,8 @@ jwt_manager = JWTManager(app)
 
 from .threads import threads_blueprint
 from .users import users_blueprint
+from .topics import topics_blueprint
 
 app.register_blueprint(threads_blueprint, url_prefix='/threads')
 app.register_blueprint(users_blueprint, url_prefix='/users')
+app.register_blueprint(topics_blueprint, url_prefix='/topics')

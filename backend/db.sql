@@ -21,3 +21,13 @@ CREATE TABLE Thread_messages (
 	thread_id INT NOT NULL,
     FOREIGN KEY (thread_id) REFERENCES Threads(thread_id)
 );
+CREATE TABLE Topics (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    topic VARCHAR(50) NOT NULL UNIQUE
+);
+CREATE TABLE Questions (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    question VARCHAR(100) NOT NULL,
+    topic_id INT NOT NULL,
+    FOREIGN KEY(topic_id) REFERENCES Topics(id)
+);

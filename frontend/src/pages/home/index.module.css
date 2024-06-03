@@ -1,28 +1,30 @@
+body {
+    background-color: var(--shades_black_100);
+}
+
 .wrapper {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 90vh;
     padding: 5vh 0;
-    background-color: var(--shades_black_100);
+    position: fixed;
+    width: 100vw;
+    top: 0;
 }
 
 .upperWrapper {
     display: flex;
-    justify-content: space-evenly;
     align-items: center;
     height: 100%;
 }
 
 .topicQuestionWrapper {
+    padding: 0 15vw;
     display: flex;
     flex-direction: column;
-    gap: 20vh;
-}
-
-.question {
-    font: var(--font_xxl_b);
-    color: var(--main_white);
+    gap: 60vh;
+    position: relative;
 }
 
 .outputWrapper {
@@ -53,9 +55,19 @@
 .inputWrapper {
     display: flex;
     gap: 8px;
-    justify-content: center;
+    position: relative;
+    margin-left: 15vw;
+}
+
+.uploadFile {
+    position: absolute;
+    transform: translateX(calc(-100% - 8px));    
 }
 
 .longTextInput {
-    width: 50%;
+    width: 60%;
+}
+
+.submit_btn {
+    width: 240px;
 }

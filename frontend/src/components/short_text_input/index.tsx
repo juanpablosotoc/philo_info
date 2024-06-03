@@ -5,20 +5,25 @@ type Props = PropsWithChildren<{
     className?: string;
     label?: string;
     name: string;
+    handleFocusOut?: () => void;
+    setTopicHasChanged?: React.Dispatch<React.SetStateAction<boolean>>;
+    value: string;
+    setValue: React.Dispatch<React.SetStateAction<string>>;
 }>
 
 function ShortTextInput(props: Props) {
-    const [value, setValue] = useState('');
+    let initialValue = props.value ? props.value : '';
     const div = useRef<HTMLDivElement>(null);
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.value.length) div.current!.classList.add(styles.active)
         else div.current!.classList.remove(styles.active);
-        setValue(event.target.value);
+        props.setValue(event.target.value);
+        if (props.setTopicHasChanged) props.setTopicHasChanged(true);
     };
     return (
-        <div className={`${styles.card} ${props.className ? props.className : ''}`} ref={div}>
+        <div className={`${styles.card} ${props.className ? props.className : ''} ${initialValue ? styles.active: ''}`} ref={div}>
             <label htmlFor={props.name} className={styles.label}>{props.label ? props.label : 'Email address'}</label>
-            <input type="text" className={styles.input} name={props.name} value={value} onChange={handleChange} />
+            <input type="text" className={styles.input} name={props.name} value={props.value} onChange={handleChange} onBlur={props.handleFocusOut ? props.handleFocusOut : ()=>{}} />
         </div>
     );
 }

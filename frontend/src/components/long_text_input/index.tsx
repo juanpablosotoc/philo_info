@@ -16,7 +16,9 @@ function LongTextInput(props: props) {
     };
 
   return (
-      <textarea className={`${styles.input} ${props.className ? props.className : ''}`} placeholder={props.label} value={value} onChange={handleChange} ref={input}/>
+    <div className={`${styles.wrapper} ${props.className ? props.className : ''}`}>
+      <textarea className={styles.input} placeholder={props.label} value={value} onChange={handleChange} ref={input}/>
+    </div>
   );
 }
 

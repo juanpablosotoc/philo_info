@@ -8,6 +8,7 @@ type Props = {
     className?: string;
     types: Array<OutputTypes>;
     first?: boolean;
+    third?: boolean;
 };
 
 function OutputChoiceCard (props: Props) {
@@ -25,15 +26,13 @@ function OutputChoiceCard (props: Props) {
         y = (xPercent - 50) / 5;
         x *= -1;
         y *= -1;
-        let translate = '';
-        if (!props.first) translate = 'translateX(70%)';
-        wrapper.current!.style.transform = `rotateY(${ initialRotateY + y}deg) rotateX(${ initialRotateX + x}deg) ${translate}`;
+        wrapper.current!.style.transform = `rotateY(${ initialRotateY + y}deg) rotateX(${ initialRotateX + x}deg)`;
     };
     function handleLeave() {
-        wrapper.current!.style.transform = `rotateY(${initialRotateY}deg) rotateX(${initialRotateX}deg) translateX(0)`;
+        wrapper.current!.style.transform = `rotateY(${initialRotateY}deg) rotateX(${initialRotateX}deg)`;
     }
     return (
-        <div className={`${styles.wrapper} ${outputChoiceCardClass} ${props.className ? props.className : ''}`} ref={wrapper} onMouseMove={handleHover} onMouseLeave={handleLeave}>
+        <div className={`${styles.wrapper} ${outputChoiceCardClass} ${props.first ? '' : styles.notFirst} ${props.third ? styles.third : ''} ${props.className ? props.className : ''}`} ref={wrapper} onMouseMove={handleHover} onMouseLeave={handleLeave}>
             <p>Explain with:</p>
             <div className={styles.choices}>
             {props.types.map((type, index) => {

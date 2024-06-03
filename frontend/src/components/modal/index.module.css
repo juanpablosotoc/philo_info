@@ -1,0 +1,16 @@
+.modal {
+    position: sticky;
+    width: 100vw;
+}
+
+.top {
+    top: 0;
+    height: 40vh;
+    background:linear-gradient(180deg, var(--shades_black_100) 0%, rgba(0,0,0,0) 100%);
+}
+
+.bottom {
+    bottom: 0;
+    height: 45vh;
+    background:linear-gradient(0deg, var(--shades_black_100) 0%, rgba(0,0,0,0) 100%);
+}
