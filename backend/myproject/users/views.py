@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from ..models import Solo
+from ..models import Users
 from myproject import db
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_cors import cross_origin
@@ -11,9 +11,9 @@ users_blueprint = Blueprint('users', __name__,)
 @cross_origin()
 def index():
     current_user_alternative_token = get_jwt_identity()
-    current_user = Solo.query.filter_by(alternative_token=current_user_alternative_token).first()
+    current_user = Users.query.filter_by(alternative_token=current_user_alternative_token).first()
     if not current_user:
-        return jsonify({'error': 'user not found'}), 404
+        return jsonify({'error': 'user not found'}), 401
     if request.method == 'PUT':
         email = request.json['email']
         password = request.json['password']
@@ -31,7 +31,7 @@ def index():
 def login():
     email = request.json['email']
     password = request.json['password']
-    user = Solo.query.filter_by(email=email).first()
+    user = Users.query.filter_by(email=email).first()
     if user and user.check_password(password):
         return jsonify({'token': create_access_token(identity=user.alternative_token)})
     return jsonify({'error': 'invalid credentials'}), 401
@@ -41,13 +41,12 @@ def login():
 def create_user():
     email = request.json['email']
     password = request.json['password']
-    print(password, '--------------------------')
-    existant_user = Solo.query.filter_by(email=email).first()
+    existant_user = Users.query.filter_by(email=email).first()
     if not existant_user:
-        user = Solo(email=email, password=password)
+        user = Users(email=email, password=password)
         db.session.add(user)
         db.session.commit()
-        alternative_token = Solo.query.filter_by(email=email).first().alternative_token
+        alternative_token = Users.query.filter_by(email=email).first().alternative_token
         return jsonify({'token': create_access_token(identity=alternative_token)})
     return jsonify({'error': 'this email is already in use'}), 409
     

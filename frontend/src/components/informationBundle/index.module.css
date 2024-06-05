@@ -1,0 +1,23 @@
+
+.wrapper {
+    background-color: var(--main_black);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    overflow-y: scroll;
+}
+
+.addIcon {
+    align-self: flex-end;
+}
+
+.informationBundle {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tint_b_100 {
+    background-color: var(--tints_black_100);
+}

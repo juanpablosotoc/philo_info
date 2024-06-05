@@ -1,0 +1,13 @@
+.thread {
+    border-radius: 5px;
+    padding: 18.75px;
+    background-color: var(--tints_black_100);
+    color: var(--main_white);
+    font: var(--font_m_b);
+    margin-bottom: 4px;
+}
+
+.thread:hover {
+    background-color: var(--main_black);
+    cursor: pointer;
+}

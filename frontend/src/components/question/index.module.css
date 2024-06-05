@@ -1,6 +1,4 @@
 .question {
     font: var(--font_xl_b);
     color: var(--main_white);
-    padding-left: 15vw;
-    width:40vw;
 }

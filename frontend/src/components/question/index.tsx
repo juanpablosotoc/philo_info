@@ -6,20 +6,18 @@ type Props = {
     question: string;
     questionNumber: number;
     setQuestionNumber: React.Dispatch<React.SetStateAction<number>>;
+    myRef?: any;
 }
 
 function Question(props: Props) {
-    const element = useRef<HTMLParagraphElement>(null);
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting) props.setQuestionNumber(props.questionNumber + 1);
-        });
-          observer.observe( element.current!);
-        }
-    , []);
     return (
-        <p className={styles.question} ref={element}>{props.question}</p>
+        <>
+            {props.myRef ? (
+            <p className={`${styles.question} ${props.className ? props.className : ''}`} ref={props.myRef}>{props.question}</p>
+        ) : (
+            <p className={`${styles.question} ${props.className ? props.className : ''}`}>{props.question}</p>
+        )}
+        </>
     )
 };
 

@@ -1,3 +1,5 @@
+import { dateComparisonString } from "./types";
+
 function getOffset(el: any) {
     const rect = el.getBoundingClientRect();
     return {
@@ -20,4 +22,18 @@ export function getXYPercentages(e: any, element: any) {
     const yPercent = Math.trunc((y / cardHeight) * 100);
 
     return { xPercent, yPercent };
+};
+
+export function dateComparison( d2: Date ){
+    let d1 = new Date();
+    let comparison = 'Older';
+    if (d1.getUTCFullYear() == d2.getUTCFullYear()) {
+        comparison = 'This year';
+        if (d1.getUTCMonth() == d2.getUTCMonth()) {
+            comparison = 'This month';
+            if (d1.getUTCDate() == d2.getUTCDate()) {
+                comparison = 'Today';
+            }
+    }};
+    return comparison as dateComparisonString;
 };

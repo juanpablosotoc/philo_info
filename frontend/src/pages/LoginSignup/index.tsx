@@ -10,6 +10,7 @@ import {Link, Form, redirect, useSearchParams, useRouteError} from "react-router
 import {getToken, post, saveToken} from "../../utils/http";
 import { useEffect, useState } from "react";
 import { ErrorType } from "../../utils/types";
+import { Helmet } from 'react-helmet';
 
 type props = {
     type: "login" | "signup"
@@ -44,7 +45,12 @@ function LoginSignup (props: props) {
         setSearchParams({}); // Clear the error message
     }, []);
     const [email, setEmail] = useState('');
+    const title = props.type[0].toUpperCase() + props.type.slice(1) + ' | Factic';
     return (
+        <>
+        <Helmet>
+            <title>{title}</title>
+        </Helmet>
         <div className={styles.wrapper}>
             <img src={black_anaglyphic_logo} alt="Factic logo" />
             <div className={styles.formWrapper}>
@@ -62,6 +68,7 @@ function LoginSignup (props: props) {
             </div>
             <Footer />
         </div>
+        </>
     )
 };
 

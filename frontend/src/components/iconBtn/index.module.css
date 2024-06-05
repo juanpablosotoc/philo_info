@@ -1,0 +1,12 @@
+.icon {
+    height: 32px;
+    width: 32px;
+    background-color: var(--main_black);
+    padding: 16px;
+    border-radius: 5px;
+}
+
+.icon:hover {
+    cursor: pointer;
+    background-color: var(--tints_black_100);
+}

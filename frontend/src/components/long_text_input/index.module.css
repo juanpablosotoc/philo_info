@@ -1,26 +1,30 @@
 .wrapper {
-    padding: 14px;
+    border-radius: 5px;
+    border: 2px solid var(--shades_white_200);
+    height: 52px;
+    overflow-y: hidden;
 }
+
+.wrapper:focus-within, .active {
+    border-color: var(--main_white);
+}
+
 .input {
     background-color: transparent;
     color: var(--main_black);
     font: var(--font_m);
-    border: 2px solid var(--shades_white_200);
     resize: none;
-    border-radius: 5px;
-    height: 24px;
-    width: 100%;
+    height: calc(100% - 28px);
+    padding: 14px;
+    width: calc(100% - 28px);
+    outline: none;
+    border: none;
 }
 
 .input::placeholder {
     color: var(--shades_white_200);
 }
 
-.input:focus, .active {
-    border-color: var(--main_white);
-    outline: none;
-}
-
-.input:focus, .input:focus::placeholder, .active {
+.input:focus, .input:focus::placeholder, .active textarea {
     color: var(--main_white);
 }

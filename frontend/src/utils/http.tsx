@@ -1,7 +1,7 @@
 import { json } from "react-router-dom";
-import type { ErrorType, endpoint, methods } from "./types";
+import type { ErrorType, contentType, endpoint, methods } from "./types";
 
-const BASE_URL = "http://127.0.0.1:5000/";
+export const BASE_URL = "http://127.0.0.1:5000/";
 
 export function saveToken(token: string) {
   localStorage.setItem("token", token);
@@ -15,14 +15,18 @@ export function clearToken() {
   localStorage.removeItem("token");
 };
 
-async function fetch_(
+export async function fetch_(
   endpoint: endpoint,
   auth: boolean = false,
   method: methods,
-  body?: BodyInit
+  type: contentType,
+  thenCallback?: (jsonResp: any) => any,
+  errorCallback?: (e: ErrorType) => any,
+  finallyCallback?: () => any,
+  body?: BodyInit,
 ) {
   let headers: HeadersInit = {
-    "Content-Type": "application/json",
+    "Content-Type": type,
   };
   if (auth) {
     const token = getToken();
@@ -41,20 +45,24 @@ async function fetch_(
     let message = response.statusText || "Something went wrong";
     throw json({}, { status: response.status, statusText: message})
   }
-  return await response.json();
+  const jsonResp = await response.json();
+  if (!thenCallback) return jsonResp;
+  return thenCallback(jsonResp);
   } catch (e) {
     const status = (e as ErrorType).status || 500;
     let statusText = (e as ErrorType).statusText || "Connection refused";
-    if (status === 401) {
+    if (status === 401 || status === 422) {
       clearToken()
-      statusText = "Invalid email or password";
     };
+    if (errorCallback) errorCallback({ status, statusText });
     throw json({}, { status: status, statusText: statusText });
+  } finally {
+    if (finallyCallback) finallyCallback();
   }
 };
 
 export function get(endpoint: endpoint) {
-  return fetch_(endpoint, true, "GET");
+  return fetch_(endpoint, true, "GET", "application/json");
 };
 
 export function post(
@@ -62,13 +70,13 @@ export function post(
   auth: boolean = false,
   body: object
 ) {
-  return fetch_(endpoint, auth, "POST", JSON.stringify(body));
+  return fetch_(endpoint, auth, "POST", "application/json", undefined, undefined, undefined, JSON.stringify(body));
 };
 
 export function put(endpoint: endpoint, body: object) {
-  return fetch_(endpoint, true, "PUT", JSON.stringify(body));
+  return fetch_(endpoint, true, "PUT", "application/json", undefined, undefined, undefined, JSON.stringify(body));
 };
 
 export function del(endpoint: endpoint) {
-  return fetch_(endpoint, true, "DELETE");
+  return fetch_(endpoint, true, "DELETE", "application/json");
 };

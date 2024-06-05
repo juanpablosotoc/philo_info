@@ -1,11 +1,12 @@
 .modal {
     position: sticky;
     width: 100vw;
+    pointer-events : none;
 }
 
 .top {
     top: 0;
-    height: 40vh;
+    height: 35vh;
     background:linear-gradient(180deg, var(--shades_black_100) 0%, rgba(0,0,0,0) 100%);
 }
 

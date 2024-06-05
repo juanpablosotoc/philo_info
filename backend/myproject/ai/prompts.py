@@ -70,7 +70,7 @@ class Prompts:
         return messages
     
     @staticmethod
-    def get_questions_topics(n_topics: int, n_questions: int) -> list:
+    def get_questions_topics(n_topics: int, n_questions: int, dont_include_topics: list[str]) -> list:
         messages = [
             {
                 'role': 'system',
@@ -105,7 +105,7 @@ class Prompts:
             },
             {
                 'role': 'user',
-                'content': f'Give me a list of {n_topics} topics along with {n_questions} short and interesting questions related to each topic.'
+                'content': f'Give me a list of {n_topics} topics along with {n_questions} short and interesting questions related to each topic.  Do not include the following topics: {dont_include_topics}'
             },
         ]
         return messages

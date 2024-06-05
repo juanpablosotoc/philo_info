@@ -1,0 +1,65 @@
+
+.wrapper {
+    display: flex;
+    height: 100%;
+    width: 20vw;
+    justify-content: space-between;
+    transform: translateX(-80%);
+    position: absolute;
+    z-index: 20;
+    align-items: center;
+    top: 0;
+}
+
+.wrapper, .chevron {
+    transition: transform 0.3s ease-out;
+}
+
+.threadsWrapper {
+    backdrop-filter: blur(10px);
+    height: 100%;
+    width: 100%;
+}
+.iconsWrapper {
+    display: flex;
+    gap: 8px;
+}
+
+.threadsWrapper > div {
+    margin-top: 15vh;
+    padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: scroll;
+    height: calc(100% - 30vh);
+    width: calc(100% - 80px);
+}
+
+.wrapper:hover {
+    transform: none;
+}
+
+.chevronWrapper {
+    display: flex;
+}
+
+.greyChevron {
+    position: absolute;
+}
+
+.wrapper:hover .greyChevron, .wrapper:hover .whiteChevron {
+    transform: rotateY(0deg);
+}
+
+.chevron {
+    transform: rotateY(180deg);
+}
+
+.wrapper:hover .greyChevron, .whiteChevron {
+    visibility: hidden;
+}
+
+.wrapper:hover .whiteChevron {
+    visibility: visible;
+}

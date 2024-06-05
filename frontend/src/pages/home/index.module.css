@@ -11,19 +11,23 @@ body {
     position: fixed;
     width: 100vw;
     top: 0;
+    pointer-events : none;
+
 }
 
 .upperWrapper {
     display: flex;
-    align-items: center;
     height: 100%;
+    padding-top: 5vh;
+    
 }
 
 .topicQuestionWrapper {
     padding: 0 15vw;
     display: flex;
     flex-direction: column;
-    gap: 60vh;
+    gap: 50vh;
+
     position: relative;
 }
 
@@ -32,6 +36,10 @@ body {
 
     --horizontal_spacing: 50px;
     --vertical_spacing: 25px;
+}
+
+.outputWrapper, .inputWrapper, .threads {
+    pointer-events : auto;
 }
 
 .output_choice {
@@ -57,6 +65,7 @@ body {
     gap: 8px;
     position: relative;
     margin-left: 15vw;
+    align-items: flex-end;
 }
 
 .uploadFile {
@@ -66,8 +75,14 @@ body {
 
 .longTextInput {
     width: 60%;
+    position: absolute;
 }
 
 .submit_btn {
     width: 240px;
+    margin-left: calc(60% + 8px);
+}
+
+.hidden {
+    visibility: hidden;
 }

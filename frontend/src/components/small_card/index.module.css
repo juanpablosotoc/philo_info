@@ -1,0 +1,35 @@
+.cardWrapper {
+    background-color: var(--main_black);
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font: var(--font_m);
+    color: var(--shades_white_100);
+    padding: 12px 16px;
+    margin-bottom: 4px;
+}
+
+.cardWrapper:hover {
+    background-color: var(--tints_black_100);
+    color: var(--main_white);
+}
+
+.iconsWrapper {
+    height: 24px;
+    padding: 4px;
+    border-radius: 5px;
+}
+
+.iconsWrapper:hover {
+    cursor: pointer;
+    background-color: var(--main_black);
+}
+
+.cardWrapper:hover .white {
+    display: inline;
+}
+
+.white, .cardWrapper:hover .grey{
+    display: none;
+}

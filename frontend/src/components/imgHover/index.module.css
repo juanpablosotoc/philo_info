@@ -1,0 +1,15 @@
+.wrapper {
+    display: flex;
+}
+
+.img, .imgHover {
+    height: 100%
+}
+
+.imgHover, .wrapper:hover .img {
+    display: none;
+}
+
+.wrapper:hover .imgHover {
+    display: inline;
+}

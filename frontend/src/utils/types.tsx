@@ -1,4 +1,4 @@
-export type endpoint = 'users/' | 'users/login' | 'users/create_user' | 'topics/';
+export type endpoint = 'users/' | 'users/login' | 'users/create_user' | 'topics/' | 'threads/' | 'threads/message';
 export type methods = "GET" | "POST" | "PUT" | "DELETE";
 export interface UserState {
     email?: string;
@@ -7,8 +7,37 @@ export interface ErrorType {
     status: number;
     statusText?: string;
 };
-export type OutputTypes = 'timeline' | 'text' | 'speech'
 export type Topic = {
     topic: string;
     questions: Array<string>;
+}
+export type Thread = {
+    id: number;
+    name: string;
+    date: Date;
+}
+export interface request_obj {
+    method: "GET" | "POST";
+    headers: Headers;
+    body: any;
+}
+export type dateComparisonString = 'Today' | 'This month' | 'Older'
+export type OutputTypes = 'timeline' | 'text' | 'speech'
+export type choice = Array<OutputTypes>
+export type choicesType = choice[]
+export type contentType = "application/json" | "multipart/form-data"
+export class InformationBundleCls {
+    constructor(public text: string, public files: Array<File>, public link: string) {}
+}
+export class QuestionCls {
+    question: string;
+    constructor(question: string) {
+        question = question.trim();
+        if (!question.length || !question.startsWith('/explain')) throw new Error("Invalid question");
+        this.question = question;
+    }
+};
+
+export class MessageCls {
+    constructor(public content: InformationBundleCls | QuestionCls, public type: 'coices' | 'question' | 'informationBundle', public threadId?: number) {}
 }
