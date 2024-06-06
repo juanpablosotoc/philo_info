@@ -1,7 +1,7 @@
 from myproject.ai import chat, Prompts
 from youtube_transcript_api import YouTubeTranscriptApi
 from ..models import Texts, Links, Files, MessageQuestions, LocalOpenaiFiles, Files
-
+import base64
 
 class InformationInput:
     def __init__(self) -> None:
@@ -73,15 +73,27 @@ class YoutubeVideoHandler():
 class FilesHandler(InformationInput):
     def __init__(self, files: list[Files]) -> None:
         super().__init__()
-        self.already_uploaded_files: LocalOpenaiFiles = [file.openai_file for file in files if file.openai_file]
-        self.upload_new_files: Files= [file for file in files if not file.openai_file]
+        self.files_for_search: list[Files] = [file for file in files if file.path.split('.')[-1] in InformationBundle.file_search_file_types]
+        self.files_for_vision: list[Files] = [file for file in files if file.path.split('.')[-1] in InformationBundle.vision_file_types]
         self.__info = ''
 
     def handle(self):
         self.handled = True
-        uploaded_new_files: LocalOpenaiFiles = [chat.upload_file(file=file) for file in self.upload_new_files]
-        self.__info = chat.ask_assistant_file_search(files=uploaded_new_files + self.already_uploaded_files)
-    
+        if len(self.files_for_search): self.handle_file_search()
+        for file in self.files_for_vision:
+            self.handle_image(file.path)
+
+    def handle_file_search(self):
+        self.already_uploaded_files: list[LocalOpenaiFiles] = [file.openai_file for file in self.files_for_search if file.openai_file]
+        self.upload_new_files: list[Files] = [file for file in self.files_for_search if not file.openai_file]
+        uploaded_new_files: list[LocalOpenaiFiles] = [chat.upload_file(file=file) for file in self.upload_new_files]
+        self.__info += chat.ask_assistant_file_search(files=uploaded_new_files + self.already_uploaded_files) + '\n'
+
+    def handle_image(self, image_file_path):
+        with open(image_file_path, "rb") as image_file:
+            base64_image = base64.b64encode(image_file.read()).decode('utf-8')
+        self.__info += chat.ask.no_stream(Prompts.process_image_messages(base64_image)) + '\n'
+
     @property
     def info(self):
         if not self.handled: self.handle()
@@ -89,6 +101,10 @@ class FilesHandler(InformationInput):
 
 
 class InformationBundle:
+    vision_file_types = ['jpg', 'jpeg', 'png', 'gif', 'webp']
+    file_search_file_types = ["c", "cs", "cpp", "doc", "docx", "html", "java", 
+                              "json", "md", "pdf", "php", "pptx", "py", "rb", 
+                              "tex", "txt", "css", "js", "sh", "ts"]
     def __init__(self, texts: list[Texts], links: list[Links], files: list[Files]) -> None:
         links = [link for link in links if not link.link.startswith(YoutubeVideoHandler.youtube_start_link)]
         youtube_links = [link for link in links if link.link.startswith(YoutubeVideoHandler.youtube_start_link)]

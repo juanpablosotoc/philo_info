@@ -4,6 +4,7 @@ from werkzeug.datastructures import FileStorage
 import uuid
 from myproject.ai import chat, db
 import json
+from ..binary_files import ImageResizer
 
 class UserInput:
     def __init__(self, links_strs: list[str], texts_strs: list[str], files_filestorages: list[FileStorage], thread_id: int) -> None:
@@ -22,6 +23,8 @@ class UserInput:
                 file_extention = file_store_obj.filename.split('.')[-1]
                 file_path = f"./backend/uploads/{str(uuid.uuid4())}.{file_extention}"
                 file_store_obj.save(file_path)
+                if file_extention in InformationBundle.vision_file_types:
+                    ImageResizer.resize_image(file_path)
                 self.files.append(Files(path=file_path, message_id=self.message.id))
             db.session.add_all(self.links)
             db.session.add_all(self.texts)
