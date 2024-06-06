@@ -51,6 +51,24 @@ class Prompts:
         return mes
     
     @staticmethod
+    def process_image_messages(base64_image: str, detail='auto') -> list:
+        return [
+            {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "Give me a detailsed summary of the information portrayed in the following image:"},
+                {
+                "type": "image_url",
+                "image_url": {
+                    'url': f"data:image/jpeg;base64,{base64_image}",
+                    "detail": detail
+                },
+                },
+            ],
+            }
+        ]
+    
+    @staticmethod
     def ask_assistant_file_search_messages(file_ids: list = []) -> list:
         messages = [{
             "role": "user",
