@@ -8,6 +8,7 @@ serializer = Serializer(app.secret_key)
 
 
 class Users(db.Model):
+    __tablename__ = 'Users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(50), unique=True, nullable=False)
     hashed_password = db.Column(db.String(255), nullable=False)
@@ -27,6 +28,7 @@ class Users(db.Model):
 
 
 class Threads(db.Model):
+    __tablename__ = 'Threads'
     user_id = db.Column(db.Integer, db.ForeignKey(Users.id), nullable=False)
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), nullable=False)
@@ -38,6 +40,7 @@ class Threads(db.Model):
     
 
 class LocalOpenaiThreads(db.Model):
+    __tablename__ = 'LocalOpenaiThreads'
     thread_id = db.Column(db.Integer, db.ForeignKey(Threads.id), nullable=False, primary_key=True, autoincrement=False)
     openai_thread_id = db.Column(db.String(50), nullable=False, unique=True)
 
@@ -48,6 +51,7 @@ class LocalOpenaiThreads(db.Model):
 
 
 class MessageTypes(db.Model):
+    __tablename__ = 'MessageTypes'
     id = db.Column(TINYINT, primary_key=True, autoincrement=True)
     type = db.Column(db.String(50), unique=True, nullable=False)
 
@@ -57,6 +61,7 @@ class MessageTypes(db.Model):
 
 
 class Messages(db.Model):
+    __tablename__ = 'Messages'
     thread_id = db.Column(db.Integer, db.ForeignKey(Threads.id), nullable=False)
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     datetime = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
@@ -69,6 +74,7 @@ class Messages(db.Model):
 
 
 class ProcessedMessageInfo(db.Model):
+    __tablename__ = 'ProcessedMessageInfo'
     message_id = db.Column(db.Integer, db.ForeignKey(Messages.id), nullable=False, primary_key=True, autoincrement=False)
     text = db.Column(TEXT, nullable=False)
 
@@ -79,6 +85,7 @@ class ProcessedMessageInfo(db.Model):
 
 
 class Topics(db.Model):
+    __tablename__ = 'Topics'
     id = db.Column(SMALLINT, primary_key=True, autoincrement=True)
     topic = db.Column(db.String(50), unique=True, nullable=False)
 
@@ -88,6 +95,7 @@ class Topics(db.Model):
     
 
 class TopicQuestions(db.Model):
+    __tablename__ = 'TopicQuestions'
     topic_id = db.Column(SMALLINT, db.ForeignKey(Topics.id), nullable=False)
     id = db.Column(SMALLINT, primary_key=True, autoincrement=True)
     question = db.Column(db.String(100), nullable=False)
@@ -99,6 +107,7 @@ class TopicQuestions(db.Model):
 
 
 class MessageQuestions(db.Model):
+    __tablename__ = 'MessageQuestions'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     question = db.Column(db.String(255), nullable=False)
     message_id = db.Column(db.Integer, db.ForeignKey(Messages.id), nullable=False)
@@ -110,6 +119,7 @@ class MessageQuestions(db.Model):
 
 
 class Texts(db.Model):
+    __tablename__ = 'Texts'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     text = db.Column(TEXT, nullable=False)
     message_id = db.Column(db.Integer, db.ForeignKey(Messages.id), nullable=False)
@@ -121,6 +131,7 @@ class Texts(db.Model):
 
 
 class Links(db.Model):
+    __tablename__ = 'Links'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     link = db.Column(db.String(255), nullable=False)
     message_id = db.Column(db.Integer, db.ForeignKey(Messages.id), nullable=False)
@@ -132,6 +143,7 @@ class Links(db.Model):
 
 
 class Files(db.Model):
+    __tablename__ = 'Files'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     path = db.Column(db.String(100), unique=True, nullable=False)
     message_id = db.Column(db.Integer, db.ForeignKey(Messages.id), nullable=False)
@@ -143,6 +155,7 @@ class Files(db.Model):
 
 
 class LocalOpenaiFiles(db.Model):
+    __tablename__ = 'LocalOpenaiFiles'
     file_id = db.Column(db.Integer, db.ForeignKey(Files.id), nullable=False, primary_key=True, autoincrement=False)
     openai_file_id = db.Column(db.String(50), nullable=False, unique=True)
 
@@ -153,6 +166,7 @@ class LocalOpenaiFiles(db.Model):
 
 
 class OutputChoices(db.Model):
+    __tablename__ = 'OutputChoices'
     id = db.Column(TINYINT, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
 
@@ -162,6 +176,7 @@ class OutputChoices(db.Model):
 
 
 class OutputCombinations(db.Model):
+    __tablename__ = 'OutputCombinations'
     id = db.Column(db.Integer, primary_key=True, autoincrement=False)
     message_id = db.Column(db.Integer, db.ForeignKey(Messages.id), primary_key=True, autoincrement=False)
     output_choice_id = db.Column(TINYINT, db.ForeignKey(OutputChoices.id), primary_key=True, autoincrement=False)
@@ -178,7 +193,7 @@ Threads.local_openai_thread = db.relationship(LocalOpenaiThreads, backref='threa
 MessageTypes.messages = db.relationship(Messages, backref='type')
 Threads.messages = db.relationship(Messages, backref='thread', cascade='all, delete')
 Messages.processed_message_info = db.relationship(ProcessedMessageInfo, backref='message', cascade='all, delete')
-Topics.questions = db.relationship('Questions', backref='topic', cascade='all, delete')
+Topics.questions = db.relationship(TopicQuestions, backref='topic', cascade='all, delete')
 Messages.question = db.relationship(MessageQuestions, backref='message', cascade='all, delete')
 Messages.texts = db.relationship(Texts, backref='message', cascade='all, delete')
 Messages.links = db.relationship(Links, backref='message', cascade='all, delete')
