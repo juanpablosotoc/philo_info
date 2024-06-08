@@ -2,6 +2,9 @@ from myproject.ai import chat, Prompts
 from youtube_transcript_api import YouTubeTranscriptApi
 from ..models import Texts, Links, Files, MessageQuestions, LocalOpenaiFiles, Files
 import base64
+from sqlalchemy.future import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 
 class InformationInput:
     def __init__(self) -> None:
@@ -15,13 +18,12 @@ class TextHandler(InformationInput):
         self.text = text
         self.__info = None
   
-    def handle(self):
+    async def handle(self):
         self.handled = True
-        self.__info = chat.ask.no_stream(Prompts.process_text_messages(self.text.text))
+        self.__info = await chat.ask.no_stream(Prompts.process_text_messages(self.text.text))
 
-    @property
-    def info(self):
-        if not self.handled: self.handle()
+    async def info(self):
+        if not self.handled: await self.handle()
         return self.__info
 
 
@@ -31,13 +33,12 @@ class LinkHandler(InformationInput):
         self.link = link
         self.__info = None
 
-    def handle(self):
+    async def handle(self):
         self.handled = True
-        self.__info = chat.ask.no_stream(Prompts.process_link_messages(self.link.link))
+        self.__info = await chat.ask.no_stream(Prompts.process_link_messages(self.link.link))
     
-    @property
-    def info(self):
-        if not self.handled: self.handle()
+    async def info(self):
+        if not self.handled: await self.handle()
         return self.__info
 
 
@@ -53,14 +54,13 @@ class YoutubeVideoHandler():
         self.__info = None
         self.handled = False
     
-    def handle(self):
+    async def handle(self):
         self.handled = True
         handle_youtube_video_prompt = Prompts.process_transcript_messages(self.get_transcript())
-        self.__info = chat.ask.no_stream(handle_youtube_video_prompt)
+        self.__info = await chat.ask.no_stream(handle_youtube_video_prompt)
 
-    @property
-    def info(self):
-        if not self.handled: self.handle()
+    async def info(self):
+        if not self.handled: await self.handle()
         return self.__info
     
     def get_transcript(self, languages: list[str] = ['en']):
@@ -77,26 +77,37 @@ class FilesHandler(InformationInput):
         self.files_for_vision: list[Files] = [file for file in files if file.path.split('.')[-1] in InformationBundle.vision_file_types]
         self.__info = ''
 
-    def handle(self):
+    async def handle(self, session: AsyncSession):
         self.handled = True
-        if len(self.files_for_search): self.handle_file_search()
+        if len(self.files_for_search): await self.handle_file_search(session=session)
         for file in self.files_for_vision:
-            self.handle_image(file.path)
+            await self.handle_image(file.path)
 
-    def handle_file_search(self):
-        self.already_uploaded_files: list[LocalOpenaiFiles] = [file.openai_file for file in self.files_for_search if file.openai_file]
-        self.upload_new_files: list[Files] = [file for file in self.files_for_search if not file.openai_file]
-        uploaded_new_files: list[LocalOpenaiFiles] = [chat.upload_file(file=file) for file in self.upload_new_files]
-        self.__info += chat.ask_assistant_file_search(files=uploaded_new_files + self.already_uploaded_files) + '\n'
+    async def get_already_uploaded_files_upload_new_files(self, files_for_scrutiny: list[Files], session: AsyncSession):
+        statement = select(Files, LocalOpenaiFiles).join(LocalOpenaiFiles, 
+                onclause=Files.id == LocalOpenaiFiles.file_id, 
+                isouter=True).where(Files.id.in_([file_for_scrutiny.id for file_for_scrutiny in files_for_scrutiny]))
+        query = await session.execute(statement)
+        result = query.all()
+        already_uploaded_files = [value[1] for value in result if value[1] is not None]
+        upload_new_files = [value[0] for value in result if value[0] is not None]
+        return {'already_uploaded_files': already_uploaded_files, 'upload_new_files': upload_new_files}
 
-    def handle_image(self, image_file_path):
+    async def handle_file_search(self, session: AsyncSession):
+        result = await self.get_already_uploaded_files_upload_new_files(self.files_for_search, session=session)
+        uploaded_new_files = []
+        print(result, '\n\n\n\n\n\n')
+        for file in result['upload_new_files']:
+            uploaded_new_files.append(await chat.upload_file(file=file, session=session, db_id=))
+        self.__info += await chat.ask_assistant_file_search(files=uploaded_new_files + result['already_uploaded_files'],session=session) + '\n'
+
+    async def handle_image(self, image_file_path):
         with open(image_file_path, "rb") as image_file:
             base64_image = base64.b64encode(image_file.read()).decode('utf-8')
-        self.__info += chat.ask.no_stream(Prompts.process_image_messages(base64_image)) + '\n'
+        self.__info += await chat.ask.no_stream(Prompts.process_image_messages(base64_image)) + '\n'
 
-    @property
-    def info(self):
-        if not self.handled: self.handle()
+    async def info(self, session: AsyncSession):
+        if not self.handled: await self.handle(session=session)
         return self.__info
 
 
@@ -115,13 +126,12 @@ class InformationBundle:
         self.files_handler = None
         if (len(files)): self.files_handler = FilesHandler(files)
 
-    @property
-    def info(self):
+    async def info(self, session: AsyncSession):
         full_info = ''
-        if (self.files_handler): full_info += self.files_handler.info
-        for text_handler in self.texts_handler: full_info += text_handler.info + '\n'
-        for link_handler in self.links_handler: full_info += link_handler.info + '\n'
-        for youtube_link_handler in self.youtube_videos_handler: full_info += youtube_link_handler.info + '\n'
+        if (self.files_handler): full_info += await self.files_handler.info(session=session) + '\n'
+        for text_handler in self.texts_handler: full_info += await text_handler.info() + '\n'
+        for link_handler in self.links_handler: full_info += await link_handler.info() + '\n'
+        for youtube_link_handler in self.youtube_videos_handler: full_info += await youtube_link_handler.info() + '\n'
         return full_info
     
 
@@ -132,12 +142,11 @@ class Question(InformationInput):
         self.__info = None
         self.handled = False
 
-    def handle(self):
+    async def handle(self):
         self.handled = True
-        self.__info = chat.ask.no_stream([chat.get_user_message(self.message_question.question)])
+        self.__info = await chat.ask.no_stream([chat.get_user_message(self.message_question.question)])
 
-    @property
-    def info(self):
-        if not self.handled: self.handle()
+    async def info(self):
+        if not self.handled: await self.handle()
         return self.__info
     

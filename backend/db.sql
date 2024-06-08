@@ -73,9 +73,15 @@ CREATE TABLE Files(
 	message_id INT NOT NULL,
 	FOREIGN KEY (message_id) REFERENCES Messages(id) ON DELETE CASCADE
 );	
+CREATE TABLE LocalOpenaiDb(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    openai_db_id VARCHAR(50) NOT NULL UNIQUE
+);
 CREATE TABLE LocalOpenaiFiles(
 	file_id INT PRIMARY KEY,
 	openai_file_id VARCHAR(50) NOT NULL UNIQUE,
+    db_id INT NOT NULL,
+    FOREIGN KEY (db_id) REFERENCES LocalOpenaiDb(id) ON DELETE CASCADE,
     FOREIGN KEY (file_id) REFERENCES Files(id)
 );
 CREATE TABLE OutputChoices (
