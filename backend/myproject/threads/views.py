@@ -1,6 +1,5 @@
 import json
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from werkzeug.datastructures import FileStorage
@@ -12,7 +11,6 @@ from ..process_input import UserInputFactory
 threads_blueprint = Blueprint('threads', __name__,)
 
 @threads_blueprint.route('/', methods=['GET', 'OPTIONS'])
-@jwt_required()
 @cross_origin_db(asynchronous=True, jwt_required=True)
 async def index(session: AsyncSession, user: Users):
     """This endpoint is used to get all of a user's threads.
@@ -25,7 +23,6 @@ async def index(session: AsyncSession, user: Users):
 
 
 @threads_blueprint.route('/message', methods=['POST', 'OPTIONS'])
-@jwt_required()
 @cross_origin_db(asynchronous=True, jwt_required=True)
 async def message_route(session: AsyncSession, user: Users):
     """This endpoint is used to process a user's input.

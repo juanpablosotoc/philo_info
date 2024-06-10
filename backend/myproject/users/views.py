@@ -1,9 +1,8 @@
 import asyncio
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from myproject import cross_origin_db
+from myproject import cross_origin_db, create_access_token
 from myproject.ai import chat
 from ..models import Users, Users, Threads, LocalOpenaiThreads, LocalOpenaiDb
 
@@ -40,7 +39,6 @@ async def del_all_openai_threads(openai_thread_ids: list[str]) -> None:
 
 # Works and is optimized
 @users_blueprint.route('/', methods=['PUT', 'DELETE', 'OPTIONS'])
-@jwt_required()
 @cross_origin_db(asynchronous=True, jwt_required=True)
 async def index(session: AsyncSession, user: Users):
     """This endpoint is used to update or delete a user.
@@ -54,7 +52,7 @@ async def index(session: AsyncSession, user: Users):
         user.email = email
         user.set_password(password)
         await session.commit()
-        return jsonify({'token': create_access_token(identity=user.alternative_token)})
+        return jsonify({'token': create_access_token(alternative_token=user.alternative_token)})
     # Requests method is DELETE
     # Getting all of the user's threads and db's
     statement = select(LocalOpenaiDb, LocalOpenaiThreads).join(Threads, 
@@ -92,7 +90,7 @@ async def login(session: AsyncSession):
     query = await session.execute(statement)
     user = query.scalar()
     if user and user.check_password(password=password):
-        return jsonify({'token': create_access_token(identity=user.alternative_token)})
+        return jsonify({'token': create_access_token(alternative_token=user.alternative_token)})
     return jsonify({'error': 'invalid credentials'}), 401
 
 # Works and is optimized
@@ -112,6 +110,6 @@ async def create_user(session: AsyncSession):
         user = Users(email=email, password=password)
         session.add(user)
         await session.commit()
-        return jsonify({'token': create_access_token(identity=user.alternative_token)})
+        return jsonify({'token': create_access_token(alternative_token=user.alternative_token)})
     return jsonify({'error': 'this email is already in use'}), 409
     

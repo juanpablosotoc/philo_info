@@ -1,11 +1,12 @@
 import os
-from flask import Flask, request, jsonify
-from flask_jwt_extended import JWTManager, get_jwt_identity
+import jwt
+from flask import Flask, request, jsonify, Response
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from .utils import _build_cors_preflight_response, _corsify_actual_response
 from .config import Config
+from jwt.exceptions import ExpiredSignatureError
 
 
 app = Flask(__name__)
@@ -18,8 +19,6 @@ engine = create_async_engine(SQLALCHEMY_DATABASE_URI)
 session_maker = async_sessionmaker(bind=engine, expire_on_commit=False)
 
 Base = declarative_base()
-
-jwt_manager = JWTManager(app)
 
 from .models import Users
 
@@ -40,10 +39,12 @@ def cross_origin_db(asynchronous=False, jwt_required=False):
                 async with session_maker() as session:
                     user = None
                     if jwt_required:
-                        user_alternative_token = get_jwt_identity()
-                        statement = select(Users).where(Users.alternative_token == user_alternative_token)
-                        query = await session.execute(statement)
-                        user = query.scalar()
+                        encoded_jwt = request.headers.get('Authorization', default='').split(' ')[1]
+                        user_alternative_token = jwt.decode(encoded_jwt, Config.JWT_SECRET_KEY, algorithms=["HS256"])['token']
+                        if len(user_alternative_token):
+                            statement = select(Users).where(Users.alternative_token == user_alternative_token)
+                            query = await session.execute(statement)
+                            user = query.scalar()
                         if not user:
                             return _corsify_actual_response(jsonify({'error': 'Invalid credentials'})), 401
                     my_args = [session]
@@ -52,13 +53,21 @@ def cross_origin_db(asynchronous=False, jwt_required=False):
                         response = await inner(*my_args, *args, **kwargs)
                     else:
                         response = inner(*my_args, *args, **kwargs)
+                    if type(response) == tuple: return _corsify_actual_response(response[0]), response[1]
+                    actual_response: Response = _corsify_actual_response(response)
+                    return actual_response
+            except ExpiredSignatureError:
+                return _corsify_actual_response(jsonify({'error': 'Expired token'})), 401
             finally:
                 await engine.dispose()
-            if type(response) == tuple: return _corsify_actual_response(response[0]), response[1]
-            return _corsify_actual_response(response)
         wrapper.__name__ = inner.__name__
         return wrapper
     return wrapper_wrapper
+
+# Use this to create a JWT token with the identity provided.
+def create_access_token(alternative_token: str) -> str:
+    """Creates a JWT token with the identity provided."""
+    return jwt.encode({"token": alternative_token}, Config.JWT_SECRET_KEY , algorithm="HS256")
 
 
 # Registering the blueprints and endpoints

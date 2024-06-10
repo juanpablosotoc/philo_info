@@ -1,7 +1,6 @@
 import json
 import random
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required
 from sqlalchemy import func
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,7 +12,6 @@ from ..ai import chat
 topics_blueprint = Blueprint('topics', __name__)
 
 @topics_blueprint.route('/', methods=['GET', 'POST', 'OPTIONS'])
-@jwt_required()
 @cross_origin_db(asynchronous=True, jwt_required=True)
 async def index(session: AsyncSession, _: Users):
     """GET:
