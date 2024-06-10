@@ -29,16 +29,26 @@ class Users(Base):
         self.alternative_token = serializer.dumps([self.hashed_password.decode(), str(self.id)])
 
 
+class LocalOpenaiDb(Base):
+    __tablename__ = 'LocalOpenaiDb'
+    openai_db_id = Column(String(50), primary_key=True)
+
+    def __init__(self, openai_db_id: str) -> None:
+        super().__init__()
+        self.openai_db_id = openai_db_id
+
+
 class Threads(Base):
     __tablename__ = 'Threads'
     user_id = Column(Integer, ForeignKey(Users.id), nullable=False)
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
-
-    def __init__(self, user_id: int, name: str) -> None:
+    openai_db_id = Column(String(50), ForeignKey(LocalOpenaiDb.openai_db_id), nullable=False)
+    def __init__(self, user_id: int, name: str, openai_db_id: str) -> None:
         super().__init__()
         self.user_id = user_id
         self.name = name
+        self.openai_db_id = openai_db_id
     
 
 class LocalOpenaiThreads(Base):
@@ -156,27 +166,15 @@ class Files(Base):
         self.message_id = message_id
 
 
-class LocalOpenaiDb(Base):
-    __tablename__ = 'LocalOpenaiDb'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    openai_db_id = Column(String(50), nullable=False, unique=True)
+class LocalOpenaiDbFiles(Base):
+    __tablename__ = 'LocalOpenaiDbFiles'
+    openai_db_id = Column(String(50), ForeignKey(LocalOpenaiDb.openai_db_id), nullable=False)
+    file_id = Column(Integer, ForeignKey(Files.id), primary_key=True, autoincrement=False)
 
-    def __init__(self, openai_db_id: str) -> None:
+    def __init__(self, openai_db_id: str, file_id: int) -> None:
         super().__init__()
         self.openai_db_id = openai_db_id
-
-
-class LocalOpenaiFiles(Base):
-    __tablename__ = 'LocalOpenaiFiles'
-    file_id = Column(Integer, ForeignKey(Files.id), nullable=False, primary_key=True, autoincrement=False)
-    openai_file_id = Column(String(50), nullable=False, unique=True)
-    db_id = Column(Integer, ForeignKey(LocalOpenaiDb.id), nullable=False)
-
-    def __init__(self, file_id: int, openai_file_id: str, db_id: int) -> None:
-        super().__init__()
-        self.openai_file_id = openai_file_id
         self.file_id = file_id
-        self.db_id = db_id
 
 
 class OutputChoices(Base):
@@ -202,17 +200,18 @@ class OutputCombinations(Base):
         self.output_choice_id = output_choice_id
 
 
+LocalOpenaiDb.files = relationship(LocalOpenaiDbFiles, backref='openai_db', cascade='all, delete')
+LocalOpenaiDb.thread = relationship(Threads, backref='openai_db')
+Files.local_openai_db = relationship(LocalOpenaiDbFiles, backref='files')
 Users.threads = relationship(Threads, backref='user', cascade='all, delete')
-LocalOpenaiDb.local_openai_files = relationship(LocalOpenaiFiles, backref='openai_db', cascade='all, delete')
 Threads.local_openai_thread = relationship(LocalOpenaiThreads, backref='thread')
 MessageTypes.messages = relationship(Messages, backref='type')
 Threads.messages = relationship(Messages, backref='thread', cascade='all, delete')
-Messages.processed_message_info = relationship(ProcessedMessageInfo, backref='message', cascade='all, delete')
 Topics.questions = relationship(TopicQuestions, backref='topic', cascade='all, delete')
+Messages.processed_message_info = relationship(ProcessedMessageInfo, backref='message', cascade='all, delete')
 Messages.question = relationship(MessageQuestions, backref='message', cascade='all, delete')
 Messages.texts = relationship(Texts, backref='message', cascade='all, delete')
 Messages.links = relationship(Links, backref='message', cascade='all, delete')
 Messages.files = relationship(Files, backref='message', cascade='all, delete')
-Files.openai_file = relationship(LocalOpenaiFiles, backref='file')
 OutputChoices.combinations = relationship(OutputCombinations, backref='output_choice', cascade='all, delete')
 OutputCombinations.message = relationship(Messages, backref='output_combination', cascade='all, delete')

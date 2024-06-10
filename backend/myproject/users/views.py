@@ -1,79 +1,96 @@
-from flask import Blueprint, request, jsonify
-from ..models import Users, LocalOpenaiDb, LocalOpenaiFiles, Files, Messages, Users, Threads, LocalOpenaiThreads
-from myproject import session_maker, cross_origin_db
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from sqlalchemy.future import select
 import asyncio
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import create_access_token, jwt_required
+from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from myproject import cross_origin_db
+from myproject.ai import chat
+from ..models import Users, Users, Threads, LocalOpenaiThreads, LocalOpenaiDb
 
 
-users_blueprint = Blueprint('users', __name__,)
+users_blueprint = Blueprint('users', __name__)
 
-async def del_local_openai_db(session: AsyncSession, user_id: int):
-    sub_sub_query = select(Files.id).where(Files.message_id.in_(select(Messages.id).where(Messages.thread_id.in_(select(Threads.id).where(Threads.user_id == user_id)))))
-    sub_query = select(LocalOpenaiFiles.db_id).where(LocalOpenaiFiles.file_id.in_(sub_sub_query))
-    statement = LocalOpenaiDb.__table__.delete().where(LocalOpenaiDb.id.in_(sub_query))
+
+async def del_local_openai_db(session: AsyncSession, local_openai_db_ids: list[str]) -> None:
+    """Deletes all of the db's from the local database.
+    local_openai_db_ids: The ids of the db's to delete."""
+    statement = LocalOpenaiDb.__table__.delete().where(LocalOpenaiDb.openai_db_id.in_(local_openai_db_ids))
     await session.execute(statement)
     
-
-async def del_local_openai_threads(session: AsyncSession, user_id: int):
-    statement = LocalOpenaiThreads.__table__.delete().where(LocalOpenaiThreads.thread_id.in_(select(Threads.id).where(Threads.user_id == user_id)))
+async def del_local_openai_threads(session: AsyncSession, local_thread_ids: list[str]) -> None:
+    """Deletes all of the threads from the local database.
+    local_thread_ids: The ids of the threads to delete."""
+    statement = LocalOpenaiThreads.__table__.delete().where(LocalOpenaiThreads.thread_id.in_(local_thread_ids))
     await session.execute(statement)
 
+async def del_all_openai_db(openai_db_ids: list[str]) -> None:
+    """Deletes all of the db's from OpenAI's database."""
+    if len(openai_db_ids) == 0: return
+    async with asyncio.TaskGroup() as group:
+        for openai_db_id in openai_db_ids:
+            group.create_task(chat.del_openai_db(openai_db_id))
 
-async def del_remote_openai_db(session: AsyncSession, user_id: int):
-    pass
+async def del_all_openai_threads(openai_thread_ids: list[str]) -> None:
+    """Deletes all of the threads from OpenAI's database."""
+    if len(openai_thread_ids) == 0: return
+    async with asyncio.TaskGroup() as group:
+        for openai_thread_id in openai_thread_ids:
+            group.create_task(chat.del_openai_thread(openai_thread_id))
 
-async def get_local_openai_db_threads(session: AsyncSession, user_id: int):
-    statement = select(LocalOpenaiThreads.thread_id, LocalOpenaiThreads.openai_thread_id, LocalOpenaiDb.id, LocalOpenaiDb.openai_db_id).join(Threads, 
-                onclause=Threads.id == LocalOpenaiThreads.thread_id).join(Messages, 
-                onclause=Messages.thread_id == Threads.id).join(Files, 
-                onclause=Files.message_id == Messages.id).join(LocalOpenaiFiles, 
-                onclause=LocalOpenaiFiles.file_id == Files.id).join(LocalOpenaiDb, 
-                onclause=LocalOpenaiDb.id == LocalOpenaiFiles.db_id).where(Threads.user_id == user_id)
-    query = await session.execute(statement)
-    return query.all()
 
+# Works and is optimized
 @users_blueprint.route('/', methods=['PUT', 'DELETE', 'OPTIONS'])
 @jwt_required()
-@cross_origin_db(asynchronous=True)
-async def index():
-    current_user_alternative_token = get_jwt_identity()
-    async with session_maker() as session:
-        statement = select(Users).where(Users.alternative_token == current_user_alternative_token)
-        query = await session.execute(statement)
-        current_user = query.scalar()
-        if not current_user:
-            return jsonify({'error': 'user not found'}), 401
-        if request.method == 'PUT':
-            email = request.json['email']
-            password = request.json['password']
-            current_user.email = email
-            current_user.set_password(password)
-            await session.commit()
-            return jsonify({'token': create_access_token(identity=current_user.alternative_token)})
-        if request.method == 'DELETE':
-            # async with asyncio.TaskGroup() as group:
-            #     group.create_task(del_local_openai_threads(session, user_id=current_user.id))
-            #     group.create_task(del_local_openai_db(session, user_id=current_user.id))
-            # await session.delete(current_user)
-            # await session.commit()
-            res = await get_local_openai_db_threads(session, user_id=current_user.id)
-            print(res)
-            for r in res:
-                print(r)
-            return jsonify({'message': 'user deleted'})
+@cross_origin_db(asynchronous=True, jwt_required=True)
+async def index(session: AsyncSession, user: Users):
+    """This endpoint is used to update or delete a user.
+    On update:
+    Returns a new JWT token if successful.
+    On delete:
+    Returns nothing if successful."""
+    if request.method == 'PUT':
+        email = request.json['email']
+        password = request.json['password']
+        user.email = email
+        user.set_password(password)
+        await session.commit()
+        return jsonify({'token': create_access_token(identity=user.alternative_token)})
+    # Requests method is DELETE
+    # Getting all of the user's threads and db's
+    statement = select(LocalOpenaiDb, LocalOpenaiThreads).join(Threads, 
+            onclause=Threads.openai_db_id == LocalOpenaiDb.openai_db_id).join(LocalOpenaiThreads,
+            onclause=LocalOpenaiThreads.thread_id == Threads.id).where(Threads.user_id == user.id)
+    query = await session.execute(statement=statement)
+    result = query.all()
+    local_openai_dbs: list[LocalOpenaiDb] = [row[0] for row in result]
+    local_openai_threads: list[LocalOpenaiThreads] = [row[1] for row in result]
+    openai_db_ids: list[str] = [local_openai_db.openai_db_id for local_openai_db in local_openai_dbs]
+    local_thread_ids: list[str] = [local_openai_thread.thread_id for local_openai_thread in local_openai_threads]
+    openai_thread_ids: list[str] = [thread.openai_thread_id for thread in local_openai_threads]
+    # Deleting all of the user's threads and db's (both locally and on OpenAI's servers)
+    async with asyncio.TaskGroup() as group:
+        group.create_task(del_local_openai_threads(session, local_thread_ids=local_thread_ids))
+        group.create_task(del_local_openai_db(session, local_openai_db_ids=openai_db_ids))
+        group.create_task(del_all_openai_db(openai_db_ids=openai_db_ids))
+        group.create_task(del_all_openai_threads(openai_thread_ids=openai_thread_ids))
+    # Deleting the user and committing the changes
+    await session.delete(user)
+    await session.commit()
+    return jsonify({})
 
 # Works and is optimized
 @users_blueprint.route('/login', methods=['POST', 'OPTIONS'])
 @cross_origin_db(asynchronous=True)
-async def login():
+async def login(session: AsyncSession):
+    """This endpoint is used to log in a user.
+    Expects email and password to be passed in as JSON to the request.
+    Returns a JWT token if the user is successfully authenticated.
+    Returns an error code 401 if the credentials are invalid."""
     email = request.json['email']
     password = request.json['password']
-    async with session_maker() as session:
-        statement = select(Users).where(Users.email == email)
-        query = await session.execute(statement)
-        user = query.scalar()
+    statement = select(Users).where(Users.email == email)
+    query = await session.execute(statement)
+    user = query.scalar()
     if user and user.check_password(password=password):
         return jsonify({'token': create_access_token(identity=user.alternative_token)})
     return jsonify({'error': 'invalid credentials'}), 401
@@ -81,17 +98,20 @@ async def login():
 # Works and is optimized
 @users_blueprint.route('/create_user', methods=['POST', 'OPTIONS'])
 @cross_origin_db(asynchronous=True)
-async def create_user():
+async def create_user(session: AsyncSession):
+    """This endpoint is used to create a new user.
+    Expects email and password to be passed in as JSON to the request.
+    Returns a JWT token if the user is created successfully.
+    Returns an error code 409 if the email is already in use."""
     email = request.json['email']
     password = request.json['password']
-    async with session_maker() as session:
-        statement = select(Users).where(Users.email == email)
-        query = await session.execute(statement)
-        existant_user = query.scalar()
-        if not existant_user:
-            user = Users(email=email, password=password)
-            session.add(user)
-            await session.commit()
-            return jsonify({'token': create_access_token(identity=user.alternative_token)})
+    statement = select(Users).where(Users.email == email)
+    query = await session.execute(statement)
+    existant_user = query.scalar()
+    if not existant_user:
+        user = Users(email=email, password=password)
+        session.add(user)
+        await session.commit()
+        return jsonify({'token': create_access_token(identity=user.alternative_token)})
     return jsonify({'error': 'this email is already in use'}), 409
     

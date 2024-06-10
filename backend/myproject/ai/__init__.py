@@ -1,55 +1,74 @@
+import os
+import aiohttp
+import asyncio
 from openai import OpenAI
 from .prompts import Prompts
-from myproject import session_maker
-from ..models import LocalOpenaiFiles, LocalOpenaiThreads, Files, LocalOpenaiThreads, LocalOpenaiDb, Threads, Messages
-from sqlalchemy.future import select
+from ..models import LocalOpenaiThreads, Files, LocalOpenaiThreads, LocalOpenaiDb
 from sqlalchemy.ext.asyncio import AsyncSession
-from myproject import session_maker
 
 class Ask:
+    # Headers for making openai requests
+    headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {os.getenv("OPENAI_API_KEY")}' 
+    }
+    # Headers for making openai requests when using the beta api's
+    v2_headers = {
+            'OpenAI-Beta': 'assistants=v2',
+            **headers
+    }
+    chat_completions_api = 'https://api.openai.com/v1/chat/completions'
     def __init__(self, client) -> None:
         self.client = client
 
-    # def stream(self, messages: list):
-    #     stream = self.client.chat.completions.create(
-    #         model="gpt-4o",
-    #         messages=messages,
-    #         stream=True,
-    #     )
-    #     for chunk in stream:
-    #         if chunk.choices[0].delta.content is not None:
-    #             yield chunk.choices[0].delta.content
-
-    async def no_stream(self, messages: list):
-            resp = self.client.chat.completions.create(
-                model="gpt-4o",
-                messages=messages,
-            )
-            return resp.choices[0].message.content
+    async def no_stream(self, messages: list) -> str:
+        """Returns the response from openai's chat completions api.
+        messages: The list of messages to send to openai."""
+        body = {
+            'model': "gpt-4o",
+            'messages': messages,
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.post(self.chat_completions_api, json=body, headers=self.headers) as response:
+                resp = await response.json()
+                return resp['choices'][0]['message']['content']
     
-    async def threads_no_stream(self, additional_messages: list, assistant_id: str, openai_thread_id: str):
-        run = self.client.beta.threads.runs.create_and_poll(
-            thread_id=openai_thread_id, assistant_id=assistant_id,
-            additional_messages=additional_messages
-        )
-        messages = list(self.client.beta.threads.messages.list(thread_id=openai_thread_id, run_id=run.id))
-        message_content = messages[0].content[0].text
+    async def __get_run_status(self, run_id: str, thread_id: str) -> str:
+        """Returns the status of a run.
+        run_id: The id of the run.
+        thread_id: The id of the thread."""
+        api_endpoint = f'https://api.openai.com/v1/threads/{thread_id}/runs/{run_id}'
+        async with aiohttp.ClientSession() as session:
+            async with session.get(api_endpoint, headers=self.v2_headers) as response:
+                resp = await response.json()
+                return resp['status']
 
-        # The citations refer to the ai making references to the files that were uploaded.
-        # EX: 
-        # citations": [
-        #             "[0] d6f6b32c-31dc-4c9a-9b59-5565eff002ac.pdf", 
-        #             "[1] d6f6b32c-31dc-4c9a-9b59-5565eff002ac.pdf"
-        #         ],
-        annotations = message_content.annotations
-        citations = []
-        for index, annotation in enumerate(annotations):
-            message_content.value = message_content.value.replace(annotation.text, f"[{index}]")
-            if file_citation := getattr(annotation, "file_citation", None):
-                cited_file = self.client.files.retrieve(file_citation.file_id)
-                citations.append(f"[{index}] {cited_file.filename}")
-        # return {'content': message_content.value, 'citations': citations}
-        return message_content.value
+    async def __get_run_messages(self, run_id: str, thread_id: str) -> str:
+        """Returns the messages of a run.
+        run_id: The id of the run.
+        thread_id: The id of the thread."""
+        api_endpoint = f'https://api.openai.com/v1/threads/{thread_id}/messages?run_id={run_id}'
+        async with aiohttp.ClientSession() as session:
+            async with session.get(api_endpoint, headers=self.v2_headers) as response:
+                resp = await response.json()
+                return resp['data'][0]['content'][0]['text']['value']
+            
+    async def threads_no_stream(self, additional_messages: list, assistant_id: str, openai_thread_id: str) -> str:
+        """Create a run and return its messages."""
+        body = {
+            'assistant_id': assistant_id,
+            'additional_messages': additional_messages,
+        }
+        api_endpoint = f'https://api.openai.com/v1/threads/{openai_thread_id}/runs'
+        async with aiohttp.ClientSession() as session:
+            async with session.post(api_endpoint, json=body, headers=self.v2_headers) as response:
+                run_obj: dict = await response.json()
+        while True:
+            run_status = await self.__get_run_status(run_id=run_obj['id'], thread_id=openai_thread_id)
+            print(run_status, 'run_status')
+            if run_status == 'completed' or run_status == 'failed': break
+            await asyncio.sleep(0.2)
+        return await self.__get_run_messages(run_id=run_obj['id'], thread_id=openai_thread_id)
     
 
 class Chat(Prompts):
@@ -59,78 +78,84 @@ class Chat(Prompts):
         self.client = OpenAI()
         self.ask = Ask(self.client)
     
-    async def get_assistant(self, assistant_id:str):
-        return self.client.beta.assistants.retrieve(assistant_id)
-
-    async def upload_file(self, file: Files | list[Files], session: AsyncSession, db_id: int, multiple=False) -> LocalOpenaiFiles:
-        new_openai_files = []
-        if not multiple:
-            response = self.client.files.create(
-            file=open(file.path, "rb"), purpose="assistants"
-            )
-            new_openai_files.append(LocalOpenaiFiles(file_id=file.id, openai_file_id=response.id, db_id=db_id))
-        else:
-            # Ready the files for upload to OpenAI
-            file_streams = [open(file_.path, "rb") for file_ in file]
+    async def __create_openai_vector_db(self, db_name: str) -> dict:
+        api = 'https://api.openai.com/v1/vector_stores'
+        body = {
+            'name': db_name
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.post(api, json=body, headers=self.ask.v2_headers) as response:
+                return await response.json()
+    
+    async def __create_openai_thread(self, messages: list, tool_resources: dict) -> dict:
+        api = 'https://api.openai.com/v1/threads'
+        body = {
+            'messages': messages,
+            'tool_resources': tool_resources
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.post(api, json=body, headers=self.ask.v2_headers) as response:
+                return await response.json()
             
-            # Use the upload and poll SDK helper to upload the files, add them to the vector store,
-            # and poll the status of the file batch for completion.
-            file_batch = self.client.beta.vector_stores.file_batches.upload_and_poll(
-            vector_store_id=db_id.id, files=file_streams
-            )
-            print(file_batch.status)
-            print('\n\n\n\n\n')
-            print(file_batch.file_counts)
-        session.add_all(new_openai_files)
-        await session.commit()
-        return new_openai_files
-    
-    
-    async def get_thread(self, thread_id: str, session: AsyncSession):
-        statement = select(LocalOpenaiThreads).where(LocalOpenaiThreads.thread_id == thread_id)
-        query = await session.execute(statement)
-        return query.scalar()
-    
-    async def create_vector_db(self, db_name: str, session: AsyncSession):
-        # Create a vector store caled "Financial Statements"
-        vector_db = self.client.beta.vector_stores.create(name=db_name)    
-        new_local_db = LocalOpenaiDb(openai_db_id=vector_db.id)
-        await session.add(new_local_db)
-        await session.commit()
+    async def get_assistant(self, assistant_id:str) -> dict:
+        api = f'https://api.openai.com/v1/assistants/{assistant_id}'
+        async with aiohttp.ClientSession() as session:
+            async with session.get(api, headers=self.ask.v2_headers) as response:
+                return await response.json()
+
+    async def upload_files(self, files: list[Files], openai_db_id: int) -> None:
+        # Ready the files for upload to OpenAI
+        file_streams = [open(file_.path, "rb") for file_ in files]
+        
+        # Use the upload and poll SDK helper to upload the files, add them to the vector store,
+        # and poll the status of the file batch for completion.
+        file_batch = self.client.beta.vector_stores.file_batches.upload_and_poll(
+        vector_store_id=openai_db_id, files=file_streams
+        )
+        # wait until the file batch is complete
+        while True: 
+            status = file_batch.status
+            if status == 'completed' or status == 'failed': break
+            print(file_batch.status, 'file_batch.status')
+            await asyncio.sleep(0.2)
+
+    async def create_vector_db(self, db_name: str, session: AsyncSession, commit=True) -> LocalOpenaiDb:
+        # Create a vector store 
+        vector_db = await self.__create_openai_vector_db(db_name) 
+        new_local_db = LocalOpenaiDb(openai_db_id=vector_db['id'])
+        session.add(new_local_db)
+        if commit: await session.commit()
         return new_local_db
 
-    async def create_thread_vector_db(self, messages: list, local_thread_id: str, session: AsyncSession):
-        # Create a new thread with the messages
-        response = self.client.beta.threads.create(messages=messages)
-        newOpenaiThread = LocalOpenaiThreads(thread_id=local_thread_id, openai_thread_id=response.id)
-        newOpenaiDb = await self.create_vector_db(session=session, db_name='New vector db')
+    async def create_thread(self, messages: list, local_thread_id: str, session: AsyncSession, openai_db_id: str, commit=True) -> LocalOpenaiThreads:
+        # Create a new thread with the messages and vector store attached
+        tool_resources = {'file_search':  {'vector_store_ids': [openai_db_id]} }
+        response = await self.__create_openai_thread(messages=messages, tool_resources=tool_resources)
+        newOpenaiThread = LocalOpenaiThreads(thread_id=local_thread_id, openai_thread_id=response['id'])
         session.add(newOpenaiThread)
-        await session.commit()
-        return newOpenaiThread, newOpenaiDb
-    
-    async def obtain_empty_thread(self, session: AsyncSession, local_thread_id: str, openai_thread_id: str = ''):
-        if len(openai_thread_id) == 0: 
-            return await self.create_thread([], local_thread_id=local_thread_id, session=session)
-        return await self.get_thread(openai_thread_id, session=session)
-    
-    async def ask_assistant_file_search(self, files: list[LocalOpenaiFiles], session: AsyncSession):
-        file_ids = [file.openai_file_id for file in files]
-        thread_messages = self.ask_assistant_file_search_messages(file_ids=file_ids)
-        statement = select(LocalOpenaiThreads).join(Threads, onclause=Threads.id == LocalOpenaiThreads.thread_id).join(Messages, 
-                    onclause=Messages.thread_id == Threads.id).join(Files, 
-                    onclause=Files.message_id == Messages.id).join(LocalOpenaiFiles, 
-                    onclause=LocalOpenaiFiles.file_id == Files.id).where(LocalOpenaiFiles.file_id.in_(files[0].file_id))
-        
-        query = await session.execute(statement)
-        local_openai_thread: LocalOpenaiThreads = query.scalar()
-    
-        additional_messages = []
-        if not local_openai_thread.openai_thread_id: 
-            local_openai_thread = await self.create_thread(thread_messages, thread_id=files[0].file.message.thread_id)
-        else:
-            additional_messages = thread_messages
+        if commit: await session.commit()
+        return newOpenaiThread
+
+    async def ask_assistant_file_search(self, local_openai_thread: LocalOpenaiThreads) -> str:
+        # gets the assistant to process the files inside of the 
+        # vector store that is attached to the thread
+        additional_messages = self.ask_assistant_file_search_messages()
         assistant = await self.get_assistant(self.default_assistant_id)
-        return await self.ask.threads_no_stream(additional_messages=additional_messages, assistant_id=assistant.id, openai_thread_id=local_openai_thread.openai_thread_id)
+        return await self.ask.threads_no_stream(additional_messages=additional_messages, assistant_id=assistant['id'], openai_thread_id=local_openai_thread.openai_thread_id)
+    
+    # Works and is optimized (is semi async performant)
+    async def del_openai_db(self, openai_db_id: str) -> None:
+        """Deletes a vector store from OpenAI's database.
+        openai_db_id: The id of the vector store to delete."""
+        self.client.beta.vector_stores.delete(
+        vector_store_id=openai_db_id
+        )
+    
+    # Works and is optimized (is semi async performant)
+    async def del_openai_thread(self, openai_thread_id: str) -> None:
+        """Deletes a thread from OpenAI's database.
+        openai_thread_id: The id of the thread to delete."""
+        self.client.beta.threads.delete(openai_thread_id)
 
 
 chat = Chat()

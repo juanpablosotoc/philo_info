@@ -9,10 +9,15 @@ CREATE TABLE Users (
 );
 CREATE INDEX idx_alternative_token
 ON Users (alternative_token);
+CREATE TABLE LocalOpenaiDb(
+    openai_db_id VARCHAR(50) PRIMARY KEY
+);
 CREATE TABLE Threads (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
 	user_id INT NOT NULL,
+    openai_db_id VARCHAR(50) NOT NULL,
+    FOREIGN KEY (openai_db_id) REFERENCES LocalOpenaiDb(openai_db_id),
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
 );
 CREATE TABLE LocalOpenaiThreads (
@@ -73,16 +78,11 @@ CREATE TABLE Files(
 	message_id INT NOT NULL,
 	FOREIGN KEY (message_id) REFERENCES Messages(id) ON DELETE CASCADE
 );	
-CREATE TABLE LocalOpenaiDb(
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    openai_db_id VARCHAR(50) NOT NULL UNIQUE
-);
-CREATE TABLE LocalOpenaiFiles(
-	file_id INT PRIMARY KEY,
-	openai_file_id VARCHAR(50) NOT NULL UNIQUE,
-    db_id INT NOT NULL,
-    FOREIGN KEY (db_id) REFERENCES LocalOpenaiDb(id) ON DELETE CASCADE,
-    FOREIGN KEY (file_id) REFERENCES Files(id)
+CREATE TABLE LocalOpenaiDbFiles(
+    file_id INT PRIMARY KEY,
+    openai_db_id VARCHAR(50) NOT NULL,
+    FOREIGN KEY (file_id) REFERENCES Files(id),
+    FOREIGN KEY (openai_db_id) REFERENCES LocalOpenaiDb(openai_db_id) ON DELETE CASCADE
 );
 CREATE TABLE OutputChoices (
 	id TINYINT PRIMARY KEY AUTO_INCREMENT,

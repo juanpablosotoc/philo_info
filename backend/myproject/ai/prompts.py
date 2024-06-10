@@ -1,6 +1,6 @@
-
+# This class is used to store the prompts for the Openai calls.
 class Prompts:
-    create_file_search_assistant_instr = "You are a very helpful assistant who will give me a detailed summary of the information in the documents that I have uploaded."
+    # The output guide is used to determine the best way to represent information
     output_guide = """
     1. text: Is a very versatile way to represent information.
     2. timeline: Works best when representing a sequence of events.
@@ -10,10 +10,12 @@ class Prompts:
     """
     @staticmethod
     def get_user_message(content: str) -> dict:
+        """Returns a user message."""
         return {'role': 'user', 'content': content}
     
     @staticmethod
     def process_link_messages(link: str) -> list:
+        """Returns a list of messages that ask the assistant to process a link."""
         human_message_str = f"""
         Give me a detailed summary of what the following website is about:
         {link}
@@ -22,6 +24,7 @@ class Prompts:
     
     @staticmethod
     def process_text_messages(text: str) -> list:
+        """Returns a list of messages that ask the assistant to process a text."""
         human_message_str = f"""
         Give me a detailed summary of the text denoted by [[[ ]]]. 
         [[[ 
@@ -32,26 +35,16 @@ class Prompts:
     
     @staticmethod
     def process_transcript_messages(transcript: str) -> list:
+        """Returns a list of messages that ask the assistant to process a transcript."""
         human_message_str = f"""
         Give me a very detailed summary of the following transcript:
         {transcript}
         """
         return [{"role": "user", "content": human_message_str}]
-        
-    @staticmethod
-    def process_document_messages(message_file) -> list:
-        mes = [{
-        "role": "user",
-        "content": "Give me a detailed summary of the information in the following document.",
-        # Attach the new file to the message.
-        "attachments": [
-            { "file_id": message_file.id, "tools": [{"type": "file_search"}] }
-        ],
-        }]
-        return mes
     
     @staticmethod
     def process_image_messages(base64_image: str, detail='auto') -> list:
+        """Returns a list of messages that ask the assistant to process a base64 image."""
         return [
             {
             "role": "user",
@@ -69,19 +62,18 @@ class Prompts:
         ]
     
     @staticmethod
-    def ask_assistant_file_search_messages(file_ids: list = []) -> list:
+    def ask_assistant_file_search_messages() -> list:
+        """Returns a list of messages that ask the assistant to process the 
+        files inside its vector store."""
         messages = [{
             "role": "user",
             "content": "Give me a very detailed description of the information in the documents that I have uploaded.",
         }]
-        # Attach a new file to the message.
-        if len(file_ids) > 0: messages[0]['attachments'] = []
-        for file_id in file_ids:
-            messages[0]['attachments'].append({ "file_id": file_id, "tools": [{"type": "file_search"}] })
         return messages
     
     @staticmethod
-    def get_questions_topics(n_topics: int, n_questions: int, dont_include_topics: list[str]) -> list:
+    def get_questions_topics_messages(n_topics: int, n_questions: int, dont_include_topics: list[str]) -> list:
+        """Returns a list of messages that ask the assistant to provide a list of questions and topics."""
         messages = [
             {
                 'role': 'system',
@@ -122,7 +114,8 @@ class Prompts:
         return messages
     
     @staticmethod
-    def get_questions_for_topic(topic: str, n_questions: int) -> list:
+    def get_questions_for_topic_messages(topic: str, n_questions: int) -> list:
+        """Returns a list of messages that ask the assistant to provide a list of questions for a topic."""
         messages = [
             {
                 'role': 'system',
@@ -151,7 +144,9 @@ class Prompts:
         ]
         return messages
     
-    def get_output_combinations(cls, processed_message_info: str) -> list:
+    def get_output_combinations_messages(cls, processed_message_info: str) -> list:
+        """Returns a list of messages that ask the assistant to provide the output combinations for a 
+        given processed message info."""
         messages = [
             {
                 'role': 'system',
