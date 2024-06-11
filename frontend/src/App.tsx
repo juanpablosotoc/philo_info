@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import Home, { loader as homeLoader} from "./pages/home";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -17,7 +18,7 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router}></RouterProvider>;
+  return <GoogleOAuthProvider clientId="881148832718-aukuvpi4g0rhc04sfg8q09btdo392fs3.apps.googleusercontent.com"><RouterProvider router={router}></RouterProvider></GoogleOAuthProvider>
 }
 
 export default App;
