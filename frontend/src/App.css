@@ -24,7 +24,7 @@
     /* --font_ml_b: bold 19px var(--font_family); */
     --font_l: 26px var(--font_family);
     --font_l_b: bold 26px var(--font_family);
-    --font_xl_b: bold 40px var(--font_family);
+    --font_xl_b: bold 36px var(--font_family);
     --font_xxl_b: bold 70px var(--font_family);
     /* Size variables */
     --s_card_height: 52px;

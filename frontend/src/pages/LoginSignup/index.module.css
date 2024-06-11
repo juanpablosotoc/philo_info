@@ -18,6 +18,7 @@
 .formWrapper {
     display: flex;
     flex-direction: column;
+    width: 320px;
     align-items: center;
     gap: 16px;
 }

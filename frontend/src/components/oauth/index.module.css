@@ -1,7 +1,7 @@
 .card {
     border: 1px solid var(--shades_black_200);
     border-radius: 5px;
-    width: calc(100% - 18px);
+    width: calc(100% - 34px);
     background-color: var(--main_white);
     cursor: pointer;
     position: relative;
@@ -29,6 +29,7 @@
     .card {
         padding: 15px 8px;
         gap: 8px;
+        width: calc(100% - 18px);
     }
     .label {
         font: var(--font_sm_b);
