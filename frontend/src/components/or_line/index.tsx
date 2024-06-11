@@ -8,7 +8,7 @@ type Props = PropsWithChildren<{
 
 function OrLine(props: Props) {
     return (
-        <div className={styles.div}>
+        <div className={`${styles.div} ${props.className ? props.className : ''}`}>
             <hr className={styles.hr}/>
             <p className={styles.label}>or</p>
             <hr className={styles.hr}/>

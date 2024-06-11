@@ -2,13 +2,13 @@
     background-color: var(--main_primary);
     color: var(--main_white);
     height: var(--s_card_height);
-    width: 320px;
+    width: 100%;
     border-radius: 5px;
     font: var(--font_m_b);
-    box-shadow: 4px 4px 10px var(--mixed_primary_white);
+    transition: all .3s ease;
 }
 
 .submit_btn:hover {
-    font: var(--font_ml_b);
-    cursor: pointer;
+    box-shadow: 4px 4px 10px var(--mixed_primary_white);
+    cursor:pointer;
 }

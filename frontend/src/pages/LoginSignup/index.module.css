@@ -10,7 +10,7 @@
     height: 80px;
 }
 
-h1 {
+.welcomeMessage {
     text-align: center;
     font: var(--font_xl_b);
 }
@@ -21,6 +21,20 @@ h1 {
     align-items: center;
     gap: 16px;
 }
+
+@media (max-width: 400px) {
+    .formWrapper {
+        width: 240px;
+    }
+    .welcomeMessage {
+        font: var(--font_l_b);
+    }
+    .orLine {
+        width: 240px;
+    }
+}
+
+
 
 .formWrapper form {
     display: flex;

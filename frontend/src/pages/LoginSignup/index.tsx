@@ -32,15 +32,15 @@ function LoginSignup (props: props) {
         error_message = searchParams.get("error") as string;
     }
     if (props.type === "login") {
-        welcome_message = <h1>Welcome back</h1>
+        welcome_message = <h1 className={styles.welcomeMessage}>Welcome back</h1>
         invitation_message = <p>Don't have an account? <Link to='/signup'>Sign up</Link></p>
     }
     else {
-        welcome_message = <h1>Create an account</h1>
+        welcome_message = <h1 className={styles.welcomeMessage}>Create an account</h1>
         invitation_message = <p>Already have an account? <Link to='/login'>Log in</Link></p>
     };
     if (error_message) {
-        welcome_message = <h1>{error_message}</h1>
+        welcome_message = <h1 className={styles.welcomeMessage}>{error_message}</h1>
     };
     useEffect(() => {
         setSearchParams({}); // Clear the error message
@@ -63,7 +63,7 @@ function LoginSignup (props: props) {
                     <SubmitBtn label="Continue" />
                 </Form>
                 {invitation_message}
-                <OrLine />
+                <OrLine className={styles.orLine}/>
                 <OAuth type="apple" />
                 <OAuth type="google" />
                 <OAuth type="microsoft" />

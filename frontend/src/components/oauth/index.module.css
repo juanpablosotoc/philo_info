@@ -1,7 +1,7 @@
 .card {
     border: 1px solid var(--shades_black_200);
     border-radius: 5px;
-    width: calc(320px - 2px - 32px);
+    width: calc(100% - 18px);
     background-color: var(--main_white);
     cursor: pointer;
     position: relative;
@@ -10,15 +10,32 @@
     padding: 15px 16px;
     align-items: center;
     display: flex;
+    gap: 16px;
 }
 
-.brandLogo , .label {
-    transition: all 0.1s linear;
+/* .card:hover {
+    background-color: var(--shades_white_100);
+} */
+
+.brandIcon {
+    width: 24px;
 }
 
 .label {
-    padding-left: 16px;
     font: var(--font_m_b);
+}
+
+@media screen and (max-width: 400px) {
+    .card {
+        padding: 15px 8px;
+        gap: 8px;
+    }
+    .label {
+        font: var(--font_sm_b);
+    }
+    .chevronIcon {
+        display: none;
+    }
 }
 
 .label, .label span {
@@ -29,10 +46,47 @@
     text-transform: capitalize;
 }
 
-.card:hover .label {
-    font: var(--font_ml_b);
+.wrapper {
+    position: relative;
 }
 
-.card:hover .brandLogo {
-    transform: scale(1.1);
+.underline {
+    width: 0;
+    border: none;
+    height: 2px;
+    background-color: var(--main_black);
+    position: absolute;
+    border-radius: 20px;
+}
+
+.card:hover .underline {
+    width: 100%;
+}
+
+.chevronIcon {
+    position: absolute;
+    right: 24px;
+    transform: scale(1.5);
+}
+
+.chevronIcon, .chevronIconStem{
+    transition: all .2s;
+}
+
+.card:hover .chevronIcon {
+    transform: scale(1.5) translateX(6px);
+}
+
+.underline {
+    margin-top: 2px;
+    transition: all 0.3s ease;
+}
+
+.chevronIconStem  {
+    stroke-dasharray: 10;
+    stroke-dashoffset: 10;
+}
+
+.card:hover .chevronIconStem {
+    stroke-dashoffset: 20;
 }
