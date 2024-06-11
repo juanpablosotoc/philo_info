@@ -15,6 +15,7 @@ import { useThreads } from "../../utils/hooks";
 import Messages from "../../components/messages";
 import { Helmet } from "react-helmet";
 
+
 function Home () {
     const [currentMessage, setCurrentMessage] = useState(1);
     const [topicHasChanged, setTopicHasChanged] = useState(false);
@@ -26,6 +27,7 @@ function Home () {
     const [files, setFiles] = useState<Array<File>>([]);
     const [messages, setMessages] = useState<Array<MessageCls>>([]);
     useEffect(()=>{
+        document.body.style.backgroundColor = "var(--shades_black_100)";
         const explainQuestions = questions_.map((question) => '/explain ' + question);
         setTopic(topic_);
         setMessages(explainQuestions.map((question) => {

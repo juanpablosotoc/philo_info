@@ -1,16 +1,28 @@
 .card {
-    border: 1px solid var(--shades_white_200);
+    border: 1px solid var(--shades_black_200);
     border-radius: 5px;
-    display: flex;
-    padding: 15px 16px;
-    align-items: center;
-    width: 286px;
+    width: 318px;
     background-color: var(--main_white);
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    height: calc(var(--s_card_height) - 2px);
 }
 
-.card:hover {
-    border-color: var(--shades_black_200);
+.card:hover .innerWrapper {
+    transform: translateY(-100%);
+}
+
+.innerWrapper {
+    align-items: center;
+    display: flex;
+    height: calc(100% - 30px);
+    padding: 15px 16px;
+    transition: all 0.2s ease-out;
+}
+
+.lastInnerWrapper {
+    position: absolute;
 }
 
 .label {
@@ -19,25 +31,9 @@
 }
 
 .label, .label span {
-    color: var(--shades_white_200);
-}
-
-.card:hover .label,.card:hover .label span {
     color: var(--shades_black_200);
 }
 
 .capitalize {
     text-transform: capitalize;
-}
-
-.brandDiv {
-    display: flex;
-}
-
-.blackBrand, .card:hover .greyBrand {
-    display: none;
-}
-
-.card:hover .blackBrand {
-    display: inline;
 }

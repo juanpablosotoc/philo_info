@@ -2,7 +2,7 @@
     border: 1px solid var(--shades_white_200);
     border-radius: 5px;
     padding: 0 16px;
-    height: 54px;
+    height: calc(var(--s_card_height) - 2px);
     display: flex;
     flex-direction: column;
     justify-content: center;

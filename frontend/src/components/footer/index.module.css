@@ -1,6 +1,11 @@
 .footer {
     color: var(--main_black);
     font: var(--font_s);
+    width: 100%;
+}
+
+.infoWrapper {
+    text-align: center;
 }
 
 .footer span {

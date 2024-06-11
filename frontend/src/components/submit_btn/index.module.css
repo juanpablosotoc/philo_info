@@ -1,14 +1,14 @@
 .submit_btn {
     background-color: var(--main_primary);
     color: var(--main_white);
-    height: 56px;
+    height: var(--s_card_height);
     width: 320px;
     border-radius: 5px;
     font: var(--font_m_b);
-    box-shadow: 4px 4px 10px var(--main_black);
+    box-shadow: 4px 4px 10px var(--mixed_primary_white);
 }
 
 .submit_btn:hover {
-    box-shadow: 4px 4px 10px var(--shades_primary_200);
+    /* box-shadow: 4px 4px 10px var(--shades_primary_200); */
     cursor: pointer;
 }

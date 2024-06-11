@@ -12,8 +12,8 @@
     --shades_primary_200: #BF0449;
 
     --mixed_primary_black: #562638;
+    --mixed_primary_white: #D4A2B5;
 
-    /* For now tint is unused !!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
     --tints_black_100: #2F2F2F;
     /* Font variables */
     --font_family: 'SF Pro Display', sans-serif;
@@ -23,15 +23,13 @@
     --font_l: 26px var(--font_family);
     --font_xl_b: bold 40px var(--font_family);
     --font_xxl_b: bold 70px var(--font_family);
+    /* Size variables */
+    --s_card_height: 52px;
 }
 
 * {
     margin: 0;
     padding: 0;
-}
-
-body {
-    background-color: var(--main_white);
 }
 
 input, input:focus {

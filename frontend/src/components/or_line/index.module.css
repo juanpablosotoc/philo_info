@@ -8,12 +8,12 @@
     width: 50%;
     border: none;
     border-radius: 5px;
-    background-color: var(--main_black);
+    background-color: var(--shades_white_200);
     height: 2px;
 }
 
 .label {
-    font: var(--font_m_b);
+    font: var(--font_s);
     padding: 0 4px;
-    color: var(--main_black);
+    color: var(--shades_white_200);
 }

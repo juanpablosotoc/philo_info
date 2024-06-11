@@ -1,7 +1,3 @@
-body {
-    background-color: var(--shades_black_100);
-}
-
 .wrapper {
     display: flex;
     flex-direction: column;

@@ -1,4 +1,4 @@
-import { PropsWithChildren, useRef, useState } from 'react';
+import { PropsWithChildren, useRef } from 'react';
 import styles from './index.module.css';
 import upload_white from '../../SVG/icons/upload_white.svg';
 import upload_grey from '../../SVG/icons/upload_grey.svg';

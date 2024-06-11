@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { ErrorType } from "../../utils/types";
 import { Helmet } from 'react-helmet';
 
+
 type props = {
     type: "login" | "signup"
 }
@@ -43,6 +44,7 @@ function LoginSignup (props: props) {
     };
     useEffect(() => {
         setSearchParams({}); // Clear the error message
+        document.body.style.backgroundColor = "var(--main_white)";
     }, []);
     const [email, setEmail] = useState('');
     const title = props.type[0].toUpperCase() + props.type.slice(1) + ' | Factic';
