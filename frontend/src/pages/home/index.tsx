@@ -67,7 +67,7 @@ function Home () {
             <div className={styles.upperWrapper}>
                 <Threads threads={threads} className={styles.threads} isLoading={isLoading} error={error}/>
                 <div className={styles.topicQuestionWrapper}>
-                    <ShortTextInput name="text" label="Topic" value={topic} setValue={setTopic} handleFocusOut={handleFocusOutTopic} setTopicHasChanged={setTopicHasChanged} className={topicInputClassname}/>
+                    <ShortTextInput name="text" type="text" label="Topic" value={topic} setValue={setTopic} handleFocusOut={handleFocusOutTopic} setTopicHasChanged={setTopicHasChanged} className={topicInputClassname}/>
                     <Circles number={messages.length} filledNumber={currentMessage}/>
                 </div>
                 <div className={styles.outputWrapper}>

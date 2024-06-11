@@ -4,6 +4,7 @@ import styles from './index.module.css';
 type Props = PropsWithChildren<{
     className?: string;
     label?: string;
+    type: 'email' | 'text';
     name: string;
     handleFocusOut?: () => void;
     setTopicHasChanged?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,7 +24,7 @@ function ShortTextInput(props: Props) {
     return (
         <div className={`${styles.card} ${props.className ? props.className : ''} ${initialValue ? styles.active: ''}`} ref={div}>
             <label htmlFor={props.name} className={styles.label}>{props.label ? props.label : 'Email address'}</label>
-            <input type="text" className={styles.input} name={props.name} value={props.value} onChange={handleChange} onBlur={props.handleFocusOut ? props.handleFocusOut : ()=>{}} />
+            <input type={props.type} className={styles.input} name={props.name} value={props.value} onChange={handleChange} onBlur={props.handleFocusOut ? props.handleFocusOut : ()=>{}} />
         </div>
     );
 }

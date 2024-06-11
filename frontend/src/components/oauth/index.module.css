@@ -1,28 +1,19 @@
 .card {
     border: 1px solid var(--shades_black_200);
     border-radius: 5px;
-    width: 318px;
+    width: calc(320px - 2px - 32px);
     background-color: var(--main_white);
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    height: calc(var(--s_card_height) - 2px);
-}
-
-.card:hover .innerWrapper {
-    transform: translateY(-100%);
-}
-
-.innerWrapper {
+    height: calc(var(--s_card_height) - 32px);
+    padding: 15px 16px;
     align-items: center;
     display: flex;
-    height: calc(100% - 30px);
-    padding: 15px 16px;
-    transition: all 0.2s ease-out;
 }
 
-.lastInnerWrapper {
-    position: absolute;
+.brandLogo , .label {
+    transition: all 0.1s linear;
 }
 
 .label {
@@ -36,4 +27,12 @@
 
 .capitalize {
     text-transform: capitalize;
+}
+
+.card:hover .label {
+    font: var(--font_ml_b);
+}
+
+.card:hover .brandLogo {
+    transform: scale(1.1);
 }

@@ -9,6 +9,6 @@
 }
 
 .submit_btn:hover {
-    /* box-shadow: 4px 4px 10px var(--shades_primary_200); */
+    font: var(--font_ml_b);
     cursor: pointer;
 }

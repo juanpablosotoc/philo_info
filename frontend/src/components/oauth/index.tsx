@@ -20,14 +20,8 @@ function OAuth(props: Props) {
     }
     return (
         <div className={styles.card}>
-            <div className={styles.innerWrapper}>
-                <img src={brandLogo} alt={`${props.type} logo`} className={styles.brandLogo} />
-                <p className={styles.label}>Continue with <span className={styles.capitalize}>{props.type}</span></p>
-            </div>
-            <div className={styles.innerWrapper + ' ' + styles.lastInnerWrapper}>
-                <img src={brandLogo} alt={`${props.type} logo`} className={styles.brandLogo} />
-                <p className={styles.label}>Continue with <span className={styles.capitalize}>{props.type}</span></p>
-            </div>
+            <img src={brandLogo} alt={`${props.type} logo`} className={styles.brandLogo} />
+            <p className={styles.label}>Continue with <span className={styles.capitalize}>{props.type}</span></p>
         </div>
     );
 }
