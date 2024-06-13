@@ -3,9 +3,9 @@ CREATE DATABASE factic;
 USE factic;
 CREATE TABLE Users (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	email VARCHAR(50) NOT NULL UNIQUE,
-    hashed_password VARCHAR(255) NOT NULL,
-    alternative_token VARCHAR(255) NOT NULL UNIQUE
+	email VARCHAR(50) UNIQUE NOT NULL,
+    hashed_password VARCHAR(255),
+    alternative_token VARCHAR(255) UNIQUE
 );
 CREATE INDEX idx_alternative_token
 ON Users (alternative_token);

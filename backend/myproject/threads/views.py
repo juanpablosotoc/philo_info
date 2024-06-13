@@ -10,16 +10,23 @@ from ..process_input import UserInputFactory
 
 threads_blueprint = Blueprint('threads', __name__,)
 
+
+async def get_users_threads(session: AsyncSession, user: Users) -> list[tuple[str, str]]:
+    """Returns the threads in the form of a list of tuples.
+    Each tuple contains the thread's id and name."""
+    statement = select(Threads).where(Threads.user_id == user.id)
+    query = await session.execute(statement)
+    threads = query.scalars()
+    return [(thread.id, thread.name) for thread in threads]
+
+
 @threads_blueprint.route('/', methods=['GET', 'OPTIONS'])
 @cross_origin_db(asynchronous=True, jwt_required=True)
 async def index(session: AsyncSession, user: Users):
     """This endpoint is used to get all of a user's threads.
     Returns the threads in the form of a list of tuples.
     Each tuple contains the thread's id and name."""
-    statement = select(Threads).where(Threads.user_id == user.id)
-    query = await session.execute(statement)
-    threads = query.scalars()
-    return jsonify({'threads': [(thread.id, thread.name) for thread in threads]})
+    return jsonify({'threads': await get_users_threads(session, user)})
 
 
 @threads_blueprint.route('/message', methods=['POST', 'OPTIONS'])

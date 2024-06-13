@@ -31,8 +31,13 @@
         gap: 8px;
         width: calc(100% - 18px);
     }
+
+    .microsoftCard > div {
+        gap: 8px !important;
+    }
+
     .label {
-        font: var(--font_sm_b);
+        font: var(--font_sm_b) !important;
     }
     .chevronIcon {
         display: none;
@@ -90,4 +95,10 @@
 
 .card:hover .chevronIconStem {
     stroke-dashoffset: 20;
+}
+
+.microsoftCard > div {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }

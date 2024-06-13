@@ -13,13 +13,13 @@ class Users(Base):
     __tablename__ = 'Users'
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String(50), unique=True, nullable=False)
-    hashed_password = Column(String(255), nullable=False)
-    alternative_token = Column(String(255), unique=True, nullable=False)
+    hashed_password = Column(String(255))
+    alternative_token = Column(String(255), unique=True)
     
-    def __init__(self, email: str, password: str) -> None:
+    def __init__(self, email: str, password: str = None) -> None:
         super().__init__()
         self.email = email
-        self.set_password(password)
+        if password: self.set_password(password)
 
     def check_password(self, password) -> bool:
         return bcrypt.check_password_hash(self.hashed_password, password)

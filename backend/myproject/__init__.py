@@ -40,11 +40,18 @@ def cross_origin_db(asynchronous=False, jwt_required=False):
                     user = None
                     if jwt_required:
                         encoded_jwt = request.headers.get('Authorization', default='').split(' ')[1]
-                        user_alternative_token = jwt.decode(encoded_jwt, Config.JWT_SECRET_KEY, algorithms=["HS256"])['token']
-                        if len(user_alternative_token):
-                            statement = select(Users).where(Users.alternative_token == user_alternative_token)
-                            query = await session.execute(statement)
-                            user = query.scalar()
+                        payload = jwt.decode(encoded_jwt, Config.JWT_SECRET_KEY, algorithms=["HS256"])
+                        identity = payload['token']
+                        type_ = payload['type']
+                        if len(identity):
+                            if type_ == 'email':
+                                statement = select(Users).where(Users.email == identity)
+                                query = await session.execute(statement)
+                                user = query.scalar()
+                            elif type_ == 'alternative_token':
+                                statement = select(Users).where(Users.alternative_token == identity)
+                                query = await session.execute(statement)
+                                user = query.scalar()
                         if not user:
                             return _corsify_actual_response(jsonify({'error': 'Invalid credentials'})), 401
                     my_args = [session]
@@ -65,16 +72,24 @@ def cross_origin_db(asynchronous=False, jwt_required=False):
     return wrapper_wrapper
 
 # Use this to create a JWT token with the identity provided.
-def create_access_token(alternative_token: str) -> str:
-    """Creates a JWT token with the identity provided."""
-    return jwt.encode({"token": alternative_token}, Config.JWT_SECRET_KEY , algorithm="HS256")
+def create_access_token(email_or_alt_tk: str, identity: str) -> str:
+    """Creates a JWT token with the identity provided.
+    email_or_alt_tk: str - either 'email' or 'alternative_token'
+    identity: str - the identity to be encoded in the token (either the oauth_access_token or the alternative_token)"""
+    assert email_or_alt_tk in ['email', 'alternative_token']
+    payload = {"token": identity, "type": email_or_alt_tk}
+    return jwt.encode(payload, Config.JWT_SECRET_KEY , algorithm="HS256")
 
 
 # Registering the blueprints and endpoints
 from .threads import threads_blueprint
 from .users import users_blueprint
 from .topics import topics_blueprint
+from .oauth import oauth_blueprint
+from .mixed import mixed_blueprint
 
 app.register_blueprint(threads_blueprint, url_prefix='/threads')
 app.register_blueprint(users_blueprint, url_prefix='/users')
 app.register_blueprint(topics_blueprint, url_prefix='/topics')
+app.register_blueprint(oauth_blueprint, url_prefix='/oauth')
+app.register_blueprint(mixed_blueprint, url_prefix='/mixed')

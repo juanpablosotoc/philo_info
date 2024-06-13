@@ -7,7 +7,7 @@ import Footer from "../../components/footer";
 import black_anaglyphic_logo from '../../SVG/logo/black_v3.svg';
 import styles from './index.module.css';
 import {Link, Form, redirect, useSearchParams, useRouteError} from "react-router-dom";
-import {getToken, post, saveToken} from "../../utils/http";
+import {getOAuth, getToken, post, saveToken} from "../../utils/http";
 import { useEffect, useState } from "react";
 import { ErrorType } from "../../utils/types";
 import { Helmet } from 'react-helmet';
@@ -17,13 +17,11 @@ type props = {
     type: "login" | "signup"
 }
 
-// const location = useLocation();
-// const error = new URLSearchParams(location.search).get("error");
-
 function LoginSignup (props: props) {
     let error_message;
     let welcome_message;
     let invitation_message;
+    const [email, setEmail] = useState('');
     let error = (useRouteError() as ErrorType);
     const [searchParams, setSearchParams] = useSearchParams();
     if (error) {
@@ -46,7 +44,6 @@ function LoginSignup (props: props) {
         setSearchParams({}); // Clear the error message
         document.body.style.backgroundColor = "var(--main_white)";
     }, []);
-    const [email, setEmail] = useState('');
     const title = props.type[0].toUpperCase() + props.type.slice(1) + ' | Factic';
     return (
         <>
@@ -76,7 +73,8 @@ function LoginSignup (props: props) {
 
 export async function loader() {
     const token = getToken();
-    if (token && token.length > 0) {
+    const oauth = getOAuth();
+    if ((token && token.length > 0) || (oauth.identity && oauth.provider)) {
         return redirect("/")
     };
     return null;

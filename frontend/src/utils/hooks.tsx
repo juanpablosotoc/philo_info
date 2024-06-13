@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
-import type { Thread, choicesType, contentType, endpoint, methods } from "./types";
-import { fetch_ } from "./http";
+import type { BearerType, Thread, Topic, choicesType, contentType, endpoint, methods } from "./types";
+import { fetch_, getOAuth, getToken, saveToken } from "./http";
+import { clearOAuth, post} from "./http";
 
 function useFetch(
     endpoint: endpoint, 
     auth: boolean = false,
     method: methods,
     type: contentType,
+    bearer?: BearerType,
     body?: BodyInit,
     ) {
     const [data, setData] = useState<any>();
     const [error, setError] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     useEffect(() => {
-        fetch_(endpoint, auth, method, type, 
+        fetch_(endpoint, auth, method, type,bearer, 
             (jsonResp) => {setData(jsonResp)}, 
             (e) => {setError(true)}, 
             () => {setIsLoading(false)}, 
@@ -23,28 +25,6 @@ function useFetch(
       data,
       error,
       isLoading,
-    };
-}
-
-export function useThreads() {
-    const [threads, setThreads] = useState<Thread[]>([]);
-    const {data, isLoading, error} = useFetch("threads/", true, "GET", "application/json");
-    useEffect(() => {
-        if (data && !error) {
-            const listOfThreads = data.threads.map((thread: any) => {
-                return {
-                    id: thread.id,
-                    name: thread.name,
-                    date: new Date(thread.date)
-                }
-            })
-            setThreads(listOfThreads);
-        }
-     }, [data]);
-    return {
-        threads,
-        isLoading,
-        error
     };
 }
 
@@ -66,7 +46,7 @@ export function useMessage(message: string, files: File[] | undefined, threadId?
     type response = {
         choices: choicesType
     }
-    const {data, isLoading, error} = useFetch("threads/message", true, "POST", "multipart/form-data", JSON.stringify(body));
+    const {data, isLoading, error} = useFetch("threads/message", true, "POST", "multipart/form-data","alt_token", JSON.stringify(body));
     useEffect(() => {
         if (data) {
             setChoices((data as response).choices);
@@ -78,3 +58,4 @@ export function useMessage(message: string, files: File[] | undefined, threadId?
         error
     };
 };
+

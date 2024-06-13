@@ -10,9 +10,9 @@ import IconBtn from '../iconBtn';
 
 type Props = {
     threads: Thread[];
-    isLoading: boolean;
+    // isLoading: boolean;
     className?: string;
-    error: boolean;
+    // error: boolean;
 };
 
 interface ThreadGroupsInterface {
@@ -21,19 +21,18 @@ interface ThreadGroupsInterface {
     'Older': Thread[];
 }
 
-function Threads({ threads, isLoading, error, className}: Props) {
+function Threads({ threads, className}: Props) {
     const threadGroups: ThreadGroupsInterface = {
         'Today': [],
         'This month': [],
         'Older': [],
     };
-    if (!error) {
-        for (let thread of threads) {
-            threadGroups[dateComparison(thread.date)].push(thread);
-        }
+    console.log(threads);
+    for (let thread of threads) {
+        threadGroups[dateComparison(thread.date)].push(thread);
     }
     let threadGroupElements = Object.entries(threadGroups).map(([threadGroup, threads]) => (
-        !error && threads.length ? <ThreadGroup key={threadGroup} date={threadGroup} threads={threads} /> : undefined
+        threads.length ? <ThreadGroup key={threadGroup} date={threadGroup} threads={threads} /> : undefined
     ));
     threadGroupElements = threadGroupElements.filter((element) => element !== undefined);
     if (!threadGroupElements.length) {

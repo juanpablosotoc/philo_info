@@ -1,7 +1,15 @@
-export type endpoint = 'users/' | 'users/login' | 'users/create_user' | 'topics/' | 'threads/' | 'threads/message';
+export type endpoint = 'users/' | 'users/login' | 'users/create_user' |
+ 'topics/' | 'threads/' | 'threads/message' | 'oauth/login_create_account' |
+ 'mixed/topics_threads';
 export type methods = "GET" | "POST" | "PUT" | "DELETE";
+export type OAuthProvider = 'google' | 'apple' | 'microsoft';
+export type BearerType = 'alt_token' | 'access_token';
 export interface UserState {
     email?: string;
+}
+export interface OAuthToken {
+    identity: string;
+    provider: OAuthProvider;
 }
 export interface ErrorType {
     status: number;
