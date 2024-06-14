@@ -108,7 +108,7 @@ class Prompts:
             },
             {
                 'role': 'user',
-                'content': f'Give me a list of {n_topics} topics along with {n_questions} short and interesting questions related to each topic.  Do not include the following topics: {dont_include_topics}'
+                'content': f'Give me a list of {n_topics} easy and interesting topics along with {n_questions} very short and interesting questions related to each topic.  Do not include the following topics: {dont_include_topics}'
             },
         ]
         return messages
@@ -139,7 +139,7 @@ class Prompts:
             },
             {
                 'role': 'user',
-                'content': f'Give me a list of {n_questions} short and interesting questions related to the topic "{topic}".'
+                'content': f'Give me a list of {n_questions} very short and interesting questions related to the topic "{topic}".'
             },
         ]
         return messages

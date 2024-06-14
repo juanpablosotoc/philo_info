@@ -12,13 +12,14 @@
     --shades_primary_200: #BF0449;
 
     --mixed_primary_black: #562638;
-    --mixed_primary_white: #D4A2B5;
+    --mixed_primary_white: #FD4A89;
 
     --tints_black_100: #2F2F2F;
     --tints_black_200: #404040;
     /* Font variables */
     --font_family: 'SF Pro Display', sans-serif;
     --font_s: 12px var(--font_family);
+    --font_sm: 14px var(--font_family);
     --font_sm_b: bold 14px var(--font_family);
     --font_m: 18px var(--font_family);
     --font_m_b: bold 18px var(--font_family);
@@ -39,4 +40,12 @@
 input, input:focus {
     border: none;
     outline: none;
+}
+
+#root {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: -20;
 }

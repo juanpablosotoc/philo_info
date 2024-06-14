@@ -9,11 +9,5 @@
 }
 
 .a {
-    color: var(--main_primary);
     margin: 24px;
-}
-
-.a:hover {
-    cursor: pointer;
-    text-decoration: underline;
 }

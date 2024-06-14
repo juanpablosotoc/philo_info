@@ -1,12 +1,11 @@
 .message {
-    margin-left: 15vw;
-    width: 35vw;
-    height: 50vh;
+    width: 100%;
     border-radius: 10px;
+    position: relative;
 }
 
 .br {
     display: block; /* makes it have a width */
     content: ""; /* clears default height */
-    margin-top: 100vh; /* change this to whatever height you want it */
+    margin-top: 50vh; /* change this to whatever height you want it */
 }

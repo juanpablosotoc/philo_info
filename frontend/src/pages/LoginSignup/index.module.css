@@ -48,12 +48,3 @@
 .formWrapper > p {
     font: var(--font_s);
 }
-
-.formWrapper a {
-    color: var(--main_primary);
-    text-decoration: none;
-}
-
-.formWrapper a:hover {
-    text-decoration: underline;
-}

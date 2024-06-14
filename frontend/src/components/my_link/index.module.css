@@ -1,0 +1,30 @@
+.wrapper {
+    overflow: hidden;
+    display: inline-flex;
+    flex-direction: column;
+    position: relative;
+    text-decoration: none;
+}
+
+.link {
+    transition: all 0.3s 0.05s;
+    overflow: hidden;
+    color: var(--main_primary);
+}
+
+.wrapper:hover .link {
+    text-decoration: underline;
+}
+
+.last {
+    position: absolute;
+    transform: translateY(100%);
+}
+
+.wrapper:hover .first {
+    transform: translateY(-100%);
+}
+
+.wrapper:hover .last {
+    transform: translateY(0)
+}

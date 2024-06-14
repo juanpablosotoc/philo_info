@@ -1,25 +1,40 @@
 import styles from './index.module.css';
 import Message from '../message';
-import { MessageCls } from '../../utils/types';
+import { MessageCls, QuestionCls } from '../../utils/types';
+import WelcomMessage from '../welcomeMessage';
 
 type Props = {
     messages: MessageCls[];
     className?: string;
-    setCurrentMessage: React.Dispatch<React.SetStateAction<number>>;
+    questions: QuestionCls[];
 }
 
 function Messages (props: Props) {
     return (
-        <>
-            {props.messages.map((message, index) =>{
+        <div className={props.className + ' ' + styles.wrapper}>
+            {props.messages.length ? (props.messages.map((message, index) =>{
             return (
                 <>
-                <Message message={message} setCurrentMessage={props.setCurrentMessage} key={index + 'message'} messageNumber={index} className={styles.message}></Message>
-                {index < (props.messages.length -1) ? <br className={styles.br} key={index + 'br'}/> : ''}
+                <br className={styles.br} key={index + 'br'}/>
+                <Message message={message} key={index + 'message'} messageNumber={index} className={styles.message}></Message>
                 </>
             )
-            })}
-        </>
+            })) : (
+                <>
+                <br className={styles.br}/>
+                <WelcomMessage className={styles.message} questions={props.questions}></WelcomMessage>
+                <br className={styles.br}/>
+                <br className={styles.br}/>
+                <WelcomMessage className={styles.message} questions={props.questions}></WelcomMessage>
+                <br className={styles.br}/>
+                <br className={styles.br}/>
+                <WelcomMessage className={styles.message} questions={props.questions}></WelcomMessage>
+                <br className={styles.br}/>
+                <br className={styles.br}/>
+                <WelcomMessage className={styles.message} questions={props.questions}></WelcomMessage>                
+                </>
+            )}
+        </div>
     )
 };
 

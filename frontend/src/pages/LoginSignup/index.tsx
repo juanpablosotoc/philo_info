@@ -6,11 +6,12 @@ import OAuth from "../../components/oauth";
 import Footer from "../../components/footer";
 import black_anaglyphic_logo from '../../SVG/logo/black_v3.svg';
 import styles from './index.module.css';
-import {Link, Form, redirect, useSearchParams, useRouteError} from "react-router-dom";
+import { Form, redirect, useSearchParams, useRouteError} from "react-router-dom";
 import {getOAuth, getToken, post, saveToken} from "../../utils/http";
 import { useEffect, useState } from "react";
 import { ErrorType } from "../../utils/types";
 import { Helmet } from 'react-helmet';
+import MyLink from "../../components/my_link";
 
 
 type props = {
@@ -31,11 +32,11 @@ function LoginSignup (props: props) {
     }
     if (props.type === "login") {
         welcome_message = <h1 className={styles.welcomeMessage}>Welcome back</h1>
-        invitation_message = <p>Don't have an account? <Link to='/signup'>Sign up</Link></p>
+        invitation_message = <p>Don't have an account? <MyLink to='/signup'>Sign up</MyLink></p>
     }
     else {
         welcome_message = <h1 className={styles.welcomeMessage}>Create an account</h1>
-        invitation_message = <p>Already have an account? <Link to='/login'>Log in</Link></p>
+        invitation_message = <p>Already have an account? <MyLink to='/login'>Log in</MyLink></p>
     };
     if (error_message) {
         welcome_message = <h1 className={styles.welcomeMessage}>{error_message}</h1>

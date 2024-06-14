@@ -31,7 +31,10 @@ function UploadFile(props: Props) {
                     <path d="M17 8L12 3L7 8" stroke="#2F2F2F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     <path d="M12 3V15" stroke="#2F2F2F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                <span>Upload file</span>
+                <div className={styles.textWrapper}>
+                    <span>Upload file</span>
+                    <hr className={styles.underline}/>
+                </div>
             </button>
             <input type="file" ref={input} multiple hidden className={`${styles.input} ${props.className ? props.className : ''}`} onChange={handleChange}/>
         </div>

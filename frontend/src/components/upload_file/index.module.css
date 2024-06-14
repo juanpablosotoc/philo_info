@@ -22,8 +22,9 @@
     cursor: pointer;
 }
 
-.btn span {
+.textWrapper {
     padding-left: 8px;
+    position: relative;
 }
 
 .btn:hover .whiteUpload {
@@ -36,4 +37,19 @@
 
 .btn:hover path{
     stroke:var(--main_black) !important;
+}
+
+.underline {
+    width: 0;
+    border: none;
+    height: 2px;
+    background-color: var(--main_black);
+    position: absolute;
+    border-radius: 20px;
+    margin-top: 2px;
+    transition: all 0.2s;
+}
+
+.btn:hover .underline {
+    width: calc(100% - 8px);
 }

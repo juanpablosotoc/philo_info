@@ -1,0 +1,62 @@
+.wrapper {
+    position: fixed;
+    z-index: 10;
+    width: 30vw;
+    display: flex;
+    top: var(--s_card_height);
+    margin-left: 40vw;
+    pointer-events: all;
+    transform: translateX(-50%);
+}
+
+.innerWrapper {
+    position: relative;
+    height: var(--s_card_height);
+    width: 50%;
+    backdrop-filter: blur(5px);
+}
+
+.innerWrapper:hover {
+    cursor: pointer;
+}
+
+.innerWrapper:hover > .modal , .active .modal {
+    opacity: 0.8;
+    background-color: var(--shade_white_200);
+}
+
+.innerWrapper:hover > .link , .active .link {
+    color: var(--main_black);
+}
+
+.modal {
+    background-color: var(--tints_black_100);
+    opacity: 0.5;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.link {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font: var(--font_sm);
+    color: var(--tints_black_100);
+    text-decoration: none;
+}
+
+.modal, .link {
+    transition: all 0.3s;
+}
+
+.left .modal {
+    border-radius: 5px 0 0 5px;
+}
+
+.right .modal {
+    border-radius: 0 5px 5px 0;
+}

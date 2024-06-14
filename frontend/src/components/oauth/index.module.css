@@ -78,6 +78,8 @@
     background-color: var(--main_black);
     position: absolute;
     border-radius: 20px;
+    margin-top: 2px;
+    transition: all 0.3s ease;
 }
 
 .card:hover .underline {
@@ -91,11 +93,6 @@
 
 .card:hover .chevron {
     transform: scale(1.5) translateX(6px);
-}
-
-.underline {
-    margin-top: 2px;
-    transition: all 0.3s ease;
 }
 
 .card:hover .chevronStem {

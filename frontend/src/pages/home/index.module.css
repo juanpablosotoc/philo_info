@@ -1,82 +1,38 @@
 .wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 90vh;
-    padding: 5vh 0;
+    padding: 0 10vw 0 10vw;
+}
+
+.wrapper, .messages {
+    pointer-events: none;
+}
+
+.fixedWrapper {
     position: fixed;
-    width: 100vw;
     top: 0;
-    pointer-events : none;
-
+    bottom: 0;
+    right: 0;
+    left: 0;
 }
 
-.upperWrapper {
-    display: flex;
-    height: 100%;
-    padding-top: 5vh;
-    
-}
-
-.topicQuestionWrapper {
-    padding: 0 15vw;
-    display: flex;
-    flex-direction: column;
-    gap: 50vh;
-
-    position: relative;
-}
-
-.outputWrapper {
-    position: relative;
-
-    --horizontal_spacing: 50px;
-    --vertical_spacing: 25px;
-}
-
-.outputWrapper, .inputWrapper, .threads {
-    pointer-events : auto;
-}
-
-.output_choice {
-    position: absolute;
-}
-
-.output_choice.first {
-    margin-top: calc(var(--vertical_spacing)*2);
-    margin-left: calc(var(--horizontal_spacing)*2);
-}
-
-.output_choice.middle {
-    margin-top: var(--vertical_spacing);
-    margin-left: var(--horizontal_spacing);
-}
-
-.output_choice.last {
-    position: relative;
+.threads, .inputWrapper {
+    pointer-events: all;
 }
 
 .inputWrapper {
     display: flex;
     gap: 8px;
     position: relative;
-    margin-left: 15vw;
     align-items: flex-end;
+    position: absolute;
+    left: 10vw;
+    bottom: 32px;
+    width: 80vw;
 }
 
-/* .uploadFile {
-    position: absolute;
-    transform: translateX(calc(-100% - 8px));    
-} */
-
 .longTextInput {
-    width: 50%;
+    width: 60%;
 }
 
 .submit_btn {
-    width: 240px;
-}
-
-.hidden {
-    visibility: hidden;
+    width: 250px;
 }
