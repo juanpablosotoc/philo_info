@@ -6,17 +6,27 @@
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    height: calc(var(--s_card_height) - 32px);
-    padding: 15px 16px;
     align-items: center;
     display: flex;
     gap: 16px;
 }
 
-/* .card:hover {
-    background-color: var(--shades_white_100);
-} */
+.apple, .google {
+    height: calc(var(--s_card_height) - 32px);
+}
 
+.microsoft {
+    height: calc(var(--s_card_height) - 2px);
+    width: calc(100% - 2px);
+}
+
+.apple, .google, .microsoft > div{
+    padding: 15px 16px;
+}
+
+.microsoft > div {
+    width: 100%;
+}
 .brandIcon {
     width: 24px;
 }
@@ -27,19 +37,24 @@
 
 @media screen and (max-width: 400px) {
     .card {
-        padding: 15px 8px;
         gap: 8px;
+    }
+    .apple, .google {
         width: calc(100% - 18px);
     }
 
-    .microsoftCard > div {
+    .apple, .google, .microsoft > div {
+        padding: 15px 8px;
+    }
+
+    .microsoft > div {
         gap: 8px !important;
     }
 
     .label {
         font: var(--font_sm_b) !important;
     }
-    .chevronIcon {
+    .chevron {
         display: none;
     }
 }
@@ -69,17 +84,12 @@
     width: 100%;
 }
 
-.chevronIcon {
+.chevron {
     position: absolute;
     right: 24px;
-    transform: scale(1.5);
 }
 
-.chevronIcon, .chevronIconStem{
-    transition: all .2s;
-}
-
-.card:hover .chevronIcon {
+.card:hover .chevron {
     transform: scale(1.5) translateX(6px);
 }
 
@@ -88,16 +98,11 @@
     transition: all 0.3s ease;
 }
 
-.chevronIconStem  {
-    stroke-dasharray: 10;
-    stroke-dashoffset: 10;
-}
-
-.card:hover .chevronIconStem {
+.card:hover .chevronStem {
     stroke-dashoffset: 20;
 }
 
-.microsoftCard > div {
+.microsoft > div {
     display: flex;
     align-items: center;
     gap: 16px;

@@ -1,4 +1,3 @@
-import styles from './index.module.css';
 import { Thread } from '../../utils/types';
 import SmallCardGroup from '../small_card_group';
 

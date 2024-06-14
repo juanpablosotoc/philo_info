@@ -43,7 +43,7 @@ function Home () {
         }
      }, [jwt_is_ready]);
     useEffect(()=>{
-        document.body.style.backgroundColor = "var(--shades_black_100)";
+        document.body.style.backgroundColor = "var(--main_white)";
         const token = getToken();
         if(token) setJwtIsReady(true);
         else {
@@ -90,7 +90,7 @@ function Home () {
             <div className={styles.upperWrapper}>
                 <Threads threads={threads} className={styles.threads}/>
                 <div className={styles.topicQuestionWrapper}>
-                    <ShortTextInput name="text" type="text" label="Topic" value={topic} setValue={setTopic} handleFocusOut={handleFocusOutTopic} setTopicHasChanged={setTopicHasChanged} className={topicInputClassname}/>
+                    <ShortTextInput name="text" type="text" color="black" label="Topic" value={topic} setValue={setTopic} handleFocusOut={handleFocusOutTopic} setTopicHasChanged={setTopicHasChanged} className={topicInputClassname}/>
                     <Circles number={messages.length} filledNumber={currentMessage}/>
                 </div>
                 <div className={styles.outputWrapper}>

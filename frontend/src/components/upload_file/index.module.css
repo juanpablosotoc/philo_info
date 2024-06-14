@@ -6,19 +6,19 @@
 
 .btn {
     background-color: transparent;
-    border: 2px solid var(--shades_white_200);
+    border: 2px solid var(--tints_black_100);
     border-radius: 5px;
     display: flex;
     align-items: center;
-    color: var(--shades_white_200);
+    color: var(--tints_black_100);
     font: var(--font_m_b);
     padding: 12.75px;
-    height: 56px;
+    height: var(--s_card_height);
 }
 
 .btn:hover {
-    color: var(--main_white);
-    border-color: var(--main_white);
+    color: var(--main_black);
+    border-color: var(--main_black);
     cursor: pointer;
 }
 
@@ -32,4 +32,8 @@
 
 .btn:hover .greyUpload {
     display: none;
+}
+
+.btn:hover path{
+    stroke:var(--main_black) !important;
 }

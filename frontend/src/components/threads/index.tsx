@@ -7,6 +7,7 @@ import { Thread } from '../../utils/types';
 import ThreadGroup from '../thread_group';
 import { dateComparison } from '../../utils/functions';
 import IconBtn from '../iconBtn';
+import Chevron from '../chevron';
 
 type Props = {
     threads: Thread[];
@@ -27,7 +28,6 @@ function Threads({ threads, className}: Props) {
         'This month': [],
         'Older': [],
     };
-    console.log(threads);
     for (let thread of threads) {
         threadGroups[dateComparison(thread.date)].push(thread);
     }
@@ -49,9 +49,10 @@ function Threads({ threads, className}: Props) {
                     {threadGroupElements}
                 </div>
             </div>
-            <div className={styles.chevronWrapper}>
-                <img src={chevron_grey} alt="chevron" className={styles.greyChevron + ' ' + styles.chevron} />
-                <img src={chevron_white} alt="chevron" className={styles.whiteChevron + ' ' + styles.chevron} />
+            <div className={styles.chevronWrapperWrapper}>
+                <div className={styles.chevronWrapper}>
+                    <Chevron className={styles.chevron} stemClassName={styles.chevronStem}/>
+                </div>
             </div>
         </div>
     );

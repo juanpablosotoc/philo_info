@@ -15,6 +15,7 @@
     --mixed_primary_white: #D4A2B5;
 
     --tints_black_100: #2F2F2F;
+    --tints_black_200: #404040;
     /* Font variables */
     --font_family: 'SF Pro Display', sans-serif;
     --font_s: 12px var(--font_family);

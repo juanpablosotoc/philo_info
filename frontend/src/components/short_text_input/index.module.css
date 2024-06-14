@@ -1,20 +1,35 @@
 .card {
-    border: 1px solid var(--shades_white_200);
     border-radius: 5px;
     padding: 0 16px;
-    height: calc(var(--s_card_height) - 2px);
+    height: var(--s_card_height);
     display: flex;
     flex-direction: column;
     justify-content: center;
     width: calc(100% - 34px);
+}
+
+.card.white {
+    height: calc(var(--s_card_height) - 2px);
+    border: 1px solid var(--shades_white_200);
     background-color: var(--main_white);
+}
+
+.card.black {
+    background-color: var(--tints_black_100);
 }
 
 .label {
     position: absolute;
     font: var(--font_m);
-    color: var(--shades_white_200);
     transition: all 0.1s ease;
+}
+
+.white .label {
+    color: var(--shades_white_200);
+}
+
+.black .label {
+    color: var(--shades_white_100);
 }
 
 .card.active .label, .card:focus-within .label {
@@ -26,6 +41,13 @@
     position: relative;
     background-color: transparent;
     font: var(--font_m);
-    color: var(--main_black);
     height: 100%;
+}
+
+.white .input {
+    color: var(--main_black);
+}
+
+.black .input {
+    color: var(--main_white);
 }

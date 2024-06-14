@@ -55,7 +55,7 @@ function LoginSignup (props: props) {
             <div className={styles.formWrapper}>
                 {welcome_message}
                 <Form method="post">
-                    <ShortTextInput type={'email'} value={email} setValue={setEmail} name="email"/>
+                    <ShortTextInput type={'email'}  color="white" value={email} setValue={setEmail} name="email"/>
                     <PasswordInput name="password"/>
                     <SubmitBtn label="Continue" />
                 </Form>

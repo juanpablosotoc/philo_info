@@ -1,12 +1,13 @@
 .icon {
     height: 32px;
     width: 32px;
-    background-color: var(--main_black);
+    background-color: var(--tints_black_100);
     padding: 16px;
     border-radius: 5px;
 }
 
 .icon:hover {
     cursor: pointer;
-    background-color: var(--tints_black_100);
+    background-color: var(--main_black);
+    /* transform: scale(1.2); */
 }

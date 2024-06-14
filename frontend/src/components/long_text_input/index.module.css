@@ -1,17 +1,17 @@
 .wrapper {
     border-radius: 5px;
-    border: 2px solid var(--shades_white_200);
-    height: 52px;
     overflow-y: hidden;
+    background-color: var(--tints_black_100);
 }
 
 .wrapper:focus-within, .active {
     border-color: var(--main_white);
+    background-color: var(--main_black);
 }
 
 .input {
     background-color: transparent;
-    color: var(--main_black);
+    color: var(--main_white);
     font: var(--font_m);
     resize: none;
     height: calc(100% - 28px);
@@ -22,7 +22,7 @@
 }
 
 .input::placeholder {
-    color: var(--shades_white_200);
+    color: var(--shades_white_100);
 }
 
 .input:focus, .input:focus::placeholder, .active textarea {

@@ -12,7 +12,7 @@
 
 .donut {
     border-radius: 50%;
-    background-color: var(--main_white);
+    background-color: var(--main_black);
     width: 35px;
     height: 35px;
 }

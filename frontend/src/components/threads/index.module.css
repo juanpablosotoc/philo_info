@@ -2,18 +2,24 @@
 .wrapper {
     display: flex;
     height: 100%;
+    position: relative;
     width: 20vw;
     justify-content: space-between;
-    transform: translateX(-80%);
+    transform: translateX(-100%);
     position: absolute;
     z-index: 20;
     align-items: center;
     top: 0;
 }
 
-.wrapper, .chevron {
-    transition: transform 0.3s ease-out;
+.wrapper, .chevron, .chevronStem, .chevronWrapper {
+    transition: all 0.3s ease-out !important;
 }
+
+.wrapper:hover {
+    transform: none;
+}
+
 
 .threadsWrapper {
     backdrop-filter: blur(10px);
@@ -36,30 +42,43 @@
     width: calc(100% - 80px);
 }
 
-.wrapper:hover {
-    transform: none;
+.chevronWrapperWrapper {
+    position: absolute;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    width: calc(15vw - 80px);
+    transform: translateX(100%);
 }
 
 .chevronWrapper {
     display: flex;
-}
-
-.greyChevron {
-    position: absolute;
-}
-
-.wrapper:hover .greyChevron, .wrapper:hover .whiteChevron {
-    transform: rotateY(0deg);
+    padding: 16px;
+    border-radius: 5px;
+    background-color: var(--tints_black_100);
 }
 
 .chevron {
-    transform: rotateY(180deg);
+    transform: scale(2) !important;
 }
 
-.wrapper:hover .greyChevron, .whiteChevron {
-    visibility: hidden;
+.wrapper:hover .chevronWrapper {
+    padding: 16px 24px;
+    background-color: var(--main_black);
 }
 
-.wrapper:hover .whiteChevron {
-    visibility: visible;
+.wrapper:hover .chevron {
+    transform: scale(2) translateX(1.5px) !important;
+}
+
+
+.wrapper:hover .chevronStem {
+    stroke-dashoffset: 20;
+}
+
+
+.chevron path {
+    color: var(--main_white);
 }

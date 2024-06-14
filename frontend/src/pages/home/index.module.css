@@ -64,19 +64,17 @@
     align-items: flex-end;
 }
 
-.uploadFile {
+/* .uploadFile {
     position: absolute;
     transform: translateX(calc(-100% - 8px));    
-}
+} */
 
 .longTextInput {
-    width: 60%;
-    position: absolute;
+    width: 50%;
 }
 
 .submit_btn {
     width: 240px;
-    margin-left: calc(60% + 8px);
 }
 
 .hidden {

@@ -5,9 +5,9 @@ function Footer () {
     return (
         <footer className={styles.footer}>
             <p className={styles.infoWrapper}>
-                <span>API</span> |
-                <span> Privacy</span> |
-                <span>Terms</span>
+                <a className={styles.a}>API</a>|
+                <a className={styles.a}>Privacy</a>| 
+                <a className={styles.a}>Terms</a>
             </p>
             <Lines></Lines>
         </footer>

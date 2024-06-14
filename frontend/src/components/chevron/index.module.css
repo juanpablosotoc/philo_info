@@ -1,0 +1,13 @@
+.chevron {
+    transform: scale(1.5);
+    color: var(--shades_black_200);
+}
+
+.chevron, .stem{
+    transition: all .2s;
+}
+
+.stem  {
+    stroke-dasharray: 10;
+    stroke-dashoffset: 10;
+}
