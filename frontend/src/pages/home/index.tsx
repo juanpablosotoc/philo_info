@@ -21,17 +21,17 @@ function Home () {
     const [files, setFiles] = useState<Array<File>>([]);
     const [messages, setMessages] = useState<Array<MessageCls>>([]);
     const [questions, setQuestions] = useState<Array<QuestionCls>>([]);
-    useEffect(() => {
-        if(jwt_is_ready) {
-            fetch_("mixed/topics_threads", true, "GET", "application/json", "alt_token" , (jsonResp) => {
-                setThreads(jsonResp.threads);
-                const questions = jsonResp.topic_questions.questions.map((question : any) => {
-                    return new QuestionCls('/explain ' + question)}
-                );
-                setQuestions(questions);
-            });
-        }
-     }, [jwt_is_ready]);
+    // useEffect(() => {
+    //     if(jwt_is_ready) {
+    //         fetch_("mixed/topics_threads", true, "GET", "application/json", "alt_token" , (jsonResp) => {
+    //             setThreads(jsonResp.threads);
+    //             const questions = jsonResp.topic_questions.questions.map((question : any) => {
+    //                 return new QuestionCls('/explain ' + question)}
+    //             );
+    //             setQuestions(questions);
+    //         });
+    //     }
+    //  }, [jwt_is_ready]);
     useEffect(()=>{
         document.body.style.backgroundColor = "var(--shades_black_100)";
         const token = getToken();
