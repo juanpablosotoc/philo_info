@@ -33,7 +33,7 @@ function Home () {
         }
      }, [jwt_is_ready]);
     useEffect(()=>{
-        document.body.style.backgroundColor = "var(--main_white)";
+        document.body.style.backgroundColor = "var(--shades_black_100)";
         const token = getToken();
         if(token) setJwtIsReady(true);
         else {
@@ -71,7 +71,7 @@ function Home () {
                 <div className={styles.inputWrapper}>
                     <UploadFile className={styles.uploadFile} files={files} setFiles={setFiles}/>
                     <LongTextInput label="Enter information" className={styles.longTextInput} value={longTextInputValue} setValue={setLongTextInputValue}/>
-                    <SubmitBtn className={styles.submit_btn} onClick={handleSubmit}/>
+                    <SubmitBtn className={styles.submit_btn} theme='dark' onClick={handleSubmit}/>
                 </div>
                 <Threads threads={threads} className={styles.threads}/>
             </div>

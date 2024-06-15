@@ -1,24 +1,25 @@
 .wrapper {
     display: flex;
     flex-direction: column;
+    backdrop-filter: blur(5px);
     gap: 8px;
 }
 
 .btn {
     background-color: transparent;
-    border: 2px solid var(--tints_black_100);
+    border: 2px solid var(--shades_white_100);
     border-radius: 5px;
     display: flex;
     align-items: center;
-    color: var(--tints_black_100);
+    color: var(--shades_white_100);
     font: var(--font_m_b);
     padding: 12.75px;
     height: var(--s_card_height);
 }
 
 .btn:hover {
-    color: var(--main_black);
-    border-color: var(--main_black);
+    color: var(--main_white);
+    border-color: var(--main_white);
     cursor: pointer;
 }
 
@@ -35,15 +36,19 @@
     display: none;
 }
 
+.btn path {
+    stroke: var(--shades_white_100);
+}
+
 .btn:hover path{
-    stroke:var(--main_black) !important;
+    stroke:var(--main_white) !important;
 }
 
 .underline {
     width: 0;
     border: none;
     height: 2px;
-    background-color: var(--main_black);
+    background-color: var(--main_white);
     position: absolute;
     border-radius: 20px;
     margin-top: 2px;

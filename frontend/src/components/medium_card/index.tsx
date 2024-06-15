@@ -12,7 +12,7 @@ function MediumCard (props: React.PropsWithChildren<Props>) {
     const wrapper = useRef<HTMLDivElement>(null);
     function handleHover(e: any) {
         const { xPercent, yPercent } = getXYPercentages(e, wrapper.current);
-        wrapper.current!.style.background = `radial-gradient(circle at ${xPercent}% ${yPercent}%, var(--mixed_primary_white), var(--main_white) 70%)`;
+        wrapper.current!.style.background = `radial-gradient(circle at ${xPercent}% ${yPercent}%, var(--mixed_primary_black), var(--main_black) 70%)`;
         let x;
         let y;
         x = (yPercent - 50) / 5;

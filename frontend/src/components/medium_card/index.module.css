@@ -1,14 +1,14 @@
 .medium_card {
-    color: var(--main_black);
+    color: var(--main_white);
     font: var(--font_m_b);
     border-radius: 5px;
     padding: 64px;
-    background-color: var(--main_white);
+    background-color: var(--main_black);
     position: relative;
     transition: all 0.3s ease-in;
     z-index: -1;
     transform: translateY(-50%) perspective(500px);
-    box-shadow: 5px 5px 15px var(--mixed_primary_white);
+    box-shadow: 3px 3px 40px 15px var(--mixed_primary_black);
     pointer-events: all;
 }
 
@@ -23,7 +23,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: var(--main_white);
+    background-color: var(--main_black);
     z-index: -2;
     transition: opacity 0.3s ease-in;
     opacity: 1;

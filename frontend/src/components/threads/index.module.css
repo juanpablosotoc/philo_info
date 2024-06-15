@@ -56,7 +56,7 @@
     display: flex;
     padding: 16px;
     border-radius: 5px;
-    background-color: var(--tints_black_100);
+    background-color: var(--main_black);
 }
 
 .chevron {
@@ -79,4 +79,28 @@
 
 .chevron path {
     color: var(--main_white);
+}
+
+.iconWrapper {
+    height: 32px;
+    width: 32px;
+    padding: 16px;
+    background-color: var(--main_black);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconWrapper:hover {
+    cursor: pointer;
+    background-color: var(--tints_black_100);
+}
+
+.icon {
+    transition: all 0.2s;
+}
+
+.iconWrapper:hover .icon {
+    transform: scale(1.2);
 }

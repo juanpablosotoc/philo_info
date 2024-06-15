@@ -1,7 +1,7 @@
 .cardWrapper {
-    background-color: var(--tints_black_100);
     border-radius: 5px;
     display: flex;
+    background-color: var(--main_black);
     justify-content: space-between;
     align-items: center;
     font: var(--font_m);
@@ -11,25 +11,34 @@
 }
 
 .cardWrapper:hover {
-    background-color: var(--main_black);
+    background-color: var(--tints_black_100);
+    color: var(--main_white);
+    cursor: pointer;
+}
+
+.x {
+    padding: 2px;
+    border-radius: 3px;
+}
+
+.x path {
+    stroke: var(--shades_white_100);
+}
+
+.x:hover {
+    cursor: pointer;
+    background-color: var(--tints_black_100);
+}
+
+.x:hover path {
+    stroke: var(--main_white);
+}
+
+.clickable {
     color: var(--main_white);
 }
 
-.iconsWrapper {
-    height: 24px;
-    padding: 4px;
-    border-radius: 5px;
-}
-
-.iconsWrapper:hover {
-    cursor: pointer;
+.clickable:hover {
+    cursor: default;
     background-color: var(--main_black);
-}
-
-.cardWrapper:hover .white {
-    display: inline;
-}
-
-.white, .cardWrapper:hover .grey{
-    display: none;
-}
+}   

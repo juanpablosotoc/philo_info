@@ -22,16 +22,7 @@ function Messages (props: Props) {
             })) : (
                 <>
                 <br className={styles.br}/>
-                <WelcomMessage className={styles.message} questions={props.questions}></WelcomMessage>
-                <br className={styles.br}/>
-                <br className={styles.br}/>
-                <WelcomMessage className={styles.message} questions={props.questions}></WelcomMessage>
-                <br className={styles.br}/>
-                <br className={styles.br}/>
-                <WelcomMessage className={styles.message} questions={props.questions}></WelcomMessage>
-                <br className={styles.br}/>
-                <br className={styles.br}/>
-                <WelcomMessage className={styles.message} questions={props.questions}></WelcomMessage>                
+                <WelcomMessage className={styles.message} questions={props.questions}></WelcomMessage>         
                 </>
             )}
         </div>

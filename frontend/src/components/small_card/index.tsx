@@ -1,6 +1,4 @@
 import styles from './index.module.css';
-import x_white from '../../SVG/icons/x_white.svg';
-import x_grey from '../../SVG/icons/x_grey.svg';
 
 type Props = {
     className?: string;
@@ -9,14 +7,16 @@ type Props = {
 };
 
 function SmallCard (props: Props) {
+    const wrapper_class = `${props.className} ${styles.cardWrapper} ${props.handleXClick ? styles.clickable : ''}`;
     return (
-        <div className={`${props.className} ${styles.cardWrapper}`}>
+        <div className={wrapper_class}>
             <p>{props.label}</p>
             {props.handleXClick && (
-            <div className={styles.iconsWrapper} onClick={props.handleXClick}>
-                <img src={x_grey} alt="grey x" className={styles.grey}/>
-                <img src={x_white} alt="white x" className={styles.white} />
-            </div>
+                // The x icon
+            <svg width="24" height="24" className={styles.x} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18" stroke="#F7F7F7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M6 6L18 18" stroke="#F7F7F7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
             )}
         </div>
     )

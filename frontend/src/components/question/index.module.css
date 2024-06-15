@@ -2,15 +2,15 @@
     padding: 16px;
     border-radius: 5px;
     width: 25%;
-    border: 1px solid var(--shades_white_100);
+    border: 2px solid var(--shades_white_100);
 }
 
 .wrapper:hover {
     cursor: pointer;
-    border: 1px solid var(--main_black);
+    border: 2px solid var(--main_white);
 }
 
 .question {
     font: var(--font_sm);
-    color: var(--main_black);
+    color: var(--main_white);
 }

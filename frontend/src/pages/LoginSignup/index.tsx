@@ -58,7 +58,7 @@ function LoginSignup (props: props) {
                 <Form method="post">
                     <ShortTextInput type={'email'}  color="white" value={email} setValue={setEmail} name="email"/>
                     <PasswordInput name="password"/>
-                    <SubmitBtn label="Continue" />
+                    <SubmitBtn label="Continue" theme="light" />
                 </Form>
                 {invitation_message}
                 <OrLine className={styles.orLine}/>
