@@ -12,22 +12,7 @@ from ..ai import chat
 topics_blueprint = Blueprint('topics', __name__)
 
 
-async def get_random_topic_and_questions(session: AsyncSession) -> dict[str, list[str]]:
-    """Returns a random topic and questions associated with the topic."""
-   # Getting a random id
-    maximum_random_id = (await session.execute(func.count(Topics.id))).scalar()
-    random_id = random.randint(1, maximum_random_id)
-    # Getting the topic associated with the id
-    statement = select(Topics, TopicQuestions).join(TopicQuestions, onclause=Topics.id == TopicQuestions.topic_id).where(Topics.id == random_id)
-    query = await session.execute(statement)
-    result = query.all()
-    topic: Topics = result[0][0]
-    # Getting the questions associated with the topic
-    questions: list[TopicQuestions] = [row[1] for row in result]
-    return {'topic': topic.topic, 'questions': [question.question for question in questions]}
-
-
-@topics_blueprint.route('/', methods=['GET', 'POST', 'OPTIONS'])
+@topics_blueprint.route('/', methods=['GET', 'OPTIONS'])
 @cross_origin_db(asynchronous=True, jwt_required=True)
 async def index(session: AsyncSession, _: Users):
     """GET:
@@ -36,19 +21,38 @@ async def index(session: AsyncSession, _: Users):
     - get questions for a topic.
     - Provide the topic in the json body as 'topic'.
     - Can provide the number of questions to get in the json body as 'n_questions'."""
-    if request.method == 'GET':
-        return jsonify(await get_random_topic_and_questions(session))
-    # Request method is POST
-    # Make sure topic is provided
-    if 'topic' not in request.json.keys():
-        return jsonify({'error': 'no topic provided'}), 400
-    topic = request.json['topic']
-    # Default number of questions to get
-    n_questions = 5
-    if 'n_questions' in request.json.keys():
-        n_questions = request.json['n_questions']
-    resp: str = await chat.ask.no_stream(chat.get_questions_for_topic_messages(topic, n_questions))
-    return jsonify(json.loads(resp))
+    # Getting a random id
+    maximum_random_id = (await session.execute(func.count(Topics.id))).scalar()
+    # Num_of_ids determines the amount of questions and topics that we are going to get
+    num_of_ids = 4
+    random_ids = [random.randint(1, maximum_random_id) for _ in range(num_of_ids)]
+    # Remove duplicate entries
+    random_ids = list(set(random_ids))
+    while True:
+        if len(random_ids) == num_of_ids: break
+        random_ids.append(random.randint(1, maximum_random_id))
+        # Remove duplicate entries
+        random_ids = list(set(random_ids))
+    # Getting the topic associated with the id
+    statement = select(Topics, TopicQuestions).join(TopicQuestions, onclause=Topics.id == TopicQuestions.topic_id).where(Topics.id.in_(random_ids))
+    query = await session.execute(statement)
+    result = query.all()
+    questions_topics_unordered = [{'topic': topic.topic, 'question': question.question} for topic, question in result]
+    questions_topics_ordered = []
+    for question_topic in questions_topics_unordered:
+        questions = []
+        for questio_topic_2 in questions_topics_unordered:
+            if question_topic['topic'] != questio_topic_2['topic']: continue
+            questions.append(questio_topic_2['question'])
+        questions_topics_ordered.append({'topic': question_topic['topic'], 'questions': questions})
+    questions_topics = []
+    already_covered_topics = set()
+    for question_topic in questions_topics_ordered:
+        if question_topic['topic'] in already_covered_topics: continue
+        already_covered_topics.add(question_topic['topic'])
+        questions_topics.append({'topic': question_topic['topic'], 'question':random.choice(question_topic['questions'])})
+    return jsonify({'topics_questions': questions_topics})
+
 
 
 # This is a temporary endpoint that will be used to create topics and questions for the topics.

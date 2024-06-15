@@ -1,1 +1,1 @@
-from .views import topics_blueprint, get_random_topic_and_questions
+from .views import topics_blueprint

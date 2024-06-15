@@ -86,10 +86,8 @@ from .threads import threads_blueprint
 from .users import users_blueprint
 from .topics import topics_blueprint
 from .oauth import oauth_blueprint
-from .mixed import mixed_blueprint
 
 app.register_blueprint(threads_blueprint, url_prefix='/threads')
 app.register_blueprint(users_blueprint, url_prefix='/users')
 app.register_blueprint(topics_blueprint, url_prefix='/topics')
 app.register_blueprint(oauth_blueprint, url_prefix='/oauth')
-app.register_blueprint(mixed_blueprint, url_prefix='/mixed')
