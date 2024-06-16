@@ -19,7 +19,6 @@ function MediumCard (props: React.PropsWithChildren<Props>) {
         y = (xPercent - 50) / 5;
         y /= -4;
         x /= 4;
-        console.log(x, 'x', y, 'y');
         wrapper.current!.style.transform = `translateY(-50%) perspective(500px) rotateY(${y}deg) rotateX(${x}deg)`;
     };
     function handleLeave() {

@@ -11,13 +11,14 @@ import Threads from "../../components/threads";
 import Messages from "../../components/messages";
 import { Helmet } from "react-helmet";
 import TopFrame from "../../components/top_frame";
+import {LongTextInputType} from "../../utils/types";
 
 
 function Home () {
     // If the jwt is ready, we can fetch the topic
     const [jwt_is_ready, setJwtIsReady] = useState(false);
     const [threads, setThreads] = useState<Thread[]>([]);
-    const [longTextInputValue, setLongTextInputValue] = useState('');
+    const [longTextInputValue, setLongTextInputValue] = useState<Array<LongTextInputType>>([]);
     const [files, setFiles] = useState<Array<File>>([]);
     const [messages, setMessages] = useState<Array<MessageCls>>([]);
     const [questions, setQuestions] = useState<Array<QuestionCls>>([]);
@@ -48,14 +49,13 @@ function Home () {
     }, []);
 
     function handleSubmit() {
-        if (!longTextInputValue.trim() && !files.length) return;
-        const text = longTextInputValue.startsWith('http') ? '' : longTextInputValue;
-        const link = longTextInputValue.startsWith('http') ? longTextInputValue : '';
-        let message = new MessageCls(new InformationBundleCls(text, files, link), "informationBundle");
+        const texts = longTextInputValue.filter((value) => value.type === 'text').map((value) => value.content);
+        const links = longTextInputValue.filter((value) => value.type === 'link').map((value) => value.content);
+        let message = new MessageCls(new InformationBundleCls(texts, files, links), "informationBundle");
         setMessages((prevMessages) => {
             return [...prevMessages, message];
         });
-        setLongTextInputValue('');
+        setLongTextInputValue([]);
         setFiles([]);
     };
     return (

@@ -1,7 +1,7 @@
 import { InformationBundleCls } from '../../utils/types';
 import styles from './index.module.css';
-import Link from '../link';
-import Text from '../text';
+import Links from '../links';
+import Texts from '../texts';
 import Files from '../files';
 
 type Props = {
@@ -19,8 +19,8 @@ function InformationBundle(props: Props) {
                 <path d="M5 12H19" stroke="#F7F7F7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             <div className={styles.informationBundle}>
-                {props.informationBundle.text ? <Text text={props.informationBundle.text}></Text> : ''}
-                {props.informationBundle.link.length ? <Link link={props.informationBundle.link}></Link> : ''}
+                {props.informationBundle.texts.length ? <Texts texts={props.informationBundle.texts}></Texts> : ''}
+                {props.informationBundle.links.length ? <Links links={props.informationBundle.links}></Links> : ''}
                 {props.informationBundle.files.length ? <Files files={props.informationBundle.files}></Files> : ''}
             </div>
         </div>

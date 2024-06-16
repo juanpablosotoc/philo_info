@@ -29,13 +29,17 @@ export interface request_obj {
     headers: Headers;
     body: any;
 }
+export interface LongTextInputType {
+    content: string;
+    type: 'text' | 'link';
+}
 export type dateComparisonString = 'Today' | 'This month' | 'Older'
 export type OutputTypes = 'timeline' | 'text' | 'speech'
 export type choice = Array<OutputTypes>
 export type choicesType = choice[]
 export type contentType = "application/json" | "multipart/form-data"
 export class InformationBundleCls {
-    constructor(public text: string, public files: Array<File>, public link: string) {}
+    constructor(public texts: Array<string>, public files: Array<File>, public links: Array<string>) {}
 }
 export class QuestionCls {
     question: string;
