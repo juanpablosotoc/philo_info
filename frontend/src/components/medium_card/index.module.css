@@ -2,7 +2,7 @@
     color: var(--main_white);
     font: var(--font_m_b);
     border-radius: 5px;
-    padding: 64px;
+    padding: 64px 128px;
     background-color: var(--main_black);
     position: relative;
     transition: all 0.3s ease-in;

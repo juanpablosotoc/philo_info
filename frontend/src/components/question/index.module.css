@@ -8,21 +8,28 @@
 }
 
 .wrapper {
+    height: 100%;
     width: 100%;
     border-radius: 5px;
-    border: 2px solid var(--shades_white_100);
     transform-style: preserve-3d;
     position: relative;
-    transition: all 1s ease;
+    transform: perspective(700px);
+    transition: all 0.7s;
 }
 
 .wrapperWrapper:hover .wrapper{
-    transform: rotateY(180deg);
-    border: 2px solid var(--main_white);
+    transform: perspective(700px) rotateY(180deg);
 }
 
 .text {
-    font: var(--font_m);
+    font: var(--font_sm);
+}
+
+.topic {
+    font: var(--font_sm_b);
+}
+
+.text, .topic {
     color: var(--main_white);
 }
 
@@ -32,7 +39,8 @@
 }
 
 .front {
-    position: relative;
+    position: absolute;
+
     z-index: 30;
 }
 
@@ -49,21 +57,17 @@
 .upper, .lower {
     display: flex;
     align-items: center;
-    transform: translateZ(40px);
+    /* Only there so that they wont overlap */
+    transform: translateZ(0.1px);
     gap: 8px;
 }
 
 .back {
-    position: absolute;
-    z-index: 20;
+    transition: all 0.7s;
+    transform-style: preserve-3d;
+    background-color: var(--shades_black_100);
+    border-radius: 5px;
+    transition: all 0.7s;
     transform: rotateY(180deg);
-}
 
-.modal {
-    background-color: var(--main_black);
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
 }
