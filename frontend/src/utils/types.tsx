@@ -39,7 +39,7 @@ export class InformationBundleCls {
 }
 export class QuestionCls {
     question: string;
-    constructor(question: string) {
+    constructor(question: string, public topic: string) {
         question = question.trim();
         if (!question.length || !question.startsWith('/explain')) throw new Error("Invalid question");
         this.question = question;

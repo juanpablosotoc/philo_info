@@ -8,6 +8,7 @@
     transition: all 0.3s ease-in;
     z-index: -1;
     transform: translateY(-50%) perspective(500px);
+    transform-style: preserve-3d;
     box-shadow: 3px 3px 40px 15px var(--mixed_primary_black);
     pointer-events: all;
 }

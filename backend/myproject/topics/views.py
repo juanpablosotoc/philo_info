@@ -12,16 +12,8 @@ from ..ai import chat
 topics_blueprint = Blueprint('topics', __name__)
 
 
-@topics_blueprint.route('/', methods=['GET', 'OPTIONS'])
-@cross_origin_db(asynchronous=True, jwt_required=True)
-async def index(session: AsyncSession, _: Users):
-    """GET:
-    - get a random topic and questions associated with the topic.
-    POST:
-    - get questions for a topic.
-    - Provide the topic in the json body as 'topic'.
-    - Can provide the number of questions to get in the json body as 'n_questions'."""
-    # Getting a random id
+async def get_random_topic_and_questions(session: AsyncSession):
+     # Getting a random id
     maximum_random_id = (await session.execute(func.count(Topics.id))).scalar()
     # Num_of_ids determines the amount of questions and topics that we are going to get
     num_of_ids = 4
@@ -51,7 +43,20 @@ async def index(session: AsyncSession, _: Users):
         if question_topic['topic'] in already_covered_topics: continue
         already_covered_topics.add(question_topic['topic'])
         questions_topics.append({'topic': question_topic['topic'], 'question':random.choice(question_topic['questions'])})
-    return jsonify({'topics_questions': questions_topics})
+    return {'topics_questions': questions_topics}
+
+
+
+@topics_blueprint.route('/', methods=['GET', 'OPTIONS'])
+@cross_origin_db(asynchronous=True, jwt_required=True)
+async def index(session: AsyncSession, _: Users):
+    """GET:
+    - get a random topic and questions associated with the topic.
+    POST:
+    - get questions for a topic.
+    - Provide the topic in the json body as 'topic'.
+    - Can provide the number of questions to get in the json body as 'n_questions'."""
+    return jsonify(await get_random_topic_and_questions(session))
 
 
 

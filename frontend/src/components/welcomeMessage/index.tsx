@@ -15,7 +15,7 @@ function WelcomMessage(props: props) {
             <h1>What information can I help you digest today?</h1>
             <div className={styles.randomQuestions}>
                 {props.questions.map((question, index) => {
-                    return <Question question={question.question} key={'question-' + index}></Question>
+                    return <Question question={question} key={'question-' + index}></Question>
                 })}
             </div>
         </MediumCard>

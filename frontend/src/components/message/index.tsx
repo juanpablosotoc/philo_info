@@ -12,7 +12,7 @@ function Message(props: Props) {
     return (
         <>
         {props.message.type === 'question' ? (
-            <Question question={(props.message.content as QuestionCls).question} className={props.className ? props.className : ''}/>
+            <Question question={(props.message.content as QuestionCls)} className={props.className ? props.className : ''}/>
         ) : (
             <InformationBundle informationBundle={props.message.content as InformationBundleCls} className={props.className ? props.className : ''}></InformationBundle>
         )
