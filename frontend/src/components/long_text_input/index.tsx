@@ -9,34 +9,66 @@ type props = {
     setValue: React.Dispatch<React.SetStateAction<Array<LongTextInputType>>>;
 }
 
+function isLink(text: string) {
+    return text.startsWith('http://') || text.startsWith('https://');
+};
+
 function LongTextInput(props: props) {
     const wrapper = useRef<HTMLDivElement>(null);
-    const input = useRef<HTMLTextAreaElement>(null);
-    function setHeight() {
-        input.current!.style.height = "0px";
-        input.current!.style.height = (input.current!.scrollHeight - 26) + "px";
-        if (input.current!.scrollHeight > 130) {
-            wrapper.current!.style.height = "130px";
-            wrapper.current!.style.overflowY = "scroll";
-        } else {
-            wrapper.current!.style.height = (input.current!.scrollHeight) + "px";
-            wrapper.current!.style.overflowY = "hidden";
+    const handleChange = (event: React.ChangeEvent<HTMLDivElement>) => {
+        const childNodes = event.target.childNodes;
+        // delete all child nodes that are <br>
+        let usefulNode;
+        for (let i = childNodes.length - 1; i >= 0; i--) {
+            const childNode = childNodes[i];
+            if (childNode.nodeName === 'SPAN') {
+                break; // Exit the loop if the last node is a <span>
+            }
+            if (childNode.nodeType !== 3) continue;
+            if (childNode.textContent === '\n') {
+                continue;
+            }
+            if (!childNode.textContent!.trim()) continue;
+            usefulNode = childNode;
+            break;
+        }
+        if (!usefulNode) return;
+        const lastTextNode = usefulNode.textContent;
+        const words = lastTextNode?.trim().split(' ');
+        const lastTextInputed = words?.pop();
+        // It fails because last text node is empty
+        console.log(event.target.childNodes)
+        if (!lastTextInputed) {
+            return;
         };
+        if (isLink(lastTextInputed)) {
+            console.log('is link')
+            props.setValue((prevValue) => {
+                return [...prevValue, {type: 'link', content: lastTextInputed}];
+            });
+            console.log('creating new element')
+            // Insert a span element to make the link clickable
+            const spanElement = document.createElement('span');
+            spanElement.contentEditable = 'false';
+            spanElement.className = styles.link;
+            spanElement.innerText = lastTextInputed;
+            // Del the text from the div
+            usefulNode.textContent = '';
+            // Add the span element to the wrapper
+            wrapper.current?.insertBefore(spanElement, usefulNode);
+        }
+        else {
+            props.setValue((prevValue) => {
+                if (!prevValue.length) return [{type: 'text', content: lastTextInputed}];
+                const lastElement = prevValue[prevValue.length - 1];
+                if (lastElement.type === 'text') {
+                    prevValue[prevValue.length - 1].content = lastElement.content.concat(lastTextInputed);
+                    return prevValue;
+                }
+                return [...prevValue, {type: 'text', content: lastTextInputed}];
+            });
+        }
     };
-    const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const stringInputs = event.target.value.split(' ');
-        if (!stringInputs.length) return props.setValue([]);
-        let type: 'text' | 'link' = 'text';
-        if (stringInputs.at(-1)!.startsWith('http') || stringInputs.at(-1)!.startsWith('https')) type = 'link';
-        const newValue: LongTextInputType = {type: type, content: stringInputs[-1]};
-        props.setValue((prevValue) => {
-            return [...prevValue, newValue];
-        });
-        setHeight();
-    };
-    useEffect(() => {
-        setHeight();
-    });
     useEffect(() => {
         if (props.value.length) wrapper.current!.classList.add(styles.active)
         else wrapper.current!.classList.remove(styles.active);
@@ -46,8 +78,7 @@ function LongTextInput(props: props) {
         textareaValue = textareaValue.concat(element.content);
     });
   return (
-    <div className={`${styles.wrapper} ${props.className ? props.className : ''}`} ref={wrapper}>
-      <textarea className={styles.input} placeholder={props.label} value={textareaValue} onChange={handleChange} ref={input}/>
+    <div contentEditable onInput={handleChange} className={styles.input + ' ' + (props.className ? props.className : '')} ref={wrapper}>
     </div>
   );
 }

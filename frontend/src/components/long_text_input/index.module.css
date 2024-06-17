@@ -1,30 +1,20 @@
-.wrapper {
+.input {
     border-radius: 5px;
     overflow-y: hidden;
+    color: var(--main_white);
     backdrop-filter: blur(5px);
     border: 2px solid var(--shades_white_100);
-}
-
-.wrapper:focus-within, .active {
-    border-color: var(--main_white);
-}
-
-.input {
-    background-color: transparent;
-    color: var(--main_white);
     font: var(--font_m);
-    resize: none;
-    height: calc(100% - 26px);
-    padding: 13px;
-    width: calc(100% - 28px);
+    padding: 14px;
+    max-height: 20vh;
+    overflow-y: scroll;
+}
+
+.input:focus, .active {
+    border-color: var(--main_white);
     outline: none;
-    border: none;
 }
 
-.input::placeholder {
-    color: var(--shades_white_100);
-}
-
-.input:focus, .input:focus::placeholder, .active textarea {
-    color: var(--main_white);
+.link {
+    background-color: red;
 }
