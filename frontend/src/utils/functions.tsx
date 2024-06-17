@@ -37,3 +37,7 @@ export function dateComparison( d2: Date ){
     }};
     return comparison as dateComparisonString;
 };
+
+export function isLink(text: string) {
+    return text.startsWith('http://') || text.startsWith('https://');
+};

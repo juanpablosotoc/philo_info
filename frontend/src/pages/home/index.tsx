@@ -4,21 +4,22 @@ import LongTextInput from "../../components/long_text_input";
 import SubmitBtn from "../../components/submit_btn";
 import styles from './index.module.css';
 import { clearOAuth, fetch_, getOAuth, getToken, post, saveToken } from "../../utils/http";
-import { InformationBundleCls, MessageCls, QuestionCls, Thread, Topic } from "../../utils/types";
+import { InformationBundleCls, LongTextInputType, MessageCls, QuestionCls, Thread, Topic } from "../../utils/types";
 import Modal from "../../components/modal";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Threads from "../../components/threads";
 import Messages from "../../components/messages";
 import { Helmet } from "react-helmet";
 import TopFrame from "../../components/top_frame";
-import {LongTextInputType} from "../../utils/types";
+import { isLink } from "../../utils/functions";
 
 
 function Home () {
+    const longTextInput = useRef<HTMLDivElement>(null);
     // If the jwt is ready, we can fetch the topic
     const [jwt_is_ready, setJwtIsReady] = useState(false);
     const [threads, setThreads] = useState<Thread[]>([]);
-    const [longTextInputValue, setLongTextInputValue] = useState<Array<LongTextInputType>>([]);
+    const [longTextInputValue, setLongTextInputValue] = useState<string>('');
     const [files, setFiles] = useState<Array<File>>([]);
     const [messages, setMessages] = useState<Array<MessageCls>>([]);
     const [questions, setQuestions] = useState<Array<QuestionCls>>([]);
@@ -49,13 +50,25 @@ function Home () {
     }, []);
 
     function handleSubmit() {
-        const texts = longTextInputValue.filter((value) => value.type === 'text').map((value) => value.content);
-        const links = longTextInputValue.filter((value) => value.type === 'link').map((value) => value.content);
+        const texts: Array<string> = [];
+        const links: Array<string> = [];
+        for (let node of longTextInput.current!.childNodes) {
+            // if node is span add the text content
+            if (node.nodeName === 'SPAN') {
+                links.push(node.textContent!);
+            } else if (node.nodeName === '#text') {
+                if (texts.length) {
+                    texts[texts.length - 1] = texts[texts.length - 1] + ' ' + node.textContent!;
+                } else if (node.textContent && node.textContent.trim()){
+                    texts.push(node.textContent!);
+                }
+            }
+        };
         let message = new MessageCls(new InformationBundleCls(texts, files, links), "informationBundle");
         setMessages((prevMessages) => {
             return [...prevMessages, message];
         });
-        setLongTextInputValue([]);
+        setLongTextInputValue('');
         setFiles([]);
     };
     return (
@@ -70,7 +83,7 @@ function Home () {
             <div className={styles.fixedWrapper}>
                 <div className={styles.inputWrapper}>
                     <UploadFile className={styles.uploadFile} files={files} setFiles={setFiles}/>
-                    <LongTextInput label="Enter information" className={styles.longTextInput} value={longTextInputValue} setValue={setLongTextInputValue}/>
+                    <LongTextInput myRef={longTextInput} label="Enter information" className={styles.longTextInput} value={longTextInputValue} setValue={setLongTextInputValue}/>
                     <SubmitBtn className={styles.submit_btn} theme='dark' onClick={handleSubmit}/>
                 </div>
                 <Threads threads={threads} className={styles.threads}/>
