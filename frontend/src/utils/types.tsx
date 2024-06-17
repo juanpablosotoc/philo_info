@@ -39,9 +39,9 @@ export type choice = Array<OutputTypes>
 export type choicesType = choice[]
 export type contentType = "application/json" | "multipart/form-data"
 export class InformationBundleCls {
-    constructor(public texts: Array<string>, public files: Array<File>, public links: Array<string>) {}
+    constructor(public texts: Array<string>, public files: Array<File>, public links: Array<string>, public questions: Array<string>) {}
 }
-export class QuestionCls {
+export class DefaultQuestionsCls {
     question: string;
     constructor(question: string, public topic: string) {
         question = question.trim();
@@ -51,5 +51,5 @@ export class QuestionCls {
 };
 
 export class MessageCls {
-    constructor(public content: InformationBundleCls | QuestionCls, public type: 'coices' | 'question' | 'informationBundle', public threadId?: number) {}
+    constructor(public content: InformationBundleCls, public threadId?: number) {}
 }

@@ -1,0 +1,63 @@
+.wrapper {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    background-color: var(--main_black);
+}
+
+.wrapper > div {
+    width: calc(50% - 32px);
+}
+
+.input {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    overflow-y: scroll;
+}
+
+.output {
+}
+
+.addIcon {
+    align-self: flex-end;
+    background-color: var(--main_black);
+}
+
+.informationBundle {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.iconWrapper {
+    height: 32px;
+    width: 32px;
+    padding: 16px;
+    border-radius: 5px;
+    background-color: var(--tints_black_100);
+}
+
+.iconWrapper:hover {
+    cursor: pointer;
+}
+
+.icon {
+    height: 100%;
+    width: 100%;
+    transition: all 0.2s;
+}
+
+.iconWrapper:hover .icon {
+    transform: scale(1.1);
+}
+
+.iconWrapper:hover .icon path {
+    stroke: var(--main_white);
+}
+
+.icon path {
+    stroke: var(--shades_white_100);
+}
+

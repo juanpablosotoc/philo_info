@@ -11,6 +11,7 @@
     border-radius: 5px;
     display: flex;
     align-items: center;
+    justify-content: center;
     color: var(--shades_white_100);
     font: var(--font_m_b);
     transition: all 0.2s;

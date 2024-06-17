@@ -29,10 +29,14 @@
     width: 80vw;
 }
 
+.uploadFile {
+    width: 18%;
+}
+
 .longTextInput {
     width: 60%;
 }
 
 .submit_btn {
-    width: 250px;
+    width: 22%;
 }

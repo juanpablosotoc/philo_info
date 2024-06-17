@@ -1,12 +1,12 @@
 import styles from './index.module.css';
 import Message from '../message';
-import { MessageCls, QuestionCls } from '../../utils/types';
+import { MessageCls, DefaultQuestionsCls } from '../../utils/types';
 import WelcomMessage from '../welcomeMessage';
 
 type Props = {
     messages: MessageCls[];
     className?: string;
-    questions: QuestionCls[];
+    questions: DefaultQuestionsCls[];
 }
 
 function Messages (props: Props) {

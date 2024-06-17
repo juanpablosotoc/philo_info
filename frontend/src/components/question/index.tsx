@@ -1,9 +1,9 @@
-import { QuestionCls } from '../../utils/types';
+import { DefaultQuestionsCls } from '../../utils/types';
 import styles from './index.module.css';
 
 type Props = {
     className?: string;
-    question: QuestionCls;
+    question: DefaultQuestionsCls;
 }
 
 function Question(props: Props) {

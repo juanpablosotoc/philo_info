@@ -2,15 +2,10 @@
     display: flex;
     flex-direction: column;
     gap: 32px;
-    width: 60vw;
 }
 
 .card > h1 {
     font: var(--font_xxl_b);
-}
-
-.card > * {
-    transform: translateZ(50px);
 }
 
 .randomQuestions {

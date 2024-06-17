@@ -1,4 +1,4 @@
-import { QuestionCls } from '../../utils/types';
+import { DefaultQuestionsCls } from '../../utils/types';
 import MediumCard from '../medium_card';
 import Question from '../question';
 import styles from './index.module.css';
@@ -6,7 +6,7 @@ import styles from './index.module.css';
 
 type props = {
     className?: string;
-    questions: QuestionCls[];
+    questions: DefaultQuestionsCls[];
 };
 
 function WelcomMessage(props: props) {

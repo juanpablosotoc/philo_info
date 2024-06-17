@@ -4,7 +4,7 @@ import LongTextInput from "../../components/long_text_input";
 import SubmitBtn from "../../components/submit_btn";
 import styles from './index.module.css';
 import { clearOAuth, fetch_, getOAuth, getToken, post, saveToken } from "../../utils/http";
-import { InformationBundleCls, LongTextInputType, MessageCls, QuestionCls, Thread, Topic } from "../../utils/types";
+import { InformationBundleCls, LongTextInputType, MessageCls, DefaultQuestionsCls, Thread, Topic } from "../../utils/types";
 import Modal from "../../components/modal";
 import { useEffect, useRef, useState } from "react";
 import Threads from "../../components/threads";
@@ -22,13 +22,13 @@ function Home () {
     const [longTextInputValue, setLongTextInputValue] = useState<string>('');
     const [files, setFiles] = useState<Array<File>>([]);
     const [messages, setMessages] = useState<Array<MessageCls>>([]);
-    const [questions, setQuestions] = useState<Array<QuestionCls>>([]);
+    const [questions, setQuestions] = useState<Array<DefaultQuestionsCls>>([]);
     useEffect(() => {
         if(jwt_is_ready) {
             fetch_("mixed/topics_threads", true, "GET", "application/json", "alt_token" , (jsonResp) => {
                 setThreads(jsonResp.threads);
                 const questions = jsonResp.topics_questions.map((topic_question : any) => {
-                    return new QuestionCls('/explain ' + topic_question.question, topic_question.topic)}
+                    return new DefaultQuestionsCls('/explain ' + topic_question.question, topic_question.topic)}
                 );
                 setQuestions(questions);
             });
@@ -50,7 +50,7 @@ function Home () {
     }, []);
 
     function handleSubmit() {
-        const texts: Array<string> = [];
+        let texts: Array<string> = [];
         const links: Array<string> = [];
         for (let node of longTextInput.current!.childNodes) {
             // if node is span add the text content
@@ -64,7 +64,13 @@ function Home () {
                 }
             }
         };
-        let message = new MessageCls(new InformationBundleCls(texts, files, links), "informationBundle");
+        const questions = texts.filter((text) => {
+            return text.startsWith('/explain');
+        });
+        texts = texts.filter((text) => {
+            return !text.startsWith('/explain');
+        });
+        let message = new MessageCls(new InformationBundleCls(texts, files, links, questions));
         setMessages((prevMessages) => {
             return [...prevMessages, message];
         });

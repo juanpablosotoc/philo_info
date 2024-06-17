@@ -3,6 +3,7 @@
     font: var(--font_m_b);
     border-radius: 5px;
     padding: 64px 128px;
+    width: calc(80vw - 256px);
     background-color: var(--main_black);
     position: relative;
     transition: all 0.3s ease-in;
@@ -32,4 +33,8 @@
 
 .medium_card:hover::before {
     opacity: 0;
+}
+
+.medium_card > * {
+    transform: translateZ(50px);
 }
