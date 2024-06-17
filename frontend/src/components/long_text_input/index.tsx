@@ -17,23 +17,18 @@ function LongTextInput(props: props) {
     const wrapper = useRef<HTMLDivElement>(null);
     const handleChange = (event: React.ChangeEvent<HTMLDivElement>) => {
         const childNodes = event.target.childNodes;
-        // delete all child nodes that are <br>
-        let usefulNode;
-        for (let i = childNodes.length - 1; i >= 0; i--) {
-            const childNode = childNodes[i];
-            if (childNode.nodeName === 'SPAN') {
-                break; // Exit the loop if the last node is a <span>
-            }
-            if (childNode.nodeType !== 3) continue;
-            if (childNode.textContent === '\n') {
-                continue;
-            }
-            if (!childNode.textContent!.trim()) continue;
-            usefulNode = childNode;
-            break;
-        }
-        if (!usefulNode) return;
-        const lastTextNode = usefulNode.textContent;
+        let lastNode = childNodes[childNodes.length - 1];
+        if (!lastNode) return;
+        const prevNode = lastNode.previousSibling;
+        const prevPrevNode = prevNode?.previousSibling;
+        if (prevNode) {
+            if (prevNode.nodeName === 'BR') {
+                wrapper.current?.removeChild(prevNode);
+                wrapper.current?.removeChild(lastNode);
+                lastNode = prevPrevNode!;
+            };
+        };
+        const lastTextNode = lastNode.textContent;
         const words = lastTextNode?.trim().split(' ');
         const lastTextInputed = words?.pop();
         // It fails because last text node is empty
@@ -41,7 +36,9 @@ function LongTextInput(props: props) {
         if (!lastTextInputed) {
             return;
         };
-        if (isLink(lastTextInputed)) {
+        // check if event was backspace
+        const wasBackspace = (event.nativeEvent as InputEvent).inputType === 'deleteContentBackward';
+        if (!wasBackspace && isLink(lastTextInputed)) {
             console.log('is link')
             props.setValue((prevValue) => {
                 return [...prevValue, {type: 'link', content: lastTextInputed}];
@@ -53,9 +50,9 @@ function LongTextInput(props: props) {
             spanElement.className = styles.link;
             spanElement.innerText = lastTextInputed;
             // Del the text from the div
-            usefulNode.textContent = '';
+            lastNode.textContent = '';
             // Add the span element to the wrapper
-            wrapper.current?.insertBefore(spanElement, usefulNode);
+            wrapper.current?.insertBefore(spanElement, lastNode);
         }
         else {
             props.setValue((prevValue) => {
