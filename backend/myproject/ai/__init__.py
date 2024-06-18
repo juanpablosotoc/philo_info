@@ -70,6 +70,18 @@ class Ask:
             await asyncio.sleep(0.2)
         return await self.__get_run_messages(run_id=run_obj['id'], thread_id=openai_thread_id)
     
+    async def threads_stream(self, additional_messages: list, assistant_id: str, openai_thread_id: str) -> str:
+        """Create a run and return its messages."""
+        body = {
+            'assistant_id': assistant_id,
+            'additional_messages': additional_messages,
+            'stream': True,
+        }
+        api_endpoint = f'https://api.openai.com/v1/threads/{openai_thread_id}/runs'
+        async with aiohttp.ClientSession() as session:
+            async with session.post(api_endpoint, json=body, headers=self.v2_headers) as response:
+                print(response, 'response')
+    
 
 class Chat(Prompts):
     default_assistant_id = 'asst_rREgGseo2wATsN8VQI8MsdxL'
