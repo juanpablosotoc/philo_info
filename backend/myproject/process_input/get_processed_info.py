@@ -1,5 +1,6 @@
 import base64
-import asyncio
+import uuid
+from typing import AsyncGenerator
 from asyncio import Task
 from youtube_transcript_api import YouTubeTranscriptApi
 from sqlalchemy.future import select
@@ -8,87 +9,96 @@ from myproject.ai import chat
 from ..models import Texts, Links, Files, MessageQuestions, Files, LocalOpenaiDbFiles, LocalOpenaiDb, LocalOpenaiThreads
 
 
-# Handles text
-class TextHandler():
-    def __init__(self, text: Texts) -> None:
-        self.handled = False
-        self.text = text
-        self.__processed_info = None
-  
-    async def handle(self) -> None:
-        self.handled = True
-        self.__processed_info = await chat.ask.no_stream(chat.process_text_messages(self.text.text))
+class InformationStream:
+    def __init__(self) -> None:
+        # Create an id that will be used to determine the stream string id
+        self.id = str(uuid.uuid4())
 
-    async def processed_info(self) -> str:
-        if not self.handled: await self.handle()
-        return self.__processed_info + '\n'
+# Handles text
+class TextHandler(InformationStream):
+    def __init__(self, text: Texts) -> None:
+        super().__init__()
+        # Is immeadiately ready to get the processed info
+        self.ready = True
+        self.text = text
+        self.messages = chat.process_text_messages(self.text.text)
+        self.__processed_info: AsyncGenerator = chat.ask.stream(messages=self.messages)
+
+    async def processed_info(self):
+        yield 'Processed text info:\n'
+        async for value in self.__processed_info:
+            yield value
 
 
 # Handles non youtube links
-class LinkHandler():
+class LinkHandler(InformationStream):
     def __init__(self, link: Links) -> None:
-        self.handled = False
+        super().__init__()
+        # Is immeadiately ready to get the processed info
+        self.ready = True
         self.link = link
-        self.__processed_info = None
+        self.messages = chat.process_link_messages(self.link.link)
+        self.__processed_info: AsyncGenerator = chat.ask.stream(messages=self.messages)
 
-    async def handle(self) -> None:
-        self.handled = True
-        self.__processed_info = await chat.ask.no_stream(chat.process_link_messages(self.link.link))
-    
-    async def processed_info(self) -> str:
-        if not self.handled: await self.handle()
-        return self.__processed_info + '\n'
+    async def processed_info(self):
+        yield 'Processed link info:\n'
+        async for value in self.__processed_info:
+            yield value
 
 
 # Handles youtube videos
-class YoutubeVideoHandler():
+class YoutubeVideoHandler(InformationStream):
     youtube_start_link = 'https://www.youtube.com/watch?v='
     def __init__(self, link: Links) -> None:
+        super().__init__()
         # Get the video id from the youtube link
         self.video_id = link.link.split("v=")[1]
         if self.video_id.find("&") != -1: 
             self.video_id = self.video_id.split("&")[0]
         if self.video_id.find("#") != -1:
             self.video_id = self.video_id.split("#")[0]
-        self.__transcript = None
-        self.__processed_info = None
-        self.handled = False
-    
-    async def handle(self) -> None:
-        self.handled = True
-        self.set_transcript()
-        handle_youtube_video_prompt = chat.process_transcript_messages()
-        self.__processed_info = await chat.ask.no_stream(handle_youtube_video_prompt)
+        # For now only retrieves the english transcript
+        self.__transcript = YouTubeTranscriptApi.get_transcript(self.video_id, languages=['en'])
+        # Is immediately ready to get the processed info
+        self.ready = True
 
-    async def processed_info(self) -> str:
-        if not self.handled: await self.handle()
-        return self.__processed_info + '\n'
-    
-    def set_transcript(self, languages: list[str] = ['en']) -> None:
-        """Gets the transcript of the video using the youtube_transcript_api.
-        languages: a list of language codes in a descending priority.(Only fetches one language)"""
-        if self.__transcript is None: 
-            self.__transcript = YouTubeTranscriptApi.get_transcript(self.video_id, languages)
+    async def processed_info(self):
+        handle_youtube_video_prompt = chat.process_transcript_messages(transcript=self.__transcript)
+        self.__processed_info: AsyncGenerator = chat.ask.stream(messages=handle_youtube_video_prompt)
+        yield 'Processed youtube video info:\n'
+        async for value in self.__processed_info:
+            yield value
 
+
+# Handle images
+class ImageHandler(InformationStream):
+    def __init__(self, image: Files) -> None:
+        super().__init__()
+        self.image = image
+        # Is immediately ready to get the processed info
+        self.ready = True
+    
+    async def processed_info(self):
+        # Open the image and base64 encode it
+        with open(self.image.path, "rb") as image_file:
+            base64_image = base64.b64encode(image_file.read()).decode('utf-8')
+        # Get the processed info of the image from OpenAI vision model
+        self.__processed_info: AsyncGenerator = chat.ask.stream(messages=chat.process_image_messages(base64_image))
+        yield 'Processed image info:\n'
+        async for value in self.__processed_info:
+            yield value
 
 # Handles files
-class FilesHandler():
+class FilesHandler(InformationStream):
     def __init__(self, files: list[Files], openai_db: LocalOpenaiDb, openai_thread: LocalOpenaiThreads) -> None:
+        super().__init__()
         self.openai_db = openai_db
         self.openai_thread = openai_thread
         self.handled = False
-        # Separates the files into files for search and files for vision for processing in OpenAI
-        self.files_for_search: list[Files] = [file for file in files if file.path.split('.')[-1].lower() in InformationBundle.file_search_file_types]
-        self.files_for_vision: list[Files] = [file for file in files if file.path.split('.')[-1].lower() in InformationBundle.vision_file_types]
-        self.__processed_info = ''
-
-    async def handle(self, session: AsyncSession) -> None:
-        self.handled = True
-        # Asyncronously gets the processed info of the files
-        async with asyncio.TaskGroup() as tg:
-            if len(self.files_for_search): tg.create_task(self.handle_file_search(session=session))
-            for file in self.files_for_vision:
-                tg.create_task(self.handle_image(file.path))
+        self.files = files
+        # Ready represents if the files have been uploaded to OpenAI and we are close 
+        # to getting the processed info
+        self.ready = False
 
     async def get_upload_new_files(self, files_for_scrutiny: list[Files], session: AsyncSession) -> list[Files]:
         """Returns the files that have not been uploaded already."""
@@ -99,27 +109,32 @@ class FilesHandler():
         query = await session.execute(statement)
         return [*query.scalars()]
     
-    async def handle_file_search(self, session: AsyncSession) -> None:
+    async def processed_info(self, session: AsyncSession):
         # Get the already uploaded files and the files to upload
-        upload_new_files = await self.get_upload_new_files(self.files_for_search, session=session)
+        upload_new_files = await self.get_upload_new_files(self.files, session=session)
         # Upload the files that have not been uploaded already
         await chat.upload_files(files=upload_new_files, openai_db_id=self.openai_db.openai_db_id)
+        self.ready = True
         # Get the processed info of the files
-        self.__processed_info += await chat.ask_assistant_file_search(local_openai_thread=self.openai_thread) + '\n'
+        self.__processed_info: AsyncGenerator = await chat.ask_assistant_file_search(local_openai_thread=self.openai_thread) + '\n'
+        yield 'Processed file info:\n'
+        async for value in self.__processed_info:
+            yield value
 
-    async def handle_image(self, image_file_path) -> None:
-        # Open the image and base64 encode it
-        with open(image_file_path, "rb") as image_file:
-            base64_image = base64.b64encode(image_file.read()).decode('utf-8')
-        # Get the processed info of the image from OpenAI vision model
-        self.__processed_info += await chat.ask.no_stream(chat.process_image_messages(base64_image)) + '\n'
+# Handles questions
+class QuestionHandler(InformationStream):
+    def __init__(self, message_question: MessageQuestions) -> None:
+        super().__init__()
+        self.message_question = message_question
 
-    async def processed_info(self, session: AsyncSession) -> str:
-        if not self.handled: await self.handle(session=session)
-        return self.__processed_info + '\n'
-
-
-# Handles a collection of texts, links, and files
+    async def processed_info(self):
+        messages = [chat.get_user_message(self.message_question.question)]
+        self.__processed_info = chat.ask.stream(messages=messages)
+        yield 'Processed question info:\n'
+        async for value in self.__processed_info:
+            yield value
+    
+# Handles a collection of texts, links, and files, questions
 class InformationBundle:
     # File types supported by OpenAI's vision model
     vision_file_types = ['jpg', 'jpeg', 'png', 'gif', 'webp']
@@ -130,7 +145,10 @@ class InformationBundle:
     file_search_file_types = ["c", "cs", "cpp", "doc", "docx", "html", "java", 
                               "json", "md", "pdf", "php", "pptx", "py", "rb", 
                               "tex", "txt", "css", "js", "sh", "ts"]
-    def __init__(self, texts: list[Texts], links: list[Links], files: list[Files], openai_db: LocalOpenaiDb, openai_thread: LocalOpenaiThreads) -> None:
+    def __init__(self, texts: list[Texts], links: list[Links], 
+                 files: list[Files], openai_db: LocalOpenaiDb, 
+                 openai_thread: LocalOpenaiThreads, questions: list[MessageQuestions]
+                 ) -> None:
         # Separates links into youtube links and normal links
         links = [link for link in links if not link.link.startswith(YoutubeVideoHandler.youtube_start_link)]
         youtube_links = [link for link in links if link.link.startswith(YoutubeVideoHandler.youtube_start_link)]
@@ -138,35 +156,12 @@ class InformationBundle:
         self.texts_handler = [TextHandler(text) for text in texts]
         self.links_handler = [LinkHandler(link) for link in links]
         self.youtube_videos_handler = [YoutubeVideoHandler(youtube_link) for youtube_link in youtube_links]
+                # Separates the files into files for search and files for vision for processing in OpenAI
+        self.files_for_search: list[Files] = [file for file in files if file.path.split('.')[-1].lower() in InformationBundle.file_search_file_types]
+        self.files_for_vision: list[Files] = [file for file in files if file.path.split('.')[-1].lower() in InformationBundle.vision_file_types]
         self.files_handler = None
-        if (len(files)): self.files_handler = FilesHandler(files, openai_db=openai_db, openai_thread=openai_thread)
-
-    async def process_info(self, session: AsyncSession) -> str:
-        tasks: list[Task] = []
-        # Get the processed_info from the handlers asynchronously
-        async with asyncio.TaskGroup() as tg:
-            for text_handler in self.texts_handler: tasks.append(tg.create_task(text_handler.processed_info()))
-            for link_handler in self.links_handler: tasks.append(tg.create_task(link_handler.processed_info()))
-            for youtube_link_handler in self.youtube_videos_handler: tasks.append(tg.create_task(youtube_link_handler.processed_info()))
-            if (self.files_handler): tasks.append(tg.create_task(self.files_handler.processed_info(session=session)))
-        # Returned a concatenated string of all the processed_info
-        return ''.join([task.result() for task in tasks])
-    
-
-# Handles a question
-class Question():
-    def __init__(self, message_question: MessageQuestions) -> None:
-        self.message_question = message_question
-        self.__info = None
-        self.handled = False
-
-    async def handle(self) -> None:
-        """sets the info attribute to the answer to the question."""
-        self.handled = True
-        messages = [chat.get_user_message(self.message_question.question)]
-        self.__info = await chat.ask.no_stream(messages=messages)
-
-    async def process_info(self) -> str:
-        if not self.handled: await self.handle()
-        return self.__info + '\n'
-    
+        if (len(self.files_for_search)): self.files_handler = FilesHandler(self.files_for_search, openai_db=openai_db, openai_thread=openai_thread)
+        self.images_handler: list[ImageHandler] = [ImageHandler(file) for file in self.files_for_vision]
+        self.questions_handler = [QuestionHandler(question) for question in questions]
+        self.items = [*self.texts_handler, *self.links_handler, *self.youtube_videos_handler, *self.images_handler, *self.questions_handler]
+        if self.files_handler: self.items.append(self.files_handler)

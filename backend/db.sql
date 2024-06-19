@@ -25,18 +25,10 @@ CREATE TABLE LocalOpenaiThreads (
 	openai_thread_id VARCHAR(50) NOT NULL UNIQUE,
     FOREIGN KEY (thread_id) REFERENCES Threads(id)
 );
-CREATE TABLE MessageTypes (
-	id TINYINT PRIMARY KEY AUTO_INCREMENT,
-    type VARCHAR(50) NOT NULL UNIQUE
-);
-INSERT INTO MessageTypes (type)
-VALUES ("Question"), ("Information Bundle");
 CREATE TABLE Messages (
 	id INT PRIMARY KEY AUTO_INCREMENT,
     datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	thread_id INT NOT NULL,
-    type_id TINYINT NOT NULL,
-    FOREIGN KEY (type_id) REFERENCES MessageTypes(id),
     FOREIGN KEY (thread_id) REFERENCES Threads(id) ON DELETE CASCADE
 );
 CREATE TABLE ProcessedMessageInfo (

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, UploadFile
+from fastapi.responses import StreamingResponse
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from myproject import user_db_dependancy
@@ -28,7 +29,7 @@ async def index(user_db: user_db_dependancy):
 
 
 @threads_route.post('/message')
-async def message_route(user_db: user_db_dependancy, local_thread_id: int | None = None,
+async def message_route(user_db: user_db_dependancy, local_thread_id: int = '',
                         files: list[UploadFile] = [],
                         links: list[str] = [], 
                         texts: list[str] = []
@@ -62,8 +63,7 @@ async def message_route(user_db: user_db_dependancy, local_thread_id: int | None
     # Creating the user_input object
     user_input = await UserInputFactory(links_strs=links, texts_strs=texts, file_storage_objs=files, session=user_db.session, openai_db=openai_db, openai_thread=openai_thread)
     # Porcess info and get the output_combinations
-    output_combinations = await user_input.process_get_output_combinations(session=user_db.session)
+    output_combinations_async_gen = user_input.processed_info_output_combos(session=user_db.session, close_session=user_db.close_session)
     # Close the session
-    user_db.close_session()
-    return {'output_combinations': output_combinations, 'thread_id': local_thread.id}
+    return StreamingResponse(content=output_combinations_async_gen, media_type='text/event-stream')
     

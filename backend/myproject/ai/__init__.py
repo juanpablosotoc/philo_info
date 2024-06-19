@@ -1,6 +1,7 @@
 import os
 import aiohttp
 import asyncio
+from typing import AsyncGenerator
 from openai import OpenAI
 from .prompts import Prompts
 from ..models import LocalOpenaiThreads, Files, LocalOpenaiThreads, LocalOpenaiDb
@@ -36,25 +37,31 @@ class Ask:
                 resp = await response.json()
                 return resp['choices'][0]['message']['content']
             
-    def stream(self, messages: list):
+    async def stream(self, messages: list):
         body = {
             'stream': True,
             'model': "gpt-4o",
             'messages': messages,
             'stream_options': {"include_usage": True}
         }
-        s = requests.Session()
-
-        with s.post(self.chat_completions_api, headers=self.headers, stream=True, json=body) as resp:
-            for line in resp.iter_lines():
-                line:str = line.decode('utf-8')
-                line = line.strip('\n').replace('data: ', '',1).strip()
-                if len(line) == 0 or line == '[DONE]': continue
-                chunk_obj = json.loads(line)
-                choices = chunk_obj['choices']
-                usage = chunk_obj['usage']
-                response = json.dumps({"choices": choices, "usage": usage})
-                yield response
+        async with aiohttp.ClientSession() as session:
+            async with session.post(self.chat_completions_api, json=body, headers=self.v2_headers) as response:
+                async for lines in response.content.iter_any():
+                    lines:str = lines.decode('utf-8')
+                    lines = lines.split('\n')
+                    combined_content = ''
+                    final_usage = ''
+                    for line in lines:
+                        line = line.strip('\n').replace('data: ', '',1).strip()
+                        if len(line) == 0 or line == '[DONE]': continue
+                        chunk_obj = json.loads(line)
+                        choices: list[dict] = chunk_obj['choices']
+                        usage = chunk_obj['usage']
+                        if usage: final_usage = usage
+                        if choices[0]['finish_reason'] is not None: break
+                        combined_content += choices[0]['delta']['content']
+                    # Store the usage for data analysis ????
+                    yield combined_content
     
     async def __get_run_status(self, run_id: str, thread_id: str) -> str:
         """Returns the status of a run.
@@ -96,7 +103,7 @@ class Ask:
             await asyncio.sleep(0.2)
         return await self.__get_run_messages(run_id=run_obj['id'], thread_id=openai_thread_id)
     
-    def threads_stream(self, additional_messages: list, assistant_id: str, openai_thread_id: str):
+    async def threads_stream(self, additional_messages: list, assistant_id: str, openai_thread_id: str):
         body = {
             'stream': True,
             # 'stream_options': {"include_usage": True}, ( Not existant in the threads and runs api )
@@ -104,17 +111,21 @@ class Ask:
             'additional_messages': additional_messages,
         }
 
-        s = requests.Session()
-
-        with s.post(self.get_threads_api(openai_thread_id=openai_thread_id), headers=self.headers, stream=True, json=body) as resp:
-            for line in resp.iter_lines():
-                line:str = line.decode('utf-8')
-                line = line.strip('\n').replace('data: ', '',1).strip()
-                if len(line) == 0 or line == '[DONE]': continue
-                chunk_obj = json.loads(line)
-                choices = chunk_obj['choices']
-                response = json.dumps({"choices": choices})
-                yield response
+        async with aiohttp.ClientSession() as session:
+            async with session.post(self.get_threads_api(openai_thread_id=openai_thread_id), json=body, headers=self.v2_headers) as response:
+                async for lines in response.content.iter_any():
+                    lines:str = line.decode('utf-8')
+                    combined_content = ''
+                    async for line in lines.split('\n'):
+                        line:str = line.decode('utf-8')
+                        line = line.strip('\n').replace('data: ', '',1).strip()
+                        if len(line) == 0 or line == '[DONE]': continue
+                        chunk_obj = json.loads(line)
+                        choices: list[dict] = chunk_obj['choices']
+                        # If this triggers then that means that Openai is done with resp and we can break
+                        if choices[0]['finish_reason'] is not None: break
+                        combined_content += choices[0]['delta']['content']
+                    yield combined_content
     
 
 class Chat(Prompts):
@@ -182,12 +193,13 @@ class Chat(Prompts):
         if commit: await session.commit()
         return newOpenaiThread
 
-    async def ask_assistant_file_search(self, local_openai_thread: LocalOpenaiThreads) -> str:
+    async def ask_assistant_file_search(self, local_openai_thread: LocalOpenaiThreads) -> AsyncGenerator:
         # gets the assistant to process the files inside of the 
         # vector store that is attached to the thread
         additional_messages = self.ask_assistant_file_search_messages()
         assistant = await self.get_assistant(self.default_assistant_id)
-        return await self.ask.threads_no_stream(additional_messages=additional_messages, assistant_id=assistant['id'], openai_thread_id=local_openai_thread.openai_thread_id)
+        return self.ask.threads_stream(additional_messages=additional_messages, assistant_id=assistant['id'], openai_thread_id=local_openai_thread.openai_thread_id)
+    
     
     # Works and is optimized (is semi async performant)
     async def del_openai_db(self, openai_db_id: str) -> None:

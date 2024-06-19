@@ -1,11 +1,11 @@
 import json
 import uuid
 import asyncio
-from asyncio import Task
 from fastapi import UploadFile
+from typing import AsyncGenerator, Callable
 from sqlalchemy.ext.asyncio import AsyncSession
 from myproject.ai import chat
-from .get_processed_info import InformationBundle, Question
+from .get_processed_info import InformationBundle
 from ..models import Messages, Texts, Links, Files, MessageQuestions, LocalOpenaiThreads, LocalOpenaiDb, ProcessedMessageInfo
 from ..binary_files import ImageResizer
 
@@ -13,31 +13,13 @@ from ..binary_files import ImageResizer
 def wrapper():
     class UserInput:
         def __init__(self, message: Messages, links: list[Links], texts: list[Texts], 
-        files: list[Files], message_questions: list[MessageQuestions], type_id: int, 
+        files: list[Files], message_questions: list[MessageQuestions], 
         openai_db: LocalOpenaiDb, openai_thread: LocalOpenaiThreads) -> None:
-            self.type_id = type_id
             self.message = message
             self.openai_db = openai_db
             self.openai_thread = openai_thread
-            if type_id == 2: # is information bundle
-                self.information_bundle = InformationBundle(texts=texts, links=links, files=files, openai_db=openai_db, openai_thread=openai_thread)
-            else: # is question
-                self.message_questions = message_questions
-                self.questions = [Question(question) for question in self.message_questions]
-        
-        async def processed_info(self, session: AsyncSession):
-            """Returns the processed information as a string."""
-            if self.type_id == 1: # is question
-                tasks: list[Task] = []
-                # Get all the question information asynchronously
-                async with asyncio.TaskGroup() as tg:
-                    for question in self.questions:
-                        tasks.append(tg.create_task(question.process_info()))
-                # Return the information as a string
-                return ''.join([task.result() for task in tasks])
-            # is information bundle
-            information_bundle_processed_info: str = await self.information_bundle.process_info(session=session)
-            return information_bundle_processed_info
+            self.information_bundle = InformationBundle(texts=texts, links=links, files=files, questions=message_questions, 
+                                                        openai_db=openai_db, openai_thread=openai_thread)
         
         async def get_output_combinations(self, processed_info: str) -> dict:
             """Returns the output combinations as a dictionary for a given processed info."""
@@ -46,7 +28,7 @@ def wrapper():
             # Get the output combinations from openai
             response = await chat.ask.no_stream(messages=messages)
             # Return the output combinations as a dictionary
-            return json.loads(response)
+            return response
 
         async def store_processed_info(self, session: AsyncSession, processed_info: str) -> None:
             """Stores the processed info in the database."""
@@ -54,17 +36,37 @@ def wrapper():
             session.add(processed_message_info)
             await session.commit()
 
-        async def process_get_output_combinations(self, session: AsyncSession) -> dict:
-            """Returns the output combinations for the user input."""
-            # Get the processed information
-            processed_info: str = await self.processed_info(session=session)
-            # Store the processed information in the database and
-            # get the output combinations
-            async with asyncio.TaskGroup() as tg:
-                output_combinations_task = tg.create_task(self.get_output_combinations(processed_info=processed_info))
-                tg.create_task(self.store_processed_info(session=session, processed_info=processed_info))
-            return output_combinations_task.result()
-              
+        async def processed_info_output_combos(self, session: AsyncSession, close_session: Callable):
+            """Streams the processed information."""
+            # Yield the processed info
+            processed_info_dict: dict = {item.id: '' for item in self.information_bundle.items}
+            done = {item.id: False for item in self.information_bundle.items}
+            processed_infos: dict[str, AsyncGenerator ] = {item.id: item.processed_info() for item in self.information_bundle.items}
+            items_iterator = self.information_bundle.items.__iter__()
+            while True:
+                try:
+                    item = items_iterator.__next__()
+                except StopIteration:
+                    items_iterator = self.information_bundle.items.__iter__()
+                if all(done.values()): break
+                if done[item.id or not item.ready]: continue
+                # We know that item is ready and hasnt been fully processed
+                try:
+                    item_value = await anext(processed_infos[item.id])
+                    processed_info_dict[item.id] += item_value
+                    response = json.dumps(({'type': 'processed_info', 'id': item.id, 'info': item_value}))
+                    yield f'data: {response}\n\n'
+                except StopAsyncIteration:
+                    done[item.id] = True
+            processed_info = '\n'.join([processed_info_dict[item.id] for item in self.information_bundle.items])
+            await self.store_processed_info(session=session, processed_info=processed_info)   
+            # Yiel the output combinations (should not be streamed)
+            response = await self.get_output_combinations(processed_info=processed_info)
+            yield f'data: {response}\n\n' 
+            # Close the session
+            close_session()
+
+
     async def save_file(file: UploadFile) -> str:
         """Saves the file to the server and returns the file path.
         file_path: The path to save the file to."""
@@ -90,38 +92,27 @@ def wrapper():
         # A question is a string that starts with "/explain "
         questions_strs = [text for text in texts_strs if text.startswith("/explain ")]
         texts_strs = [text for text in texts_strs if not text.startswith("/explain ")]
-        # Check if the user input is a question or information bundle
-        type_id = 2 # Sets message type to information bundle
-        if len(questions_strs) > 0: type_id = 1 # Sets message type to question
         # Create the message and add it to the database
-        message = Messages(thread_id=openai_thread.thread_id, type_id=type_id)
+        message = Messages(thread_id=openai_thread.thread_id)
         session.add(message)
         await session.commit()
-        if type_id == 1:
-            # Message type is question
-            # Create the message questions and add them to the database
-            message_questions = [MessageQuestions(question=question, message_id=message.id) for question in questions_strs]
-            session.add_all(message_questions)
-            # Create the user input object
-            user_input = UserInput(message_questions=message_questions, message=message, links=[], texts=[], 
-                        files=[], type_id=type_id, openai_db=openai_db, openai_thread=openai_thread)
-        else:
-            # Message type is information bundle
-            # Create the texts, links, and files and add them to the database
-            texts = [Texts(text=text, message_id=message.id) for text in texts_strs]
-            links = [Links(link=link, message_id=message.id) for link in links_strs]
-            files = []
-            file_tasks = []
-            async with asyncio.TaskGroup() as tg:
-                for file_store_obj in file_storage_objs:
-                    file_tasks.append(tg.create_task(save_file(file_store_obj)))
-            for new_file_path in [task.result() for task in file_tasks]:
-                files.append(Files(path=new_file_path, message_id=message.id))
-            session.add_all(texts)
-            session.add_all(links)
-            session.add_all(files)
-            # Create the user input object
-            user_input = UserInput(links=links, message=message, texts=texts, files=files, message_questions=[], type_id=type_id, openai_thread=openai_thread, openai_db=openai_db)
+        # Create the texts, links, questions, and files and add them to the database
+        texts = [Texts(text=text, message_id=message.id) for text in texts_strs]
+        links = [Links(link=link, message_id=message.id) for link in links_strs]
+        questions = [MessageQuestions(question=question, message_id=message.id) for question in questions_strs]
+        files = []
+        file_tasks = []
+        async with asyncio.TaskGroup() as tg:
+            for file_store_obj in file_storage_objs:
+                file_tasks.append(tg.create_task(save_file(file_store_obj)))
+        for new_file_path in [task.result() for task in file_tasks]:
+            files.append(Files(path=new_file_path, message_id=message.id))
+        session.add_all(texts)
+        session.add_all(links)
+        session.add_all(questions)
+        session.add_all(files)
+        # Create the user input object
+        user_input = UserInput(links=links, message=message, texts=texts, files=files, message_questions=questions, openai_thread=openai_thread, openai_db=openai_db)
         # Commit the changes to the database
         await session.commit()
         return user_input

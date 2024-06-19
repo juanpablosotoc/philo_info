@@ -78,27 +78,15 @@ class LocalOpenaiThreads(Base):
         self.openai_thread_id = openai_thread_id
 
 
-class MessageTypes(Base):
-    __tablename__ = 'MessageTypes'
-    id = Column(TINYINT, primary_key=True, autoincrement=True)
-    type = Column(String(50), unique=True, nullable=False)
-
-    def __init__(self, type: str) -> None:
-        super().__init__()
-        self.type = type
-
-
 class Messages(Base):
     __tablename__ = 'Messages'
     thread_id = Column(Integer, ForeignKey(Threads.id), nullable=False)
     id = Column(Integer, primary_key=True, autoincrement=True)
     datetime = Column(DateTime, nullable=False, default=func.current_timestamp())
-    type_id = Column(TINYINT, ForeignKey(MessageTypes.id), nullable=False)
 
-    def __init__(self, thread_id: int, type_id: int) -> None:
+    def __init__(self, thread_id: int) -> None:
         super().__init__()
         self.thread_id = thread_id
-        self.type_id = type_id
 
 
 class ProcessedMessageInfo(Base):
@@ -221,7 +209,6 @@ LocalOpenaiDb.thread = relationship(Threads, backref='openai_db')
 Files.local_openai_db = relationship(LocalOpenaiDbFiles, backref='files')
 Users.threads = relationship(Threads, backref='user', cascade='all, delete')
 Threads.local_openai_thread = relationship(LocalOpenaiThreads, backref='thread')
-MessageTypes.messages = relationship(Messages, backref='type')
 Threads.messages = relationship(Messages, backref='thread', cascade='all, delete')
 Topics.questions = relationship(TopicQuestions, backref='topic', cascade='all, delete')
 Messages.processed_message_info = relationship(ProcessedMessageInfo, backref='message', cascade='all, delete')
