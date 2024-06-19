@@ -1,1 +1,1 @@
-from .views import threads_blueprint, get_users_threads
+from .views import threads_route, get_users_threads

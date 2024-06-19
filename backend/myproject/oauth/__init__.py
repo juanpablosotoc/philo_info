@@ -1,1 +1,1 @@
-from .views import oauth_blueprint
+from .views import oauth_route

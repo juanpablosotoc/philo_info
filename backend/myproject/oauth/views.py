@@ -1,27 +1,24 @@
 import aiohttp
-from flask import Blueprint, request, jsonify
 from sqlalchemy.future import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from myproject import cross_origin_db, create_access_token
+from myproject import create_access_token, db_dependancy
 from ..models import Users
+from fastapi import APIRouter
+from .schema import Provider
 
 GOOGLE_INFO_API = 'https://www.googleapis.com/oauth2/v1/userinfo'
 MICROSOFT_INFO_API = 'https://graph.microsoft.com/v1.0/me'
 
-oauth_blueprint = Blueprint('oauth', __name__)
+oauth_route = APIRouter(prefix='/oauth', tags=['oauth'])
 
 
-@oauth_blueprint.route('/login_create_account', methods=['POST', 'OPTIONS'])
-@cross_origin_db(asynchronous=True, jwt_required=False)
-async def login_create_account(session: AsyncSession):
+@oauth_route.post('/login_create_account')
+async def login_create_account(access_token: str, provider: Provider, db: db_dependancy):
     """This endpoint is used to login or create an account using oauth
     The json body should contain the access_token and provider.
     The provider can be 'google', 'apple', or 'microsoft'.
     Returns a JWT token if successful."""
-    access_token = request.json['access_token']
-    provider = request.json['provider']
-    if provider not in ['google', 'apple', 'microsoft']:
-        return jsonify({'error': 'Invalid provider'}), 400
+    session = db[0]
+    close_session = db[1]
     headers = {
             'Authorization': f'Bearer {access_token}'
     }
@@ -46,4 +43,7 @@ async def login_create_account(session: AsyncSession):
                 user = Users(email=email)
                 session.add(user)
                 await session.commit()
-            return jsonify({'token': create_access_token(email_or_alt_tk='email', identity=email)})
+    # Close the session
+    close_session()
+    return {'token': create_access_token(email_or_alt_tk='email', identity=email)}
+        

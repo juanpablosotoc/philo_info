@@ -1,1 +1,1 @@
-from .views import users_blueprint
+from .views import users_route

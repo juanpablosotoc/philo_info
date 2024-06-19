@@ -1,1 +1,1 @@
-from .views import mixed_blueprint
+from .views import mixed_route

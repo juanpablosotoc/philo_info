@@ -1,15 +1,16 @@
 import json
 import random
-from flask import Blueprint, jsonify, request
+from fastapi import APIRouter
 from sqlalchemy import func
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from myproject import session_maker, cross_origin_db, engine
-from ..models import Topics, TopicQuestions, Users
+from myproject import db_dependancy
+from .schema import NQuestionsTopics
+from ..models import Topics, TopicQuestions
 from ..ai import chat
 
 
-topics_blueprint = Blueprint('topics', __name__)
+topics_route = APIRouter(prefix='/topics', tags=['topics'])
 
 
 async def get_random_topic_and_questions(session: AsyncSession):
@@ -46,47 +47,46 @@ async def get_random_topic_and_questions(session: AsyncSession):
     return {'topics_questions': questions_topics}
 
 
-
-@topics_blueprint.route('/', methods=['GET', 'OPTIONS'])
-@cross_origin_db(asynchronous=True, jwt_required=True)
-async def index(session: AsyncSession, _: Users):
+@topics_route.get('/')
+async def index(db: db_dependancy):
     """GET:
     - get a random topic and questions associated with the topic.
     POST:
     - get questions for a topic.
     - Provide the topic in the json body as 'topic'.
     - Can provide the number of questions to get in the json body as 'n_questions'."""
-    return jsonify(await get_random_topic_and_questions(session))
-
+    session = db[0]
+    close_session = db[1]
+    resp = await get_random_topic_and_questions(session)
+    close_session()
+    return resp
 
 
 # This is a temporary endpoint that will be used to create topics and questions for the topics.
 # Make sure to remove this endpoint after it is no longer needed.
-@topics_blueprint.route('/create_questions_topics', methods=['POST'])
-async def create_questions_topics():
+@topics_route.post('/create_questions_topics')
+async def create_questions_topics(n_questions_topics: NQuestionsTopics, db: db_dependancy):
     """Expects a json body with the number of 
     topics as 'n_topics' and questions as 'n_questions' to create."""
-    async with session_maker() as session:
-        if ('n_topics' not in request.json.keys()) or ('n_questions' not in request.json.keys()):
-            return jsonify({'error': 'no n_topics or n_questions provided'}), 400
-        n_topics = request.json['n_topics']
-        n_questions = request.json['n_questions']
-        # Getting all of the already existing topics
-        statement = select(Topics.topic)
-        query = await session.execute(statement)
-        dont_include_topics: list[str] = [*query.scalars().all()]
-        # Getting the topics 
-        resp: str = await chat.ask.no_stream(chat.get_questions_topics_messages(n_topics, n_questions, dont_include_topics))
-        topics: list = json.loads(resp)['topics']
-        topics_objs = [Topics(topic=topic['topic']) for topic in topics]
-        # Adding the topics to the database
-        session.add_all(topics_objs)
-        await session.commit()
-        # Getting the questions associated with the topics and adding them to the database
-        for i in range(len(topics)):
-            questions_objs = [TopicQuestions(topic_id=topics_objs[i].id, question=question) for question in topics[i]['questions']]
-            session.add_all(questions_objs)
-        await session.commit()
-    await engine.dispose()
+    session = db[0]
+    close_session = db[1]
+    # Getting all of the already existing topics
+    statement = select(Topics.topic)
+    query = await session.execute(statement)
+    dont_include_topics: list[str] = [*query.scalars().all()]
+    # Getting the topics 
+    resp: str = await chat.ask.no_stream(chat.get_questions_topics_messages(n_questions_topics.n_topics, n_questions_topics.n_questions, dont_include_topics))
+    topics: list = json.loads(resp)['topics']
+    topics_objs = [Topics(topic=topic['topic']) for topic in topics]
+    # Adding the topics to the database
+    session.add_all(topics_objs)
+    await session.commit()
+    # Getting the questions associated with the topics and adding them to the database
+    for i in range(len(topics)):
+        questions_objs = [TopicQuestions(topic_id=topics_objs[i].id, question=question) for question in topics[i]['questions']]
+        session.add_all(questions_objs)
+    await session.commit()
+    # Close the session
+    close_session()
     # Returning the topics and questions
-    return jsonify(json.loads(resp))
+    return resp

@@ -1,13 +1,18 @@
-from myproject import app, Base
-from flask_bcrypt import Bcrypt
+import bcrypt 
+from .config import Config
 from itsdangerous import Serializer
-from sqlalchemy.dialects.mysql import TINYINT, TEXT, SMALLINT
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.dialects.mysql import TINYINT, TEXT, SMALLINT
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-bcrypt = Bcrypt()
-serializer = Serializer(app.secret_key)
+serializer = Serializer(Config.SECRET_KEY)
 
+# The engine and session maker are used to asynchronously connect to the database
+engine = create_async_engine(Config.SQLALCHEMY_DATABASE_URI)
+session_maker = async_sessionmaker(bind=engine, expire_on_commit=False)
+
+Base = declarative_base()
 
 class Users(Base):
     __tablename__ = 'Users'
@@ -21,11 +26,22 @@ class Users(Base):
         self.email = email
         if password: self.set_password(password)
 
-    def check_password(self, password) -> bool:
-        return bcrypt.check_password_hash(self.hashed_password, password)
+    def check_password(self, password: str) -> bool:
+        # encoding user password 
+        userBytes = password.encode('utf-8') 
+        
+        # checking password 
+        return bcrypt.checkpw(userBytes, self.hashed_password.encode('utf-8')) 
     
-    def set_password(self, password) -> None:
-        self.hashed_password = bcrypt.generate_password_hash(password)
+    def set_password(self, password: str) -> None:
+        # converting password to array of bytes 
+        bytes = password.encode('utf-8') 
+        
+        # generating the salt 
+        salt = bcrypt.gensalt() 
+        
+        # Hashing the password 
+        self.hashed_password = bcrypt.hashpw(bytes, salt)
         self.alternative_token = serializer.dumps([self.hashed_password.decode(), str(self.id)])
 
 

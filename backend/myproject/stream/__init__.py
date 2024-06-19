@@ -1,1 +1,1 @@
-from .views import stream_blueprint
+from .views import stream_route

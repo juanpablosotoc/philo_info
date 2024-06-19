@@ -2,7 +2,7 @@ import json
 import uuid
 import asyncio
 from asyncio import Task
-from werkzeug.datastructures import FileStorage
+from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from myproject.ai import chat
 from .get_processed_info import InformationBundle, Question
@@ -65,13 +65,26 @@ def wrapper():
                 tg.create_task(self.store_processed_info(session=session, processed_info=processed_info))
             return output_combinations_task.result()
               
-
-    async def user_input_factory(links_strs: list[str], texts_strs: list[str], file_storage_objs: list[FileStorage], 
+    async def save_file(file: UploadFile) -> str:
+        """Saves the file to the server and returns the file path.
+        file_path: The path to save the file to."""
+        file_extention = file.filename.split('.')[-1]
+        file_path = f"./uploads/{str(uuid.uuid4())}.{file_extention}"
+        with open(file_path, "wb+") as file_object:
+            content = await file.read()  # async read
+            await file_object.write(content)
+        if file_extention in InformationBundle.image_file_types:
+            # Will resize the image to maximum supported size by OpenAI 
+            # and change its extention if extention is not supported by OpenAI
+            file_path = ImageResizer.resize_image(file_path)
+        return file_path
+    
+    async def user_input_factory(links_strs: list[str], texts_strs: list[str], file_storage_objs: list[UploadFile], 
         session: AsyncSession, openai_thread: LocalOpenaiThreads, openai_db: LocalOpenaiDb):
         """This function is a factory function that creates a UserInput object from the
         user input. The user input can be in the form of 'links', 'texts', and files.
         The links and texts should be in the form of a list of strings.
-        The file_storage_objs should be in the form of a list of FileStorage objects.
+        The file_storage_objs should be in the form of a list of UploadFile objects.
         The function will return a UserInput object."""
         # Get the questions and texts from the user input. 
         # A question is a string that starts with "/explain "
@@ -98,15 +111,12 @@ def wrapper():
             texts = [Texts(text=text, message_id=message.id) for text in texts_strs]
             links = [Links(link=link, message_id=message.id) for link in links_strs]
             files = []
-            for file_store_obj in file_storage_objs:
-                file_extention = file_store_obj.filename.split('.')[-1]
-                file_path = f"./uploads/{str(uuid.uuid4())}.{file_extention}"
-                file_store_obj.save(file_path)
-                if file_extention in InformationBundle.image_file_types:
-                    # Will resize the image to maximum supported size by OpenAI 
-                    # and change its extention if extention is not supported by OpenAI
-                    file_path = ImageResizer.resize_image(file_path)
-                files.append(Files(path=file_path, message_id=message.id))
+            file_tasks = []
+            async with asyncio.TaskGroup() as tg:
+                for file_store_obj in file_storage_objs:
+                    file_tasks.append(tg.create_task(save_file(file_store_obj)))
+            for new_file_path in [task.result() for task in file_tasks]:
+                files.append(Files(path=new_file_path, message_id=message.id))
             session.add_all(texts)
             session.add_all(links)
             session.add_all(files)
