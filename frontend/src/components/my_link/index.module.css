@@ -7,7 +7,7 @@
 }
 
 .link {
-    transition: all 0.3s 0.05s;
+    transition: cubic-bezier(0.23, 1, 0.32, 1) 600ms all;
     overflow: hidden;
     color: var(--main_primary);
 }
@@ -21,10 +21,11 @@
     transform: translateY(100%);
 }
 
+
 .wrapper:hover .first {
     transform: translateY(-100%);
 }
 
 .wrapper:hover .last {
-    transform: translateY(0)
+    transform: translateY(0);
 }

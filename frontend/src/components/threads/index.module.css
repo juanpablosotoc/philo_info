@@ -2,7 +2,7 @@
 .wrapper {
     display: flex;
     height: 100%;
-    width: 20vw;
+    width: 30vw;
     justify-content: space-between;
     transform: translateX(-100%);
     align-items: center;
@@ -20,9 +20,9 @@
 
 
 .threadsWrapper {
-    backdrop-filter: blur(10px);
     height: 100%;
-    width: 100%;
+    width: 80%;
+    padding-left: 64px;
 }
 
 .iconsWrapper {
@@ -95,12 +95,4 @@
 .iconWrapper:hover {
     cursor: pointer;
     background-color: var(--tints_black_100);
-}
-
-.icon {
-    transition: all 0.2s;
-}
-
-.iconWrapper:hover .icon {
-    transform: scale(1.1);
 }

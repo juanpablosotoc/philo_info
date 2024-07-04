@@ -1,10 +1,11 @@
 .wrapper {
     margin-top: 80px;
+    overflow: visible;
 }
 
 .line {
     border: none;
-    height: 1px;
     background-color: var(--shades_black_200);
     width: 100%;
 }
+

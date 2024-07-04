@@ -11,7 +11,9 @@ type Props = PropsWithChildren<{
 
 function SubmitBtn(props: Props) {
     return (
-        <input type="submit" value={props.label ? props.label : 'Submit'} className={`${styles.submit_btn} ${props.className ? props.className : ''} ${props.theme === 'dark' ? styles.dark : styles.light}`} onClick={props.onClick ? props.onClick : ()=>{}}/>
+        <button type='button' className={`${styles.submit_btn} ${props.className ? props.className : ''} ${props.theme === 'dark' ? styles.dark : styles.light}`} onClick={props.onClick ? props.onClick : ()=>{}}>
+            {props.label ? props.label : 'Submit'}
+        </button>
     );
 }
 

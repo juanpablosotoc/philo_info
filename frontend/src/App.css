@@ -8,12 +8,15 @@
     --shades_white_100: #CCCACB;
     --shades_white_200: #999697;
     --shades_black_100: #1A1A1D;
+    --shades_black_150: #101012;
     --shades_black_200: #000000;
     --shades_primary_200: #BF0449;
+    --shades_primary_100: #D9004D;
 
-    --mixed_primary_black: #275651;
+    --mixed_primary_black: #226A63;
     --mixed_primary_white: #FD4A89;
-
+    
+    --tints_black_50: #252629;
     --tints_black_100: #2F2F2F;
     --tints_black_200: #404040;
     /* Font variables */

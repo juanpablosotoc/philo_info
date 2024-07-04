@@ -6,6 +6,7 @@ type Props = PropsWithChildren<{
     label?: string;
     type: 'email' | 'text';
     color: "white" | "black";
+    hidden?: boolean;
     name: string;
     handleFocusOut?: () => void;
     setTopicHasChanged?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,7 +25,7 @@ function ShortTextInput(props: Props) {
     };
     const colorClasses = {'white': styles.white, 'black': styles.black};
     return (
-        <div className={`${styles.card} ${colorClasses[props.color]} ${props.className ? props.className : ''} ${initialValue ? styles.active: ''}`} ref={div}>
+        <div className={`${styles.card} ${props.hidden ? styles.hidden : ''} ${colorClasses[props.color]} ${props.className ? props.className : ''} ${initialValue ? styles.active: ''}`} ref={div}>
             <label htmlFor={props.name} className={styles.label}>{props.label ? props.label : 'Email address'}</label>
             <input type={props.type} className={styles.input} name={props.name} value={props.value} onChange={handleChange} onBlur={props.handleFocusOut ? props.handleFocusOut : ()=>{}} />
         </div>

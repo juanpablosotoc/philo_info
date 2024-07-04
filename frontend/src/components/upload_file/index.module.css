@@ -1,7 +1,7 @@
 .wrapper {
     display: flex;
     flex-direction: column;
-    backdrop-filter: blur(5px);
+    background-color: var(--shades_black_150);
     gap: 8px;
 }
 
@@ -11,7 +11,7 @@
     border-radius: 5px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
     color: var(--shades_white_100);
     font: var(--font_m_b);
     transition: all 0.2s;

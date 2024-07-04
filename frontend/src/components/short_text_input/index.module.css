@@ -44,10 +44,19 @@
     height: 100%;
 }
 
+input:-webkit-autofill { 
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: var(--main_black);
+}
+
 .white .input {
     color: var(--main_black);
 }
 
 .black .input {
     color: var(--main_white);
+}
+
+.hidden {
+    display: none;
 }

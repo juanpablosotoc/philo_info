@@ -1,7 +1,7 @@
 .cardWrapper {
     border-radius: 5px;
     display: flex;
-    background-color: var(--main_black);
+    background-color: var(--tints_black_50);
     justify-content: space-between;
     align-items: center;
     font: var(--font_m);
@@ -11,7 +11,7 @@
 }
 
 .cardWrapper:hover {
-    background-color: var(--tints_black_100);
+    background-color: var(--main_black);
     color: var(--main_white);
     cursor: pointer;
 }

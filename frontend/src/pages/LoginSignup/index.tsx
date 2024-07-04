@@ -8,7 +8,7 @@ import black_anaglyphic_logo from '../../SVG/logo/black_v3.svg';
 import styles from './index.module.css';
 import { Form, redirect, useSearchParams, useRouteError} from "react-router-dom";
 import {getOAuth, getToken, post, saveToken} from "../../utils/http";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ErrorType } from "../../utils/types";
 import { Helmet } from 'react-helmet';
 import MyLink from "../../components/my_link";
@@ -19,6 +19,8 @@ type props = {
 }
 
 function LoginSignup (props: props) {
+    const [phase, setPhase] = useState<'email' | 'password'>('email');
+    const submitBtn = useRef<HTMLInputElement>(null);
     let error_message;
     let welcome_message;
     let invitation_message;
@@ -44,8 +46,17 @@ function LoginSignup (props: props) {
     useEffect(() => {
         setSearchParams({}); // Clear the error message
         document.body.style.backgroundColor = "var(--main_white)";
+        // Select the element with id root and set its background color
+        document.getElementById("root")!.style.backgroundColor = "var(--main_white)";
     }, []);
     const title = props.type[0].toUpperCase() + props.type.slice(1) + ' | Factic';
+    function handleSubmitBtnClick() {
+        if (phase === 'email') {
+            setPhase('password');
+        } else {
+            submitBtn.current!.click();
+        }
+    };
     return (
         <>
         <Helmet>
@@ -56,9 +67,10 @@ function LoginSignup (props: props) {
             <div className={styles.formWrapper}>
                 {welcome_message}
                 <Form method="post">
-                    <ShortTextInput type={'email'}  color="white" value={email} setValue={setEmail} name="email"/>
-                    <PasswordInput name="password"/>
-                    <SubmitBtn label="Continue" theme="light" />
+                    <ShortTextInput type={'email'} hidden={phase === 'email' ? false : true} color="white" value={email} setValue={setEmail} name="email"/>
+                    <PasswordInput name="password" hidden={phase === "password" ? false: true}/>
+                    <SubmitBtn label="Continue" theme="light" onClick={handleSubmitBtnClick}/>
+                    <input type="submit" hidden ref={submitBtn}></input>
                 </Form>
                 {invitation_message}
                 <OrLine className={styles.orLine}/>

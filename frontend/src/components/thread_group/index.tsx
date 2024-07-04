@@ -1,9 +1,9 @@
-import { Thread } from '../../utils/types';
+import { ThreadCls } from '../../utils/types';
 import SmallCardGroup from '../small_card_group';
 
 type Props = {
     className?: string;
-    threads: Thread[];
+    threads: ThreadCls[];
     date?:string;
 }
 

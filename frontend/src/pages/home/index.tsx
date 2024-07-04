@@ -1,24 +1,28 @@
-import { useLoaderData, redirect, useLocation } from "react-router-dom";
+import { redirect } from "react-router-dom";
 import UploadFile from "../../components/upload_file";
 import LongTextInput from "../../components/long_text_input";
 import SubmitBtn from "../../components/submit_btn";
 import styles from './index.module.css';
-import { clearOAuth, fetch_, getOAuth, getToken, post, saveToken } from "../../utils/http";
-import { InformationBundleCls, LongTextInputType, MessageCls, DefaultQuestionsCls, Thread, Topic } from "../../utils/types";
+import { clearOAuth, fetch_, getOAuth, getToken, saveToken, post_stream } from "../../utils/http";
+import { InformationBundleCls, MessageCls, DefaultQuestionsCls, 
+    ThreadCls, StreamMessageResponse, StreamMessageResponseMetadata,
+    StreamMessageResponseChoices, StreamMessageResponseProcessedInfo } from "../../utils/types";
 import Modal from "../../components/modal";
 import { useEffect, useRef, useState } from "react";
 import Threads from "../../components/threads";
 import Messages from "../../components/messages";
 import { Helmet } from "react-helmet";
 import TopFrame from "../../components/top_frame";
-import { isLink } from "../../utils/functions";
+import { getFormData } from "../../utils/functions";
 
 
 function Home () {
     const longTextInput = useRef<HTMLDivElement>(null);
+    const threadsElement = useRef<HTMLDivElement>(null);
+    const blurryModal = useRef<HTMLDivElement>(null);
     // If the jwt is ready, we can fetch the topic
     const [jwt_is_ready, setJwtIsReady] = useState(false);
-    const [threads, setThreads] = useState<Thread[]>([]);
+    const [threads, setThreads] = useState<ThreadCls[]>([]);
     const [longTextInputValue, setLongTextInputValue] = useState<string>('');
     const [files, setFiles] = useState<Array<File>>([]);
     const [messages, setMessages] = useState<Array<MessageCls>>([]);
@@ -26,7 +30,11 @@ function Home () {
     useEffect(() => {
         if(jwt_is_ready) {
             fetch_("mixed/topics_threads", true, "GET", "application/json", "alt_token" , (jsonResp) => {
-                setThreads(jsonResp.threads);
+                console.log(jsonResp);
+                setThreads(jsonResp.threads.map((thread: any) => {
+                    return new ThreadCls(thread.id, thread.name, new Date(thread.date));
+                }
+                ));
                 const questions = jsonResp.topics_questions.map((topic_question : any) => {
                     return new DefaultQuestionsCls('/explain ' + topic_question.question, topic_question.topic)}
                 );
@@ -35,21 +43,31 @@ function Home () {
         }
      }, [jwt_is_ready]);
     useEffect(()=>{
-        document.body.style.backgroundColor = "var(--shades_black_100)";
+        // set the document background colo to black
+        document.documentElement.style.backgroundColor = "var(--shades_black_150)";
+        document.body.style.backgroundColor = "var(--shades_black_150)";
+        document.getElementById("root")!.style.backgroundColor = "var(--shades_black_150)";
         const token = getToken();
         if(token) setJwtIsReady(true);
         else {
+            const body = JSON.stringify({access_token: getOAuth().identity, provider: getOAuth().provider});
             fetch_("oauth/login_create_account", false, "POST", "application/json", "access_token", (jsonResp) => {
                 saveToken(jsonResp.token);
                 setJwtIsReady(true);
             }, undefined, ()=>{
                 clearOAuth();
-            }, JSON.stringify({access_token: getOAuth().identity, provider: getOAuth().provider}));
+            }, body);
         }
-
+        console.log(blurryModal.current)
+        threadsElement.current!.onmouseenter = () => {
+            blurryModal.current!.classList.add(styles.active);
+        }
+        threadsElement.current!.onmouseleave = () => {
+            blurryModal.current!.classList.remove(styles.active);
+        }
     }, []);
 
-    function handleSubmit() {
+    async function handleSubmit() {
         let texts: Array<string> = [];
         const links: Array<string> = [];
         for (let node of longTextInput.current!.childNodes) {
@@ -76,6 +94,47 @@ function Home () {
         });
         setLongTextInputValue('');
         setFiles([]);
+        // Make a post request to the server
+        const body_obj = {links, texts, questions}
+        const body = getFormData(body_obj);
+        const resp = post_stream("threads/message", true, body)
+        for await (let list of resp) {
+            for (let item of (list as Array<StreamMessageResponse>)) {
+                if (item.type === 'metadata') {
+                    setMessages((prevMessages) => {
+                        return prevMessages.map((prevMessage) => {
+                            if (!prevMessage.id) {
+                                prevMessage.id = item.message_id;
+                                prevMessage.threadId = (item as StreamMessageResponseMetadata).thread_id;
+                            }
+                            return prevMessage;
+                        });
+                    });
+                    const thread = new ThreadCls(item.thread_id, item.thread_name, new Date());
+                    setThreads((prevThreads) => {
+                        return [...prevThreads, thread];
+                    });
+                } else if (item.type === 'choices') {
+                    setMessages((prevMessages) => {
+                        return prevMessages.map((prevMessage) => {
+                            if (prevMessage.id === item.message_id) {
+                                prevMessage.possible_outputs = (item as StreamMessageResponseChoices).possible_outputs;
+                            }
+                            return prevMessage;
+                    })});
+                } else {
+                    // Type is processed_info
+                    setMessages((prevMessages) => {
+                        return prevMessages.map((prevMessage) => {
+                            if (prevMessage.id === item.message_id) {
+                                prevMessage.processedInfos.push({id: (item as StreamMessageResponseProcessedInfo).id, info: (item as StreamMessageResponseProcessedInfo).info});
+                            }
+                            return prevMessage;
+                        });
+                    })
+                }
+            }
+        }
     };
     return (
         <div className={styles.wrapper}>
@@ -92,7 +151,8 @@ function Home () {
                     <LongTextInput myRef={longTextInput} label="Enter information" className={styles.longTextInput} value={longTextInputValue} setValue={setLongTextInputValue}/>
                     <SubmitBtn className={styles.submit_btn} theme='dark' onClick={handleSubmit}/>
                 </div>
-                <Threads threads={threads} className={styles.threads}/>
+                <div className={styles.blurryModal} ref={blurryModal}></div>
+                <Threads threads={threads} myRef={threadsElement} className={styles.threads}/>
             </div>
         </div>
     )

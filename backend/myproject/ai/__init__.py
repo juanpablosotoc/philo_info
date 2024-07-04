@@ -5,8 +5,8 @@ from typing import AsyncGenerator
 from openai import OpenAI
 from .prompts import Prompts
 from ..models import LocalOpenaiThreads, Files, LocalOpenaiThreads, LocalOpenaiDb
+from ..stream import parse_stream
 from sqlalchemy.ext.asyncio import AsyncSession
-import requests
 import json
 
 
@@ -46,21 +46,22 @@ class Ask:
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(self.chat_completions_api, json=body, headers=self.v2_headers) as response:
-                async for lines in response.content.iter_any():
-                    lines:str = lines.decode('utf-8')
-                    lines = lines.split('\n')
+                prev_unended_string = ''
+                # Store the usage for data analysis ????
+                final_usage = ''
+                async for stream_bytes in response.content.iter_any():
+                    stream_str: str = stream_bytes.decode('utf-8')
+                    parsed_streams = parse_stream(prev_unended_string + stream_str)
                     combined_content = ''
-                    final_usage = ''
-                    for line in lines:
-                        line = line.strip('\n').replace('data: ', '',1).strip()
-                        if len(line) == 0 or line == '[DONE]': continue
-                        chunk_obj = json.loads(line)
-                        choices: list[dict] = chunk_obj['choices']
-                        usage = chunk_obj['usage']
-                        if usage: final_usage = usage
-                        if choices[0]['finish_reason'] is not None: break
-                        combined_content += choices[0]['delta']['content']
-                    # Store the usage for data analysis ????
+                    for stream in parsed_streams:
+                        if stream['complete']:
+                            prev_unended_string = ''
+                            choices: list[dict] = stream['data']['choices']
+                            usage = stream['data']['usage']
+                            if usage: final_usage = usage
+                            combined_content += choices[0]['delta']['content']
+                        else:
+                            prev_unended_string += stream['data']
                     yield combined_content
     
     async def __get_run_status(self, run_id: str, thread_id: str) -> str:
@@ -113,18 +114,19 @@ class Ask:
 
         async with aiohttp.ClientSession() as session:
             async with session.post(self.get_threads_api(openai_thread_id=openai_thread_id), json=body, headers=self.v2_headers) as response:
-                async for lines in response.content.iter_any():
-                    lines:str = line.decode('utf-8')
+                prev_unended_string = ''
+                async for stream_bytes in response.content.iter_any():
+                    stream_str: str = stream_bytes.decode('utf-8')
+                    parsed_streams = parse_stream(prev_unended_string + stream_str)
                     combined_content = ''
-                    async for line in lines.split('\n'):
-                        line:str = line.decode('utf-8')
-                        line = line.strip('\n').replace('data: ', '',1).strip()
-                        if len(line) == 0 or line == '[DONE]': continue
-                        chunk_obj = json.loads(line)
-                        choices: list[dict] = chunk_obj['choices']
-                        # If this triggers then that means that Openai is done with resp and we can break
-                        if choices[0]['finish_reason'] is not None: break
-                        combined_content += choices[0]['delta']['content']
+                    for stream in parsed_streams:
+                        if stream['complete']:
+                            prev_unended_string = ''
+                            choices: list[dict] = stream['data']['choices']
+                            usage = stream['data']['usage']
+                            combined_content += choices[0]['delta']['content']
+                        else:
+                            prev_unended_string += stream['data']
                     yield combined_content
     
 

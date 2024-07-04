@@ -143,27 +143,29 @@ class Prompts:
             },
         ]
         return messages
-    
-    def get_output_combinations_messages(cls, processed_message_info: str) -> list:
-        """Returns a list of messages that ask the assistant to provide the output combinations for a 
-        given processed message info."""
+    @classmethod
+    def get_possible_output_choices(cls, processed_message_info: str) -> list:
+        """Returns a list of possible output choices for a given processed message info."""
         messages = [
             {
                 'role': 'system',
                 'content': f"""You are a very useful teacher who will respond only using json. 
                 Do not prefix your responses with ```json. 
-                You will help me choose the best way to represent information given the information type. 
-                Use the following guide to help you choose in which way the information can be best represented:
-                {cls.output_guide}"""
+                You will help me choose the best ways to represent information given the information type. 
+                Use the following guide to help you choose in which ways the information can be best represented:
+                {cls.output_guide}
+
+                Respond with the following format:
+                """ + r"""
+                {possible_outputs: ["text", "timeline", "table", "speech", "list"]}
+"""
             },
             {
                 'role': 'user',
                 'content': f"""The text between [[[ ]]] is a summary of a document. 
-                Please tell me in wich way I could best represent the information in the document to make it interesting. 
-                Use the following guide to help you choose in which way the information can be best represented:
+                Please tell me in wich ways I could best represent the information in the document. 
+                Use the following guide to help you choose in which ways the information can be best represented (You can choose multiple ways):
                 {cls.output_guide}
-                
-
                 [[[ {processed_message_info} ]]]"""
             },
         ]

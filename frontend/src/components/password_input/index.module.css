@@ -24,8 +24,6 @@
 .eye {
     align-self: flex-end;
     z-index: 1;
-    padding: 8px;
-    border-radius: 5px;
 }
 
 .eye:hover {
@@ -45,7 +43,16 @@
     position: relative;
 }
 
+input:-webkit-autofill { 
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: var(--main_black);
+}
+
 .input, .input:focus {
     border: none;
     outline: none;
+}
+
+.hidden {
+    display: none;
 }

@@ -1,36 +1,36 @@
 .wrapper {
     position: fixed;
-    z-index: 10;
-    width: 30vw;
+    width: 100%;
     display: flex;
-    top: var(--s_card_height);
+    background-color: var(--shades_black_150);
+    top: 0;
     margin-left: 40vw;
+    z-index: 20;
     pointer-events: all;
     transform: translateX(-50%);
+    backdrop-filter: blur(5px);
+    opacity: 0.8;
+    justify-content: center;
 }
 
 .innerWrapper {
     position: relative;
     height: var(--s_card_height);
-    width: 50%;
-    backdrop-filter: blur(5px);
+    padding: 0px 64px;
+    border-radius: 5px;
 }
 
 .innerWrapper:hover {
     cursor: pointer;
-}
-
-.innerWrapper:hover > .modal , .active .modal {
-    opacity: 0.8;
     background-color: var(--main_black);
 }
+
 
 .innerWrapper:hover > .link , .active .link {
     color: var(--main_white);
 }
 
 .modal {
-    background-color: var(--shades_white_100);
     opacity: 0.5;
     position: absolute;
     top: 0;

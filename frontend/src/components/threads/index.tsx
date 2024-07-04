@@ -1,29 +1,31 @@
 import styles from './index.module.css';
-import { Thread } from '../../utils/types';
+import { ThreadCls } from '../../utils/types';
 import ThreadGroup from '../thread_group';
 import { dateComparison } from '../../utils/functions';
 import Chevron from '../chevron';
+import { useEffect, useRef } from 'react';
 
 type Props = {
-    threads: Thread[];
+    threads: ThreadCls[];
     // isLoading: boolean;
     className?: string;
     // error: boolean;
+    myRef?: React.RefObject<HTMLDivElement>;
 };
 
 interface ThreadGroupsInterface {
-    'Today': Thread[];
-    'This month': Thread[];
-    'Older': Thread[];
+    'Today': ThreadCls[];
+    'This month': ThreadCls[];
+    'Older': ThreadCls[];
 }
 
-function Threads({ threads, className}: Props) {
+function Threads(props: Props) {
     const threadGroups: ThreadGroupsInterface = {
         'Today': [],
         'This month': [],
         'Older': [],
     };
-    for (let thread of threads) {
+    for (let thread of props.threads) {
         threadGroups[dateComparison(thread.date)].push(thread);
     }
     let threadGroupElements = Object.entries(threadGroups).map(([threadGroup, threads]) => (
@@ -34,7 +36,7 @@ function Threads({ threads, className}: Props) {
         threadGroupElements.push(<ThreadGroup date='Today' threads={[]}></ThreadGroup>);
     };
     return (
-        <div className={`${styles.wrapper} ${className}`}>
+        <div className={`${styles.wrapper} ${props.className}`} ref={props.myRef}>
             <div className={styles.threadsWrapper}>
                 <div>
                     <div className={styles.iconsWrapper}>

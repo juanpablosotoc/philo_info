@@ -1,6 +1,8 @@
 .wrapperWrapper {
     width: 25%;
-    transform: translateZ(20px);
+    align-self: stretch;
+    display: flex;
+    align-items: stretch;
 }
 
 .wrapperWrapper:hover {
@@ -8,17 +10,16 @@
 }
 
 .wrapper {
-    height: 100%;
-    width: 100%;
     border-radius: 5px;
     transform-style: preserve-3d;
     position: relative;
-    transform: perspective(700px);
-    transition: all 0.4s;
+    transition: all 0.3s;
+    padding: 24px;
+    background-color: var(--main_black);
 }
 
 .wrapperWrapper:hover .wrapper{
-    transform: perspective(700px) rotateX(-180deg);
+    transform: translateY(-4px);
 }
 
 .text {
@@ -36,36 +37,4 @@
 .label {
     font: var(--font_sm);
     color: var(--shades_white_100);
-}
-
-.front {
-    position: absolute;
-
-    z-index: 30;
-}
-
-.front, .back {
-    transform-style: preserve-3d;
-    padding: 16px;
-    height: calc(100% - 32px);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: calc(100% - 32px);
-}
-
-.upper, .lower {
-    display: flex;
-    align-items: center;
-    transform: translateZ(15px);
-    gap: 8px;
-}
-
-.back {
-    transition: all 0.4s;
-    transform-style: preserve-3d;
-    background-color: var(--shades_black_100);
-    border-radius: 5px;
-    transform: rotateX(-180deg);
-
 }

@@ -17,9 +17,6 @@
     overflow-y: scroll;
 }
 
-.output {
-}
-
 .addIcon {
     align-self: flex-end;
     background-color: var(--main_black);
@@ -61,3 +58,78 @@
     stroke: var(--shades_white_100);
 }
 
+.labelWrapperWrapper {
+    margin-bottom: 8px;
+    padding-left: 16px;
+    position: relative;
+    display: flex;
+    width: fit-content;
+    flex-direction: column;
+}
+
+.labelWrapper {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    text-decoration: none;
+    margin-bottom: 4px;
+}
+
+.underline {
+    width: 0;
+    border: none;
+    height: 2px;
+    background-color: var(--main_white);
+    border-radius: 20px;
+    margin-top: 2px;
+    transition: all 0.2s;
+}
+.labelWrapperWrapper:hover {
+    cursor: pointer;
+}
+.labelWrapperWrapper:hover .underline {
+    width: 100% ;
+}
+
+.labelWrapper span {
+    transition: all 0.3s 0.05s;
+    font: var(--font_m_b);
+    color: var(--main_white);
+}
+.labelWrapper .last {
+    position: absolute;
+    transform: translateY(100%);
+}
+
+
+.labelWrapperWrapper:hover .first {
+    transform: translateY(-100%) ;
+}
+
+.labelWrapperWrapper:hover .last {
+    transform: translateY(0);
+}
+
+.processed_infos {
+    background-color: var(--shades_black_100);
+    border-radius: 5px;
+    max-height: 30vh;
+    padding: 16px;
+    overflow-y: scroll;
+}
+
+.processed_info {
+    color: var(--main_white);
+    font: var(--font_s);
+}
+
+.possible_outputs {
+    background-color: violet;
+}
+
+.output_choice {
+    background-color: aquamarine;
+    color: var(--main_white);
+    /* font: var(--font_m_b); */
+}

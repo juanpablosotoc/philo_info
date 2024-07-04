@@ -1,0 +1,12 @@
+.eye {
+    padding: 8px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+}
+
+.eye svg * {
+    stroke: var(--shades_black_200);
+}

@@ -4,13 +4,14 @@
     border-radius: 5px;
     padding: 64px 128px;
     width: calc(80vw - 256px);
-    background-color: var(--main_black);
+    background-color: var(--shades_black_100);
     position: relative;
+    overflow-y: hidden;
     transition: all 0.3s ease-in;
     z-index: -1;
     transform: translateY(-50%) perspective(500px);
     transform-style: preserve-3d;
-    box-shadow: 3px 3px 40px 15px var(--mixed_primary_black);
+    box-shadow: 3px 3px 40px 25px var(--mixed_primary_black);
     pointer-events: all;
 }
 
@@ -25,7 +26,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: var(--main_black);
+    background-color: var(--shades_black_100);
     z-index: -2;
     transition: opacity 0.3s ease-in;
     opacity: 1;

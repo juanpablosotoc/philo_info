@@ -1,6 +1,8 @@
-from fastapi import APIRouter, UploadFile
+import json
+from fastapi import APIRouter, UploadFile, Form
 from fastapi.responses import StreamingResponse
 from sqlalchemy.future import select
+from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 from myproject import user_db_dependancy
 from ..ai import chat
@@ -17,7 +19,7 @@ async def get_users_threads(session: AsyncSession, user: Users) -> list[tuple[st
     statement = select(Threads).where(Threads.user_id == user.id)
     query = await session.execute(statement)
     threads = query.scalars()
-    return [(thread.id, thread.name) for thread in threads]
+    return [{'id': thread.id, 'name': thread.name} for thread in threads]
 
 
 @threads_route.get('/')
@@ -31,8 +33,8 @@ async def index(user_db: user_db_dependancy):
 @threads_route.post('/message')
 async def message_route(user_db: user_db_dependancy, local_thread_id: int = '',
                         files: list[UploadFile] = [],
-                        links: list[str] = [], 
-                        texts: list[str] = []
+                        links: Annotated[str, Form()] = [], 
+                        texts: Annotated[str, Form()] = []
                         ):
     """This endpoint is used to process a user's input.
     It will return the output_combinations and the thread_id.
@@ -63,7 +65,13 @@ async def message_route(user_db: user_db_dependancy, local_thread_id: int = '',
     # Creating the user_input object
     user_input = await UserInputFactory(links_strs=links, texts_strs=texts, file_storage_objs=files, session=user_db.session, openai_db=openai_db, openai_thread=openai_thread)
     # Porcess info and get the output_combinations
-    output_combinations_async_gen = user_input.processed_info_output_combos(session=user_db.session, close_session=user_db.close_session)
-    # Close the session
-    return StreamingResponse(content=output_combinations_async_gen, media_type='text/event-stream')
+    output_combinations_async_gen = user_input.processed_info_output_combos(session=user_db.session)
+    async def stream_resp():
+        async for value in output_combinations_async_gen:
+            yield f'data: {value}\n\n'
+        metadata = json.dumps({'type': 'metadata', 'thread_id': local_thread.id, 'thread_name': local_thread.name, 'message_id': user_input.message.id})
+        yield f'data: {metadata}\n\n'
+        # Close the session
+        user_db.close_session()
+    return StreamingResponse(content=stream_resp(), media_type='text/event-stream')
     

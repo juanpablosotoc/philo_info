@@ -2,16 +2,18 @@ import { useState, PropsWithChildren, useRef } from 'react';
 import styles from './index.module.css';
 import eye_open from '../../SVG/icons/eye_open.svg';
 import eye_closed from '../../SVG/icons/eye_closed.svg';
+import Eye from '../icons/eye';
 
 type Props = PropsWithChildren<{
     className?: string;
     label?: string;
     name: string;
+    hidden?: boolean;
 }>
 
 function PasswordInput(props: Props) {
     const [value, setValue] = useState('');
-    const eye = useRef<HTMLImageElement>(null);
+    const [isInvisible, setIsInvisible] = useState(true);
     const div = useRef<HTMLDivElement>(null);
     const passwordInput = useRef<HTMLInputElement>(null);
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,20 +30,12 @@ function PasswordInput(props: Props) {
         if (passwordInput.current!.type === "text") opposite_input_type = "password";
         passwordInput.current!.type = opposite_input_type;
         /* change eye */
-        let new_eye_src = eye_open;
-        if (eye.current!.classList.contains("eye_open")) {
-            eye.current!.classList.remove("eye_open")
-            new_eye_src = eye_closed
-        } else {
-            eye.current!.classList.add("eye_open");
-        };
-        eye.current!.src = new_eye_src;
-
+        setIsInvisible((prev) => !prev);
     };
     return (
-        <div className={`${styles.card} ${props.className ? props.className : ''}`} ref={div}>
+        <div className={`${styles.card} ${props.hidden ? styles.hidden : ''} ${props.className ? props.className : ''}`} ref={div}>
             <label htmlFor={props.name} className={styles.label}>{props.label ? props.label : 'Password'}</label>
-            <img src={eye_closed} onClick={handleClick} className={styles.eye} alt="SVG Image" ref={eye}/>
+            <Eye onClick={handleClick} className={styles.eye} invisible={isInvisible}></Eye>
             <input type="password" className={styles.input} name={props.name} value={value} onChange={handleChange} ref={passwordInput}/>
         </div>
     );

@@ -1,6 +1,4 @@
-import { OutputTypes } from '../../utils/types';
 import styles from './index.module.css';
-import OutputTypeCard from '../output_type_card';
 import React, { useRef } from 'react';
 import { getXYPercentages } from '../../utils/functions';
 

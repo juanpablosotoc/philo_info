@@ -7,6 +7,24 @@ export type BearerType = 'alt_token' | 'access_token';
 export interface UserState {
     email?: string;
 }
+export interface StreamMessageResponseMetadata {
+    type: 'metadata';
+    message_id: number;
+    thread_id: number;
+    thread_name: string;
+}
+export interface StreamMessageResponseChoices {
+    type: 'choices';
+    message_id: number;
+    possible_outputs: Array<OutputTypes>;
+}
+export interface StreamMessageResponseProcessedInfo {
+    type: 'processed_info';
+    id: string;
+    info: string;
+    message_id: number;
+}
+export type StreamMessageResponse = StreamMessageResponseMetadata | StreamMessageResponseChoices | StreamMessageResponseProcessedInfo;
 export interface OAuthToken {
     identity: string;
     provider: OAuthProvider;
@@ -19,10 +37,8 @@ export type Topic = {
     topic: string;
     questions: Array<string>;
 }
-export type Thread = {
-    id: number;
-    name: string;
-    date: Date;
+export class ThreadCls {
+    constructor(public id: number, public name: string, public date: Date) {}
 }
 export interface request_obj {
     method: "GET" | "POST";
@@ -35,8 +51,6 @@ export interface LongTextInputType {
 }
 export type dateComparisonString = 'Today' | 'This month' | 'Older'
 export type OutputTypes = 'timeline' | 'text' | 'speech'
-export type choice = Array<OutputTypes>
-export type choicesType = choice[]
 export type contentType = "application/json" | "multipart/form-data"
 export class InformationBundleCls {
     constructor(public texts: Array<string>, public files: Array<File>, public links: Array<string>, public questions: Array<string>) {}
@@ -49,7 +63,19 @@ export class DefaultQuestionsCls {
         this.question = question;
     }
 };
-
+export class ProcessedInfoTextCls {
+    constructor(public content: string, public id: string) {}
+}
+export class ProcessedInfoCls {
+    constructor(public texts: Array<ProcessedInfoTextCls>, public message_id: number) {}
+}
+interface processedInfo {
+    id: string;
+    info: string;
+}
 export class MessageCls {
-    constructor(public content: InformationBundleCls, public threadId?: number) {}
+    constructor(public content: InformationBundleCls, public id?: number , 
+        public threadId?: number, public possible_outputs?: Array<OutputTypes>,
+        public processedInfos: Array<processedInfo> = []
+        ) {}
 }

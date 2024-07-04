@@ -12,6 +12,17 @@ type Props = {
 }
 
 function Message(props: Props) {
+    const processedInfosTexts: any = {};
+    if (props.message.processedInfos) {
+        for (let processed_info of props.message.processedInfos) {
+            if (!processed_info.info) continue;
+            if (processed_info.id in processedInfosTexts) {
+                processedInfosTexts[processed_info.id] = processedInfosTexts[processed_info.id].concat(processed_info.info);
+            } else {
+                processedInfosTexts[processed_info.id] = processed_info.info;
+            }
+        }
+    };
     return (
         <MediumCard className={`${props.className ? props.className : ''} ${styles.wrapper}`}>
             <div className={styles.input}>
@@ -28,8 +39,32 @@ function Message(props: Props) {
                         {props.message.content.files.length ? <Files files={props.message.content.files}></Files> : ''}
                     </div>
                 </div>
-            <div className={styles.output}>
-
+            {processedInfosTexts && (
+                <div className={styles.processedInfoWrapper}>
+                    <div className={styles.labelWrapperWrapper}>
+                        <p className={styles.labelWrapper}>
+                            <span className={styles.label + ' ' + styles.first}>Processed Information</span>
+                            <span className={styles.label + ' ' + styles.last}>Processed Information</span>
+                        </p>  
+                        <hr className={styles.underline}/>
+                    </div>
+                    <div className={styles.processed_infos}>
+                            {
+                            Object.keys(processedInfosTexts).map((key, index) => {
+                            return (
+                                <p className={styles.processed_info} key={'processed-info-' + index}>{processedInfosTexts[key]}</p>
+                            )
+                            })
+                        }
+                    </div>
+                </div>
+            )}
+            <div className={styles.possible_outputs}>
+                {props.message.possible_outputs?.map((output, index) => {
+                    return (
+                        <p className={styles.output_choice} key={'output-choice-' + index}>{output}</p>
+                    )
+                })}
             </div>
         </MediumCard>
         )

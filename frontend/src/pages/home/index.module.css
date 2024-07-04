@@ -40,3 +40,16 @@
 .submit_btn {
     width: 22%;
 }
+
+.blurryModal {
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    transition: all 0.3s;
+}
+
+.blurryModal.active {
+    backdrop-filter: blur(10px);
+}

@@ -21,10 +21,10 @@ def wrapper():
             self.information_bundle = InformationBundle(texts=texts, links=links, files=files, questions=message_questions, 
                                                         openai_db=openai_db, openai_thread=openai_thread)
         
-        async def get_output_combinations(self, processed_info: str) -> dict:
+        async def get_output_combinations(self, processed_info: str) -> str:
             """Returns the output combinations as a dictionary for a given processed info."""
             # Get the prompt messages
-            messages = chat.get_output_combinations_messages(processed_message_info=processed_info)
+            messages = chat.get_possible_output_choices(processed_message_info=processed_info)
             # Get the output combinations from openai
             response = await chat.ask.no_stream(messages=messages)
             # Return the output combinations as a dictionary
@@ -36,7 +36,7 @@ def wrapper():
             session.add(processed_message_info)
             await session.commit()
 
-        async def processed_info_output_combos(self, session: AsyncSession, close_session: Callable):
+        async def processed_info_output_combos(self, session: AsyncSession):
             """Streams the processed information."""
             # Yield the processed info
             processed_info_dict: dict = {item.id: '' for item in self.information_bundle.items}
@@ -54,17 +54,15 @@ def wrapper():
                 try:
                     item_value = await anext(processed_infos[item.id])
                     processed_info_dict[item.id] += item_value
-                    response = json.dumps(({'type': 'processed_info', 'id': item.id, 'info': item_value}))
-                    yield f'data: {response}\n\n'
+                    yield json.dumps(({'type': 'processed_info', 'id': item.id, 'info': item_value}))
                 except StopAsyncIteration:
                     done[item.id] = True
             processed_info = '\n'.join([processed_info_dict[item.id] for item in self.information_bundle.items])
             await self.store_processed_info(session=session, processed_info=processed_info)   
             # Yiel the output combinations (should not be streamed)
-            response = await self.get_output_combinations(processed_info=processed_info)
-            yield f'data: {response}\n\n' 
-            # Close the session
-            close_session()
+            output_combinations: dict = await self.get_output_combinations(processed_info=processed_info)
+            output_combinations = json.loads(output_combinations)
+            yield json.dumps({'type': 'choices', **output_combinations})
 
 
     async def save_file(file: UploadFile) -> str:

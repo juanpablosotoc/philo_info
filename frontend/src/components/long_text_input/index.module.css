@@ -2,10 +2,10 @@
     border-radius: 5px;
     overflow-y: hidden;
     color: var(--main_white);
-    backdrop-filter: blur(5px);
+    background-color: var(--shades_black_150);
     border: 2px solid var(--shades_white_100);
     font: var(--font_m);
-    padding: 14px;
+    padding: 13.25px;
     max-height: 20vh;
     overflow-y: scroll;
 }

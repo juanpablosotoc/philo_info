@@ -23,7 +23,6 @@ function LongTextInput(props: props) {
         let checkedNode = lastNode;
         while (checkedNode) {
             const prevSibling = checkedNode.previousSibling!;
-            console.log(checkedNode.nodeName)
             if (checkedNode.nodeName === 'BR' || (checkedNode.nodeName === '#text' && !checkedNode.textContent) || (checkedNode.nodeName === 'SPAN' && !checkedNode.textContent)
             || (checkedNode.nodeName === 'DIV' && !(checkedNode as HTMLDivElement).innerHTML)) {
                 props.myRef.current?.removeChild(checkedNode);
@@ -42,7 +41,6 @@ function LongTextInput(props: props) {
         let newTextContent = '';
         if (!wasBackspace) {
             for (let word of words) {
-                console.log('triggered with ', word)
                 if (isLink(word)) {
                     removeTextContent = true;
                     const spanElement = document.createElement('span');
