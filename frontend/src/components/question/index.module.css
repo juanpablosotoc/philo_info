@@ -3,19 +3,34 @@
     align-self: stretch;
     display: flex;
     align-items: stretch;
+
 }
 
 .wrapperWrapper:hover {
     cursor: pointer;
 }
 
+.modal {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    opacity: 0.5;
+    border-radius: 5px;
+    background-color: var(--shades_black_150);
+}
+
 .wrapper {
     border-radius: 5px;
-    transform-style: preserve-3d;
     position: relative;
     transition: all 0.3s;
     padding: 24px;
-    background-color: var(--main_black);
+}
+
+.upper, .lower {
+    opacity: 1;
+    position: relative;
 }
 
 .wrapperWrapper:hover .wrapper{
@@ -23,18 +38,6 @@
 }
 
 .text {
-    font: var(--font_sm);
-}
-
-.topic {
-    font: var(--font_sm_b);
-}
-
-.text, .topic {
+    font: var(--font_s);
     color: var(--main_white);
-}
-
-.label {
-    font: var(--font_sm);
-    color: var(--shades_white_100);
 }

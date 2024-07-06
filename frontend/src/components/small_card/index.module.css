@@ -1,7 +1,8 @@
 .cardWrapper {
     border-radius: 5px;
     display: flex;
-    background-color: var(--tints_black_50);
+    background-color: var(--shades_black_150);
+    border: 1px solid var(--tints_black_100);
     justify-content: space-between;
     align-items: center;
     font: var(--font_m);
@@ -14,6 +15,10 @@
     background-color: var(--main_black);
     color: var(--main_white);
     cursor: pointer;
+}
+
+.cardWrapper p {
+    text-wrap: nowrap;
 }
 
 .x {

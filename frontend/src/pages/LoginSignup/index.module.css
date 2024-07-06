@@ -5,9 +5,13 @@
     align-items: center;
 }
 
-.wrapper > img {
+.logo {
     padding-top: 80px;
     height: 80px;
+}
+
+.logoInnerHole {
+    fill: var(--shades_black_150);
 }
 
 .welcomeMessage {

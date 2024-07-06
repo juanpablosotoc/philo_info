@@ -1,0 +1,9 @@
+.icon path {
+    fill: none;
+    stroke-width: 2;
+    stroke: var(--main_white);
+}   
+
+.icon{
+    overflow: visible;
+}

@@ -11,11 +11,11 @@ type props = {
 
 function WelcomMessage(props: props) {
     return (
-        <MediumCard className={styles.card + ' ' + (props.className ? props.className : '')}>
+        <MediumCard innerClassName={styles.card + ' ' + (props.className ? props.className : '')}>
             <h1>What information can I help you digest today?</h1>
             <div className={styles.randomQuestions}>
                 {props.questions.map((question, index) => {
-                    return <Question question={question} key={'question-' + index}></Question>
+                    return <Question question={question} className={styles.question} key={'question-' + index}></Question>
                 })}
             </div>
         </MediumCard>

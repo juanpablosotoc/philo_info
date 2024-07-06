@@ -1,7 +1,3 @@
-.wrapper {
-    padding: 0 10vw 0 10vw;
-}
-
 .wrapper, .messages {
     pointer-events: none;
 }
@@ -14,7 +10,7 @@
     left: 0;
 }
 
-.threads, .inputWrapper {
+.sideMenu, .inputWrapper {
     pointer-events: all;
 }
 
@@ -24,7 +20,7 @@
     position: relative;
     align-items: flex-end;
     position: absolute;
-    left: 10vw;
+    left: 15vw;
     bottom: 32px;
     width: 80vw;
 }
@@ -51,5 +47,5 @@
 }
 
 .blurryModal.active {
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(15px);
 }

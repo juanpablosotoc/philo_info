@@ -1,41 +1,75 @@
 .medium_card {
     color: var(--main_white);
     font: var(--font_m_b);
-    border-radius: 5px;
-    padding: 64px 128px;
-    width: calc(80vw - 256px);
-    background-color: var(--shades_black_100);
-    position: relative;
-    overflow-y: hidden;
+    position: absolute;
     transition: all 0.3s ease-in;
-    z-index: -1;
-    transform: translateY(-50%) perspective(500px);
-    transform-style: preserve-3d;
-    box-shadow: 3px 3px 40px 25px var(--mixed_primary_black);
+    left: 15vw;
+    transform: translateY(-50%);
     pointer-events: all;
+    width: 80vw;
+    background-color: transparent;
 }
 
 .medium_card:hover {
     transition: all 0.1s;
 }
 
-.medium_card::before {
-    position: absolute;
-    content: "";
+.underlyingImage {
+    transition: all 0.3s ease;
     top: 0;
-    right: 0;
-    bottom: 0;
     left: 0;
-    background-color: var(--shades_black_100);
-    z-index: -2;
-    transition: opacity 0.3s ease-in;
-    opacity: 1;
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+    transform: scaleX(1.05) scaleY(1.1);
+    display: block;
+    width: 100%;
+    pointer-events: none;
+
   }
 
-.medium_card:hover::before {
-    opacity: 0;
+.medium_card:hover .underlyingImage {
+    opacity: 0.5;
 }
 
-.medium_card > * {
-    transform: translateZ(50px);
+.innerWrapper {
+    height: 100%;
+    width: calc(100% - 256px - 40px);
+    margin: 0 auto;
+    padding: 64px 128px;
+}
+
+.imgWrapper {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    position: absolute;
+    border-radius: 5px;
+    pointer-events: none;
+}
+
+.topImage {
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+}
+
+
+.modal {
+    backdrop-filter: blur(20px);
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform: scaleX(1.3) scaleY(1.4);
+}
+
+.children {
+    transform-style: preserve-3d;
+    transform: perspective(400px);
 }

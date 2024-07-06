@@ -1,0 +1,12 @@
+.icon {
+    width: 24px;
+    display: flex;
+    gap: 6px;
+    flex-direction: column;
+}
+
+.icon > div {
+    height: 3px;
+    border-radius: 5px;
+    background-color: var(--main_white);
+}

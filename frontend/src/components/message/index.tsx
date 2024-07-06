@@ -24,7 +24,7 @@ function Message(props: Props) {
         }
     };
     return (
-        <MediumCard className={`${props.className ? props.className : ''} ${styles.wrapper}`}>
+        <MediumCard innerClassName={`${props.className ? props.className : ''} ${styles.wrapper}`}>
             <div className={styles.input}>
                     {/* The add icon */}
                     <div className={styles.iconWrapper}>

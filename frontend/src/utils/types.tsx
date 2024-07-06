@@ -4,6 +4,7 @@ export type endpoint = 'users/' | 'users/login' | 'users/create_user' |
 export type methods = "GET" | "POST" | "PUT" | "DELETE";
 export type OAuthProvider = 'google' | 'apple' | 'microsoft';
 export type BearerType = 'alt_token' | 'access_token';
+export type navOptions = 'home' | 'new' | 'group' | 'education' | 'book';
 export interface UserState {
     email?: string;
 }

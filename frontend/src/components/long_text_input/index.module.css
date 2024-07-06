@@ -10,9 +10,24 @@
     overflow-y: scroll;
 }
 
+.input::before {
+    content: "Enter link, information or request";
+    position: absolute;
+    color: var(--shades_white_100);
+    pointer-events: none;
+}
+
+.input.active::before {
+    display: none;
+}
+
 .input:focus, .active {
     border-color: var(--main_white);
     outline: none;
+}
+
+.input:focus::before {
+    color: var(--main_white);
 }
 
 .link {

@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import { ErrorType } from "../../utils/types";
 import { Helmet } from 'react-helmet';
 import MyLink from "../../components/my_link";
+import Logo from "../../components/icons/logo";
 
 
 type props = {
@@ -49,7 +50,7 @@ function LoginSignup (props: props) {
         // Select the element with id root and set its background color
         document.getElementById("root")!.style.backgroundColor = "var(--main_white)";
     }, []);
-    const title = props.type[0].toUpperCase() + props.type.slice(1) + ' | Factic';
+    const title = props.type[0].toUpperCase() + props.type.slice(1) + ' | FacTic';
     function handleSubmitBtnClick() {
         if (phase === 'email') {
             setPhase('password');
@@ -63,7 +64,7 @@ function LoginSignup (props: props) {
             <title>{title}</title>
         </Helmet>
         <div className={styles.wrapper}>
-            <img src={black_anaglyphic_logo} alt="Factic logo" />
+            <Logo className={styles.logo} innerHoleClassName={styles.logoInnerHole}></Logo>
             <div className={styles.formWrapper}>
                 {welcome_message}
                 <Form method="post">

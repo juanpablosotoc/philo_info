@@ -7,18 +7,16 @@ import { clearOAuth, fetch_, getOAuth, getToken, saveToken, post_stream } from "
 import { InformationBundleCls, MessageCls, DefaultQuestionsCls, 
     ThreadCls, StreamMessageResponse, StreamMessageResponseMetadata,
     StreamMessageResponseChoices, StreamMessageResponseProcessedInfo } from "../../utils/types";
-import Modal from "../../components/modal";
 import { useEffect, useRef, useState } from "react";
-import Threads from "../../components/threads";
 import Messages from "../../components/messages";
 import { Helmet } from "react-helmet";
-import TopFrame from "../../components/top_frame";
 import { getFormData } from "../../utils/functions";
+import SideMenu from "../../components/side_menu";
 
 
 function Home () {
     const longTextInput = useRef<HTMLDivElement>(null);
-    const threadsElement = useRef<HTMLDivElement>(null);
+    const sideMenuElement = useRef<HTMLDivElement>(null);
     const blurryModal = useRef<HTMLDivElement>(null);
     // If the jwt is ready, we can fetch the topic
     const [jwt_is_ready, setJwtIsReady] = useState(false);
@@ -43,7 +41,7 @@ function Home () {
         }
      }, [jwt_is_ready]);
     useEffect(()=>{
-        // set the document background colo to black
+        // set the document background color to black
         document.documentElement.style.backgroundColor = "var(--shades_black_150)";
         document.body.style.backgroundColor = "var(--shades_black_150)";
         document.getElementById("root")!.style.backgroundColor = "var(--shades_black_150)";
@@ -58,11 +56,10 @@ function Home () {
                 clearOAuth();
             }, body);
         }
-        console.log(blurryModal.current)
-        threadsElement.current!.onmouseenter = () => {
+        sideMenuElement.current!.onmouseenter = () => {
             blurryModal.current!.classList.add(styles.active);
         }
-        threadsElement.current!.onmouseleave = () => {
+        sideMenuElement.current!.onmouseleave = () => {
             blurryModal.current!.classList.remove(styles.active);
         }
     }, []);
@@ -139,12 +136,9 @@ function Home () {
     return (
         <div className={styles.wrapper}>
             <Helmet>
-                <title>Home | Factic</title>
+                <title>Home | FacTic</title>
             </Helmet>
-            <TopFrame active="home"></TopFrame>
-            <Modal topBottom="top"></Modal>
             <Messages messages={messages} questions={questions} className={styles.messages}></Messages>
-            <Modal topBottom="bottom"></Modal>
             <div className={styles.fixedWrapper}>
                 <div className={styles.inputWrapper}>
                     <UploadFile className={styles.uploadFile} files={files} setFiles={setFiles}/>
@@ -152,7 +146,7 @@ function Home () {
                     <SubmitBtn className={styles.submit_btn} theme='dark' onClick={handleSubmit}/>
                 </div>
                 <div className={styles.blurryModal} ref={blurryModal}></div>
-                <Threads threads={threads} myRef={threadsElement} className={styles.threads}/>
+                <SideMenu className={styles.sideMenu} type="threads" data={threads} myRef={sideMenuElement} active="home"></SideMenu>
             </div>
         </div>
     )

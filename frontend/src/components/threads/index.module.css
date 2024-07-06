@@ -1,11 +1,11 @@
 
 .wrapper {
-    display: flex;
     height: 100%;
-    width: 30vw;
+    width: 20vw;
     justify-content: space-between;
-    transform: translateX(-100%);
+    /* transform: translateX(-50%); */
     align-items: center;
+    overflow-y: scroll;
     position: relative;
     top: 0;
 }
@@ -18,74 +18,17 @@
     transform: none;
 }
 
-
-.threadsWrapper {
-    height: 100%;
-    width: 80%;
-    padding-left: 64px;
-}
-
 .iconsWrapper {
     display: flex;
     gap: 8px;
-}
-
-.threadsWrapper > div {
-    margin-top: 15vh;
-    padding: 0 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    overflow-y: scroll;
-    height: calc(100% - 30vh);
-    width: calc(100% - 80px);
-}
-
-.chevronWrapperWrapper {
-    position: absolute;
-    right: 0;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    height: 100%;
-    width: calc(10vw - 40px);
-    transform: translateX(100%);
-}
-
-.chevronWrapper {
-    display: flex;
-    padding: 16px;
-    border-radius: 5px;
-    background-color: var(--main_black);
-}
-
-.chevron {
-    transform: scale(2) !important;
-}
-
-.wrapper:hover .chevronWrapper {
-    padding: 16px 24px;
-}
-
-.wrapper:hover .chevron {
-    transform: scale(2) translateX(1.5px) !important;
-}
-
-
-.wrapper:hover .chevronStem {
-    stroke-dashoffset: 20;
-}
-
-
-.chevron path {
-    color: var(--main_white);
 }
 
 .iconWrapper {
     height: 32px;
     width: 32px;
     padding: 16px;
-    background-color: var(--main_black);
+    background-color: var(--shades_black_150);
+    border: 1px solid var(--tints_black_100);
     border-radius: 5px;
     display: flex;
     align-items: center;
@@ -94,5 +37,5 @@
 
 .iconWrapper:hover {
     cursor: pointer;
-    background-color: var(--tints_black_100);
+    background-color: var(--main_black);
 }

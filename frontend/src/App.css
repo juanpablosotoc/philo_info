@@ -14,7 +14,6 @@
     --shades_primary_100: #D9004D;
 
     --mixed_primary_black: #226A63;
-    --mixed_primary_white: #FD4A89;
     
     --tints_black_50: #252629;
     --tints_black_100: #2F2F2F;
@@ -29,7 +28,7 @@
     --font_l: 26px var(--font_family);
     --font_l_b: bold 26px var(--font_family);
     --font_xl_b: bold 36px var(--font_family);
-    --font_xxl_b: bold 60px var(--font_family);
+    --font_xxl_b: bold 52px var(--font_family);
     /* Size variables */
     --s_card_height: 52px;
 }

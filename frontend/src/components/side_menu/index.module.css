@@ -1,0 +1,236 @@
+.wrapper {
+    height: 100vh;
+    position: relative;
+    width: 56px;
+    overflow-y: scroll;
+    background-color: var(--shades_black_150);
+    padding: 64px 24px;
+    transition: all 0.3s ease;
+    border-right: 2px solid var(--tints_black_200);
+}
+
+.wrapper:hover {
+    width: calc(364px + 240px);
+}
+
+.wrapper .link span, .wrapper .specificWrapper {
+    position: absolute;
+}
+
+.wrapper:hover .link span {
+    opacity: 1;
+    transform: translateX(0) !important;
+}
+
+.innerWrapper {
+    overflow-y: scroll;
+    display: flex;
+    height: calc(100% - 128px);
+}
+
+.generalWrapper nav {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+    gap: 48px;
+}
+
+.generalWrapper nav > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.iconWrapper {
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    background-color: var(--shades_black_150);
+    border-radius: 5px;
+    position: relative;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.link {
+    color: var(--main_white);
+    font: var(--font_m);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 240px;
+    background-color: var(--shades_black_150);
+    height: 56px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.link.active {
+    font: var(--font_m_b);
+}
+
+.link span {
+    opacity: 0;
+    width: 0;
+    transition: all 0.3s ease;
+    transform: translateX(-40px);
+    padding-left: 16px;
+    left: calc(56px + 32px);
+}
+
+.link svg {
+    transition: all 0.3s ease;
+}
+
+.link:hover, .link:hover .iconWrapper {
+    background-color: var(--main_white);
+}
+
+.link:hover span {
+    color: var(--shades_black_150);
+}
+
+.specificWrapper {
+    width: 300px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    padding-left: 64px;
+    padding-top: 64px;
+    left: 240px;
+    height: calc(100vh - 128px);
+    overflow: scroll;
+}
+
+.wrapper:hover .specificWrapper {
+    opacity: 1;
+}
+/* Logo styling */
+.logo {
+    width: 24px;
+}
+.link:hover .logoInnerHole {
+    fill: var(--shades_black_150);
+}
+/* New icon styling */
+.new {
+    stroke-width: 2;
+    transition: all 0.3s ease;
+}
+
+.new path {
+    stroke: var(--main_white);
+    stroke-width: 2;
+    transition: all 0.3s ease;
+}
+
+.link:hover .new path {
+    stroke: var(--shades_black_150);
+}
+
+.active .new {
+    fill: var(--main_white);
+}
+
+.active .new .crossLine {
+    stroke: var(--shades_black_150);
+}
+
+.active.link:hover .new path {
+    fill: var(--shades_black_150);
+}
+
+.active.link:hover .new .crossLine {
+    stroke: var(--main_white);
+}
+
+/* Group icon styling */
+
+.group path, .group rect{
+    transition: all 0.3s ease;
+}
+.link:hover .group path {
+    fill: var(--shades_black_150);
+}
+
+.active .group rect {
+    fill: var(--main_white);
+}
+.active.link:hover .group rect {
+    fill: var(--shades_black_150);
+}
+/* Home icon styling */
+.home {
+    height: min-content;
+}
+.home path {
+    transition: all 0.3s ease;
+    fill: var(--shades_black_150);
+}
+.link.active .home path {
+    fill: var(--main_white);
+}
+.link:hover .home path {
+    stroke: var(--shades_black_150);
+    fill: var(--main_white);
+}
+
+.active.link:hover .home path {
+    fill: var(--shades_black_150);
+}
+
+/* education icon styling */
+
+.education path, .educationHole, .book path, .moreBtn, .moreBtn > div > div > div, .moreBtn > .iconWrapper > div,
+.logoInnerHole {
+    transition: all 0.3s ease;
+}
+.link:hover .education path {
+    fill: var(--shades_black_150);
+}
+
+.link:hover path.educationHole {
+    fill: var(--main_white);
+}
+
+.active .education path {
+    fill: var(--main_white);
+}
+
+.active.link:hover .educationHole {
+    fill: var(--shades_black_150);
+}
+
+/* Book icon styling */
+
+.link:hover .book path {
+    stroke: var(--shades_black_150);
+}
+
+.active .book path {
+    fill: var(--main_white);
+    stroke-width: 0;
+}
+
+.active:hover .book path {
+    fill: var(--shades_black_150);
+}
+
+/* ------------------ */
+
+.moreBtn {
+    margin-top: auto;
+    border: none;
+    padding: 28px 0;
+    outline: none;
+}
+
+.moreBtn:hover {
+    cursor: pointer;
+}
+
+.link:hover.moreBtn > div > div > div {
+    background-color: var(--shades_black_150);
+}
