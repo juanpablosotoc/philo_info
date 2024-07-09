@@ -2,23 +2,23 @@ import json
 import uuid
 import asyncio
 from fastapi import UploadFile
-from typing import AsyncGenerator, Callable
+from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession
 from myproject.ai import chat
 from .get_processed_info import InformationBundle
-from ..models import Messages, Texts, Links, Files, MessageQuestions, LocalOpenaiThreads, LocalOpenaiDb, ProcessedMessageInfo
+from ..models import Messages, Texts, Links, Files, LocalOpenaiThreads, LocalOpenaiDb, ProcessedMessageInfo
 from ..binary_files import ImageResizer
 
 # Wrapping the UserInput class for encapsulation (it should not be accessed outside of this module)
 def wrapper():
     class UserInput:
         def __init__(self, message: Messages, links: list[Links], texts: list[Texts], 
-        files: list[Files], message_questions: list[MessageQuestions], 
+        files: list[Files], 
         openai_db: LocalOpenaiDb, openai_thread: LocalOpenaiThreads) -> None:
             self.message = message
             self.openai_db = openai_db
             self.openai_thread = openai_thread
-            self.information_bundle = InformationBundle(texts=texts, links=links, files=files, questions=message_questions, 
+            self.information_bundle = InformationBundle(texts=texts, links=links, files=files, 
                                                         openai_db=openai_db, openai_thread=openai_thread)
         
         async def get_output_combinations(self, processed_info: str) -> str:
@@ -60,7 +60,7 @@ def wrapper():
             processed_info = '\n'.join([processed_info_dict[item.id] for item in self.information_bundle.items])
             await self.store_processed_info(session=session, processed_info=processed_info)   
             # Yiel the output combinations (should not be streamed)
-            output_combinations: dict = await self.get_output_combinations(processed_info=processed_info)
+            output_combinations = await self.get_output_combinations(processed_info=processed_info)
             output_combinations = json.loads(output_combinations)
             yield json.dumps({'type': 'choices', **output_combinations})
 
@@ -88,8 +88,6 @@ def wrapper():
         The function will return a UserInput object."""
         # Get the questions and texts from the user input. 
         # A question is a string that starts with "/explain "
-        questions_strs = [text for text in texts_strs if text.startswith("/explain ")]
-        texts_strs = [text for text in texts_strs if not text.startswith("/explain ")]
         # Create the message and add it to the database
         message = Messages(thread_id=openai_thread.thread_id)
         session.add(message)
@@ -97,7 +95,6 @@ def wrapper():
         # Create the texts, links, questions, and files and add them to the database
         texts = [Texts(text=text, message_id=message.id) for text in texts_strs]
         links = [Links(link=link, message_id=message.id) for link in links_strs]
-        questions = [MessageQuestions(question=question, message_id=message.id) for question in questions_strs]
         files = []
         file_tasks = []
         async with asyncio.TaskGroup() as tg:
@@ -107,10 +104,9 @@ def wrapper():
             files.append(Files(path=new_file_path, message_id=message.id))
         session.add_all(texts)
         session.add_all(links)
-        session.add_all(questions)
         session.add_all(files)
         # Create the user input object
-        user_input = UserInput(links=links, message=message, texts=texts, files=files, message_questions=questions, openai_thread=openai_thread, openai_db=openai_db)
+        user_input = UserInput(links=links, message=message, texts=texts, files=files, openai_thread=openai_thread, openai_db=openai_db)
         # Commit the changes to the database
         await session.commit()
         return user_input

@@ -59,6 +59,8 @@ export function parseStream(streamStr: string): Array<any> {
     let prevCharWasEscBackslash = false;
     let insideOfString = false;
 
+    streamStr = streamStr.replace("data:", "");
+
     for (let i = 0; i < streamStr.length; i++) {
         let char = streamStr[i];
         currentStr += char;
@@ -92,7 +94,11 @@ export function parseStream(streamStr: string): Array<any> {
     }
 
     if (currentStr.length > 0) {
-        countedStrings.push({ complete: false, data: cleanStr(currentStr) });
+        if (openingCurlyBraces === closingCurlyBraces) {
+            countedStrings.push({ complete: true, data: cleanStr(currentStr) });
+        } else {
+            countedStrings.push({ complete: false, data: cleanStr(currentStr) });
+        }
     }
 
     let actualResp = [];

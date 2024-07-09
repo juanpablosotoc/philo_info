@@ -1,17 +1,27 @@
-.wrapper, .messages {
+.wrapper {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.wrapper {
     pointer-events: none;
 }
 
-.fixedWrapper {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
+.messages {
+    height: calc(100% - 52px - 32px);
+    overflow: scroll;
 }
 
-.sideMenu, .inputWrapper {
+.sideMenu, .inputWrapper, .messages {
     pointer-events: all;
+}
+
+.right {
+    width: 80vw;
+    right: 5vw;
+    position: absolute;
+    height: 100vh;
 }
 
 .inputWrapper {
@@ -20,9 +30,10 @@
     position: relative;
     align-items: flex-end;
     position: absolute;
-    left: 15vw;
-    bottom: 32px;
-    width: 80vw;
+    bottom: 0;
+    width: 100%;
+    height: calc(52px + 64px);
+    align-items: center;
 }
 
 .uploadFile {

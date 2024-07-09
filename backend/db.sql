@@ -46,11 +46,19 @@ CREATE TABLE TopicQuestions (
     topic_id SMALLINT NOT NULL,
     FOREIGN KEY(topic_id) REFERENCES Topics(id) ON DELETE CASCADE
 );
-CREATE TABLE MessageQuestions (
-	id INT PRIMARY KEY AUTO_INCREMENT,
-    question VARCHAR(255) NOT NULL,
+CREATE TABLE RequestTypes (
+    id TINYINT PRIMARY KEY AUTO_INCREMENT,
+    description VARCHAR(50) NOT NULL UNIQUE
+);
+INSERT INTO RequestTypes (description) VALUES ('change_appearance'), 
+('quiz'), ('contact'), ('create_playlist'), ('recap'), ('other');
+CREATE TABLE Requests (
+    id INT PRIMARY KEY AUTO_INCREMENT,
     message_id INT NOT NULL,
-    FOREIGN KEY (message_id) REFERENCES Messages(id) ON DELETE CASCADE
+    content VARCHAR(1000) NOT NULL,
+    request_type_id TINYINT NOT NULL,
+    FOREIGN KEY (message_id) REFERENCES Messages(id) ON DELETE CASCADE,
+    FOREIGN KEY (request_type_id) REFERENCES RequestTypes(id) ON DELETE CASCADE
 );
 CREATE TABLE Texts(
 	id INT PRIMARY KEY AUTO_INCREMENT,

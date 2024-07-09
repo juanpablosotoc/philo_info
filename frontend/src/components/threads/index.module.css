@@ -3,15 +3,10 @@
     height: 100%;
     width: 20vw;
     justify-content: space-between;
-    /* transform: translateX(-50%); */
     align-items: center;
     overflow-y: scroll;
     position: relative;
     top: 0;
-}
-
-.wrapper, .chevron, .chevronStem, .chevronWrapper {
-    transition: all 0.3s ease-out !important;
 }
 
 .wrapper:hover {

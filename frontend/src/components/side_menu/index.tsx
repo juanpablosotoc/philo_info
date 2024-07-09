@@ -22,53 +22,110 @@ interface Props {
 function SideMenu(props: Props) {
     return (
         <div className={styles.wrapper + ' ' + (props.className ? props.className : '')} ref={props.myRef ? props.myRef : undefined}>
+            <div className={styles.modal}></div>
             <div className={styles.innerWrapper}>
                 <div className={styles.generalWrapper}>
                     <nav>
-                        <Link to='/'  className={styles.link + ' ' + styles.active}>
-                            <div className={styles.iconWrapper}>
-                                <Logo className={styles.logo} innerHoleClassName={styles.logoInnerHole}></Logo>
-                            </div>
-                            <span>FacTic</span>
-                        </Link>
-                        <div>
-                            <Link to="/" className={`${styles.link} ${props.active === 'home' ? styles.active : ''}`}>
+                        <div className={styles.linkWrapper}>
+                            <Link to='/'  className={styles.link + ' ' + styles.active}>
                                 <div className={styles.iconWrapper}>
-                                    <Home className={styles.home}/>
+                                    <Logo className={styles.logo} innerHoleClassName={styles.logoInnerHole}></Logo>
                                 </div>
-                                <span>Home</span>
+                                <span>FacTic</span>
                             </Link>
-                            <Link to='/create' className={`${styles.link} ${props.active === 'new' ? styles.active : ''}`}>
+                            <Link to='/'  className={styles.link + ' ' + styles.active}>
                                 <div className={styles.iconWrapper}>
-                                    <New className={styles.new} crossLineClassName={styles.crossLine}/>
-                                </div>  
-                                <span>Create</span>
+                                    <Logo className={styles.logo} innerHoleClassName={styles.logoInnerHole}></Logo>
+                                </div>
+                                <span>FacTic</span>
                             </Link>
-                            <Link to='/classrooms' className={`${styles.link} ${props.active === 'group' ? styles.active : ''}`}>
+                        </div>
+                        <div>
+                            <div className={styles.linkWrapper}>
+                                <Link to="/" className={`${styles.link} ${props.active === 'home' ? styles.active : ''}`}>
+                                    <div className={styles.iconWrapper}>
+                                        <Home className={styles.home}/>
+                                    </div>
+                                    <span>Home</span>
+                                </Link>
+                                <Link to="/" className={`${styles.link} ${props.active === 'home' ? styles.active : ''}`}>
+                                    <div className={styles.iconWrapper}>
+                                        <Home className={styles.home}/>
+                                    </div>
+                                    <span>Home</span>
+                                </Link>
+                            </div>
+                            <div className={styles.linkWrapper}>
+                                <Link to='/create' className={`${styles.link} ${props.active === 'new' ? styles.active : ''}`}>
+                                    <div className={styles.iconWrapper}>
+                                        <New className={styles.new} crossLineClassName={styles.crossLine}/>
+                                    </div>  
+                                    <span>Create</span>
+                                </Link>
+                                <Link to='/create' className={`${styles.link} ${props.active === 'new' ? styles.active : ''}`}>
+                                    <div className={styles.iconWrapper}>
+                                        <New className={styles.new} crossLineClassName={styles.crossLine}/>
+                                    </div>  
+                                    <span>Create</span>
+                                </Link>
+                            </div>
+                            <div className={styles.linkWrapper}>
+                                <Link to='/classrooms' className={`${styles.link} ${props.active === 'group' ? styles.active : ''}`}>
+                                    <div className={styles.iconWrapper}>
+                                        <Group className={styles.group} />
+                                    </div>  
+                                    <span>Classrooms</span>
+                                </Link>
+                                <Link to='/classrooms' className={`${styles.link} ${props.active === 'group' ? styles.active : ''}`}>
                                 <div className={styles.iconWrapper}>
                                     <Group className={styles.group} />
                                 </div>  
                                 <span>Classrooms</span>
-                            </Link>
-                            <Link to='/courses' className={`${styles.link} ${props.active === 'education' ? styles.active : ''}`}>
-                                <div className={styles.iconWrapper}>
-                                    <Education className={styles.education} holeClassName={styles.educationHole}/>
-                                </div>  
-                                <span>Courses</span>
-                            </Link>
-                            <Link to='/books' className={`${styles.link} ${props.active === 'book' ? styles.active : ''}`}>
-                                <div className={styles.iconWrapper}>
-                                    <Book className={styles.book}/>
-                                </div>  
-                                <span>Books</span>
-                            </Link>
+                                </Link>
+                            </div>
+                            <div className={styles.linkWrapper}>
+                                <Link to='/courses' className={`${styles.link} ${props.active === 'education' ? styles.active : ''}`}>
+                                    <div className={styles.iconWrapper}>
+                                        <Education className={styles.education} holeClassName={styles.educationHole}/>
+                                    </div>  
+                                    <span>Courses</span>
+                                </Link>
+                                <Link to='/courses' className={`${styles.link} ${props.active === 'education' ? styles.active : ''}`}>
+                                    <div className={styles.iconWrapper}>
+                                        <Education className={styles.education} holeClassName={styles.educationHole}/>
+                                    </div>  
+                                    <span>Courses</span>
+                                </Link>
+                            </div>
+                            <div className={styles.linkWrapper}>
+                                <Link to='/books' className={`${styles.link} ${props.active === 'book' ? styles.active : ''}`}>
+                                    <div className={styles.iconWrapper}>
+                                        <Book className={styles.book}/>
+                                    </div>  
+                                    <span>Books</span>
+                                </Link>
+                                <Link to='/books' className={`${styles.link} ${props.active === 'book' ? styles.active : ''}`}>
+                                    <div className={styles.iconWrapper}>
+                                        <Book className={styles.book}/>
+                                    </div>  
+                                    <span>Books</span>
+                                </Link>
+                            </div>
                         </div>
-                        <button onClick={()=>{alert('siu')}} className={styles.moreBtn + ' ' + styles.link}>
-                            <div className={styles.iconWrapper}>
-                                <Bars></Bars>
-                            </div>  
-                            <span>More</span>
-                        </button>
+                        <div className={styles.linkWrapper + ' ' + styles.moreBtnWrapper}>
+                            <button onClick={()=>{alert('siu')}} className={styles.moreBtn + ' ' + styles.link}>
+                                <div className={styles.iconWrapper}>
+                                    <Bars></Bars>
+                                </div>  
+                                <span>More</span>
+                            </button>
+                            <button onClick={()=>{alert('siu')}} className={styles.moreBtn + ' ' + styles.link}>
+                                <div className={styles.iconWrapper}>
+                                    <Bars></Bars>
+                                </div>  
+                                <span>More</span>
+                            </button>
+                        </div>
                     </nav>
                 </div>
                 {props.type === 'threads' ? <Threads threads={props.data} className={styles.specificWrapper}></Threads> : undefined}

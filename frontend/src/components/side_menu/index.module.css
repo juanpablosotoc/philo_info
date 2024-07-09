@@ -1,16 +1,40 @@
 .wrapper {
     height: 100vh;
     position: relative;
-    width: 56px;
     overflow-y: scroll;
-    background-color: var(--shades_black_150);
+    width: calc(364px + 240px);
+    z-index: 30;
     padding: 64px 24px;
-    transition: all 0.3s ease;
+}
+
+.wrapper, .wrapper * {
+    pointer-events: none;
+}
+
+.wrapper:hover .specificWrapper *, .wrapper:hover .generalWrapper *, .modal {
+    pointer-events: all;
+}
+
+.modal {
+    height: 100%;
+    left: 0;
+    top: 0;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+    transition-property: all;
+    position: absolute;
+    background-color: var(--shades_black_150);
+    width: 100%;
+    transform: translateX(calc(-100% + 56px + 48px));
     border-right: 2px solid var(--tints_black_200);
 }
 
-.wrapper:hover {
-    width: calc(364px + 240px);
+.modal:not(:hover) {
+    transition-delay: 0.3s;
+}
+
+.wrapper:hover .modal {
+    transform: translateX(-2px);
 }
 
 .wrapper .link span, .wrapper .specificWrapper {
@@ -19,7 +43,6 @@
 
 .wrapper:hover .link span {
     opacity: 1;
-    transform: translateX(0) !important;
 }
 
 .innerWrapper {
@@ -47,11 +70,17 @@
     display: flex;
     align-items: center;
     height: 100%;
-    background-color: var(--shades_black_150);
     border-radius: 5px;
     position: relative;
     transition: all 0.3s ease;
-    z-index: 2;
+}
+
+.iconWrapper:first-child {
+    background-color: var(--shades_black_150);
+
+}
+.linkWrapper {
+    position: relative;
 }
 
 .link {
@@ -62,7 +91,7 @@
     align-items: center;
     position: relative;
     width: 240px;
-    background-color: var(--shades_black_150);
+    background-color: transparent;
     height: 56px;
     border-radius: 5px;
     transition: all 0.3s ease;
@@ -76,42 +105,63 @@
     opacity: 0;
     width: 0;
     transition: all 0.3s ease;
-    transform: translateX(-40px);
     padding-left: 16px;
     left: calc(56px + 32px);
+}
+
+.link span {
+    transform: translateX(-40px);
+}
+
+.wrapper:hover .link span{
+    transform: translateX(0);
 }
 
 .link svg {
     transition: all 0.3s ease;
 }
 
-.link:hover, .link:hover .iconWrapper {
-    background-color: var(--main_white);
-}
-
-.link:hover span {
-    color: var(--shades_black_150);
-}
 
 .specificWrapper {
     width: 300px;
     opacity: 0;
-    transition: all 0.3s ease;
     padding-left: 64px;
     padding-top: 64px;
-    left: 240px;
+    right: 32px;
+    transition: opacity 0.3s ease 0s;
     height: calc(100vh - 128px);
     overflow: scroll;
 }
 
 .wrapper:hover .specificWrapper {
+    transition-delay: 0.3s;
     opacity: 1;
+}
+
+/* ------------------ */
+/* setting the front links styling */
+.link:last-child {
+    top: 0;
+    left: 0;
+    opacity: 0;
+    z-index: 2;
+    position: absolute;
+    color: var(--shades_black_150);
+    background-color: var(--main_white);
+}
+
+.link:last-child:hover, .link:last-child .iconWrapper{
+    opacity: 1;
+}
+
+.link:last-child .iconWrapper {
+    background-color: var(--main_white);
 }
 /* Logo styling */
 .logo {
     width: 24px;
 }
-.link:hover .logoInnerHole {
+.link:last-child .logoInnerHole {
     fill: var(--shades_black_150);
 }
 /* New icon styling */
@@ -126,7 +176,7 @@
     transition: all 0.3s ease;
 }
 
-.link:hover .new path {
+.link:last-child .new path {
     stroke: var(--shades_black_150);
 }
 
@@ -138,11 +188,11 @@
     stroke: var(--shades_black_150);
 }
 
-.active.link:hover .new path {
+.active.link:last-child .new path {
     fill: var(--shades_black_150);
 }
 
-.active.link:hover .new .crossLine {
+.active.link:last-child .new .crossLine {
     stroke: var(--main_white);
 }
 
@@ -151,14 +201,14 @@
 .group path, .group rect{
     transition: all 0.3s ease;
 }
-.link:hover .group path {
+.link:last-child .group path {
     fill: var(--shades_black_150);
 }
 
 .active .group rect {
     fill: var(--main_white);
 }
-.active.link:hover .group rect {
+.active.link:last-child .group rect {
     fill: var(--shades_black_150);
 }
 /* Home icon styling */
@@ -172,12 +222,12 @@
 .link.active .home path {
     fill: var(--main_white);
 }
-.link:hover .home path {
+.link:last-child .home path {
     stroke: var(--shades_black_150);
     fill: var(--main_white);
 }
 
-.active.link:hover .home path {
+.active.link:last-child .home path {
     fill: var(--shades_black_150);
 }
 
@@ -185,13 +235,15 @@
 
 .education path, .educationHole, .book path, .moreBtn, .moreBtn > div > div > div, .moreBtn > .iconWrapper > div,
 .logoInnerHole {
-    transition: all 0.3s ease;
+    transition-duration: 0.3;
+    transition-timing-function: ease;
+    transition-property: all;
 }
-.link:hover .education path {
+.link:last-child .education path {
     fill: var(--shades_black_150);
 }
 
-.link:hover path.educationHole {
+.link:last-child path.educationHole {
     fill: var(--main_white);
 }
 
@@ -199,13 +251,13 @@
     fill: var(--main_white);
 }
 
-.active.link:hover .educationHole {
+.active.link:last-child .educationHole {
     fill: var(--shades_black_150);
 }
 
 /* Book icon styling */
 
-.link:hover .book path {
+.link:last-child .book path {
     stroke: var(--shades_black_150);
 }
 
@@ -214,23 +266,25 @@
     stroke-width: 0;
 }
 
-.active:hover .book path {
+.active:last-child .book path {
     fill: var(--shades_black_150);
 }
 
 /* ------------------ */
 
-.moreBtn {
+.moreBtnWrapper {
     margin-top: auto;
+}
+.moreBtn {
     border: none;
     padding: 28px 0;
     outline: none;
 }
 
-.moreBtn:hover {
+.moreBtn:last-child {
     cursor: pointer;
 }
 
-.link:hover.moreBtn > div > div > div {
+.link:last-child.moreBtn > div > div > div {
     background-color: var(--shades_black_150);
 }

@@ -1,12 +1,11 @@
 import base64
 import uuid
 from typing import AsyncGenerator
-from asyncio import Task
 from youtube_transcript_api import YouTubeTranscriptApi
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from myproject.ai import chat
-from ..models import Texts, Links, Files, MessageQuestions, Files, LocalOpenaiDbFiles, LocalOpenaiDb, LocalOpenaiThreads
+from ..models import Texts, Links, Files, Files, LocalOpenaiDbFiles, LocalOpenaiDb, LocalOpenaiThreads
 
 
 class InformationStream:
@@ -120,19 +119,6 @@ class FilesHandler(InformationStream):
         yield 'Processed file info:\n'
         async for value in self.__processed_info:
             yield value
-
-# Handles questions
-class QuestionHandler(InformationStream):
-    def __init__(self, message_question: MessageQuestions) -> None:
-        super().__init__()
-        self.message_question = message_question
-
-    async def processed_info(self):
-        messages = [chat.get_user_message(self.message_question.question)]
-        self.__processed_info = chat.ask.stream(messages=messages)
-        yield 'Processed question info:\n'
-        async for value in self.__processed_info:
-            yield value
     
 # Handles a collection of texts, links, and files, questions
 class InformationBundle:
@@ -147,7 +133,7 @@ class InformationBundle:
                               "tex", "txt", "css", "js", "sh", "ts"]
     def __init__(self, texts: list[Texts], links: list[Links], 
                  files: list[Files], openai_db: LocalOpenaiDb, 
-                 openai_thread: LocalOpenaiThreads, questions: list[MessageQuestions]
+                 openai_thread: LocalOpenaiThreads
                  ) -> None:
         # Separates links into youtube links and normal links
         links = [link for link in links if not link.link.startswith(YoutubeVideoHandler.youtube_start_link)]
@@ -162,6 +148,5 @@ class InformationBundle:
         self.files_handler = None
         if (len(self.files_for_search)): self.files_handler = FilesHandler(self.files_for_search, openai_db=openai_db, openai_thread=openai_thread)
         self.images_handler: list[ImageHandler] = [ImageHandler(file) for file in self.files_for_vision]
-        self.questions_handler = [QuestionHandler(question) for question in questions]
-        self.items = [*self.texts_handler, *self.links_handler, *self.youtube_videos_handler, *self.images_handler, *self.questions_handler]
+        self.items = [*self.texts_handler, *self.links_handler, *self.youtube_videos_handler, *self.images_handler]
         if self.files_handler: self.items.append(self.files_handler)

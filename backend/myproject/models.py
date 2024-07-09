@@ -122,16 +122,28 @@ class TopicQuestions(Base):
         self.question = question
 
 
-class MessageQuestions(Base):
-    __tablename__ = 'MessageQuestions'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    question = Column(String(255), nullable=False)
-    message_id = Column(Integer, ForeignKey(Messages.id), nullable=False)
+class RequestTypes(Base):
+    __tablename__ = 'RequestTypes'
+    id = Column(TINYINT, primary_key=True, autoincrement=True)
+    description = Column(String(50), unique=True, nullable=False)
 
-    def __init__(self, question: str, message_id: int) -> None:
+    def __init__(self, description: str) -> None:
         super().__init__()
-        self.question = question
+        self.description = description
+
+
+class Requests(Base):
+    __tablename__ = 'Requests'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    message_id = Column(Integer, ForeignKey(Messages.id), nullable=False)
+    request_type_id = Column(TINYINT, ForeignKey(RequestTypes.id), nullable=False)
+    content = Column(String(1000), nullable=False)
+
+    def __init__(self, message_id: int, request_type_id: int, content: str) -> None:
+        super().__init__()
         self.message_id = message_id
+        self.request_type_id = request_type_id
+        self.content = content
 
 
 class Texts(Base):
@@ -202,19 +214,3 @@ class OutputCombinations(Base):
         self.id = id
         self.message_id = message_id
         self.output_choice_id = output_choice_id
-
-
-LocalOpenaiDb.files = relationship(LocalOpenaiDbFiles, backref='openai_db', cascade='all, delete')
-LocalOpenaiDb.thread = relationship(Threads, backref='openai_db')
-Files.local_openai_db = relationship(LocalOpenaiDbFiles, backref='files')
-Users.threads = relationship(Threads, backref='user', cascade='all, delete')
-Threads.local_openai_thread = relationship(LocalOpenaiThreads, backref='thread')
-Threads.messages = relationship(Messages, backref='thread', cascade='all, delete')
-Topics.questions = relationship(TopicQuestions, backref='topic', cascade='all, delete')
-Messages.processed_message_info = relationship(ProcessedMessageInfo, backref='message', cascade='all, delete')
-Messages.question = relationship(MessageQuestions, backref='message', cascade='all, delete')
-Messages.texts = relationship(Texts, backref='message', cascade='all, delete')
-Messages.links = relationship(Links, backref='message', cascade='all, delete')
-Messages.files = relationship(Files, backref='message', cascade='all, delete')
-OutputChoices.combinations = relationship(OutputCombinations, backref='output_choice', cascade='all, delete')
-OutputCombinations.message = relationship(Messages, backref='output_combination', cascade='all, delete')

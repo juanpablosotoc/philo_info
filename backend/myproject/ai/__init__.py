@@ -59,7 +59,10 @@ class Ask:
                             choices: list[dict] = stream['data']['choices']
                             usage = stream['data']['usage']
                             if usage: final_usage = usage
-                            combined_content += choices[0]['delta']['content']
+                            choice = choices[0]
+                            if choice['finish_reason']: 
+                                break 
+                            combined_content += choice['delta']['content']
                         else:
                             prev_unended_string += stream['data']
                     yield combined_content

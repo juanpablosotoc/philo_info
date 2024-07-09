@@ -72,7 +72,7 @@ export async function fetch_raw(
     console.log("Error in fetch");
     const status = (e as ErrorType).status || 500;
     let statusText = (e as ErrorType).statusText || "Connection refused";
-    if (status === 401 || status === 422) {
+    if (status === 401 || status === 422 || status === 403) {
       clearToken()
     };
     if (errorCallback) errorCallback({ status, statusText });
@@ -126,7 +126,6 @@ export async function* post_stream(
   }
   
   const reader = response.body!.getReader();
-  
   while (true) {
     const { done, value } = await reader.read();
     
@@ -134,7 +133,10 @@ export async function* post_stream(
       break;
     }
     
-    const text = new TextDecoder().decode(value);
+    let text = new TextDecoder().decode(value);
+    // remove whitespace
+    text = text.trim();
+    if (!text) {continue;}
     const parsed_stream = parseStream(text);
     yield parsed_stream;
   }

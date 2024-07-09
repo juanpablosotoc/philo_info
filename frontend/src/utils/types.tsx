@@ -25,7 +25,16 @@ export interface StreamMessageResponseProcessedInfo {
     info: string;
     message_id: number;
 }
-export type StreamMessageResponse = StreamMessageResponseMetadata | StreamMessageResponseChoices | StreamMessageResponseProcessedInfo;
+export interface StreamMessageResponseOther {
+    type: 'other';
+    data: any;
+}
+export type StreamMessageRequestType = 'quiz' | 'contact' | 'create_playlist' | 'recap' | 'other' | 'change_appearance' | 'info';
+export interface StreamMessageRequest {
+    request_type: StreamMessageRequestType;
+}
+export type StreamMessage = (StreamMessageResponseChoices | StreamMessageResponseMetadata |
+     StreamMessageResponseProcessedInfo | StreamMessageRequest | StreamMessageResponseOther);
 export interface OAuthToken {
     identity: string;
     provider: OAuthProvider;
@@ -54,7 +63,7 @@ export type dateComparisonString = 'Today' | 'This month' | 'Older'
 export type OutputTypes = 'timeline' | 'text' | 'speech'
 export type contentType = "application/json" | "multipart/form-data"
 export class InformationBundleCls {
-    constructor(public texts: Array<string>, public files: Array<File>, public links: Array<string>, public questions: Array<string>) {}
+    constructor(public texts: Array<string>, public files: Array<File>, public links: Array<string>) {}
 }
 export class DefaultQuestionsCls {
     question: string;
@@ -70,13 +79,20 @@ export class ProcessedInfoTextCls {
 export class ProcessedInfoCls {
     constructor(public texts: Array<ProcessedInfoTextCls>, public message_id: number) {}
 }
-interface processedInfo {
+export interface processedInfo {
     id: string;
     info: string;
 }
-export class MessageCls {
-    constructor(public content: InformationBundleCls, public id?: number , 
-        public threadId?: number, public possible_outputs?: Array<OutputTypes>,
+export class InfoMessageCls {
+    constructor(public content: InformationBundleCls,
+        public possible_outputs?: Array<OutputTypes>,
         public processedInfos: Array<processedInfo> = []
         ) {}
+}
+export class RequestMessageCls {
+    constructor(public content: string, public response?: string) {}
+}
+export class MessageCls {
+    constructor(public request_type?: StreamMessageRequestType, public content?: InfoMessageCls | RequestMessageCls,
+        public id?: number , public threadId?: number, ) {}
 }

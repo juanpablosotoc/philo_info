@@ -5,7 +5,7 @@ def clean_str(text: str) -> str:
     return text.replace('data: ', '', 1)
 
 
-def parse_stream(stream_str: str):
+def parse_stream(stream_str: str) -> list[dict]:
     counted_strings = []
     current_str = ''
     opening_curly_braces = 0
@@ -39,7 +39,7 @@ def parse_stream(stream_str: str):
     actual_resp = []
     for item in counted_strings:
         if item['complete']:
-            actual_resp.append(json.loads(item['data']))
+            actual_resp.append({'complete': True, 'data': json.loads(item['data'])})
         else:
-            actual_resp.append(item['data'])
+            actual_resp.append({'complete': False, 'data': item['data']})
     return actual_resp

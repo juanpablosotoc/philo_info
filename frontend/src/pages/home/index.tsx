@@ -4,15 +4,13 @@ import LongTextInput from "../../components/long_text_input";
 import SubmitBtn from "../../components/submit_btn";
 import styles from './index.module.css';
 import { clearOAuth, fetch_, getOAuth, getToken, saveToken, post_stream } from "../../utils/http";
-import { InformationBundleCls, MessageCls, DefaultQuestionsCls, 
-    ThreadCls, StreamMessageResponse, StreamMessageResponseMetadata,
-    StreamMessageResponseChoices, StreamMessageResponseProcessedInfo } from "../../utils/types";
+import { MessageCls, DefaultQuestionsCls, 
+    ThreadCls, RequestMessageCls} from "../../utils/types";
 import { useEffect, useRef, useState } from "react";
 import Messages from "../../components/messages";
 import { Helmet } from "react-helmet";
-import { getFormData } from "../../utils/functions";
 import SideMenu from "../../components/side_menu";
-
+import HandleSubmitCls from "./functions";
 
 function Home () {
     const longTextInput = useRef<HTMLDivElement>(null);
@@ -25,10 +23,10 @@ function Home () {
     const [files, setFiles] = useState<Array<File>>([]);
     const [messages, setMessages] = useState<Array<MessageCls>>([]);
     const [questions, setQuestions] = useState<Array<DefaultQuestionsCls>>([]);
+    const handleSubmitObj = new HandleSubmitCls(longTextInput, setLongTextInputValue, setFiles, longTextInputValue, files, setMessages, setThreads);
     useEffect(() => {
         if(jwt_is_ready) {
             fetch_("mixed/topics_threads", true, "GET", "application/json", "alt_token" , (jsonResp) => {
-                console.log(jsonResp);
                 setThreads(jsonResp.threads.map((thread: any) => {
                     return new ThreadCls(thread.id, thread.name, new Date(thread.date));
                 }
@@ -41,6 +39,16 @@ function Home () {
         }
      }, [jwt_is_ready]);
     useEffect(()=>{
+        const testMessages: Array<MessageCls> = [];
+        const message = new MessageCls('other', new RequestMessageCls('Hello', 'Sure! Did you know that the worlds oldest known tree is a Great Basin bristlecone pine (Pinus longaeva) located in Californias White Mountains? Its estimated to be over 5,000 years old! This tree has witnessed human history from ancient civilizations to modern times. Its fascinating how nature can offer such remarkable longevity and resilience.'), 1, 1);
+        testMessages.push(message);testMessages.push(message);testMessages.push(message);testMessages.push(message);testMessages.push(message);
+        testMessages.push(message);
+        testMessages.push(message);
+        testMessages.push(message);
+        testMessages.push(message);
+        testMessages.push(message);
+        testMessages.push(message);
+        setMessages(testMessages);
         // set the document background color to black
         document.documentElement.style.backgroundColor = "var(--shades_black_150)";
         document.body.style.backgroundColor = "var(--shades_black_150)";
@@ -63,91 +71,21 @@ function Home () {
             blurryModal.current!.classList.remove(styles.active);
         }
     }, []);
-
-    async function handleSubmit() {
-        let texts: Array<string> = [];
-        const links: Array<string> = [];
-        for (let node of longTextInput.current!.childNodes) {
-            // if node is span add the text content
-            if (node.nodeName === 'SPAN') {
-                links.push(node.textContent!);
-            } else if (node.nodeName === '#text') {
-                if (texts.length) {
-                    texts[texts.length - 1] = texts[texts.length - 1] + ' ' + node.textContent!;
-                } else if (node.textContent && node.textContent.trim()){
-                    texts.push(node.textContent!);
-                }
-            }
-        };
-        const questions = texts.filter((text) => {
-            return text.startsWith('/explain');
-        });
-        texts = texts.filter((text) => {
-            return !text.startsWith('/explain');
-        });
-        let message = new MessageCls(new InformationBundleCls(texts, files, links, questions));
-        setMessages((prevMessages) => {
-            return [...prevMessages, message];
-        });
-        setLongTextInputValue('');
-        setFiles([]);
-        // Make a post request to the server
-        const body_obj = {links, texts, questions}
-        const body = getFormData(body_obj);
-        const resp = post_stream("threads/message", true, body)
-        for await (let list of resp) {
-            for (let item of (list as Array<StreamMessageResponse>)) {
-                if (item.type === 'metadata') {
-                    setMessages((prevMessages) => {
-                        return prevMessages.map((prevMessage) => {
-                            if (!prevMessage.id) {
-                                prevMessage.id = item.message_id;
-                                prevMessage.threadId = (item as StreamMessageResponseMetadata).thread_id;
-                            }
-                            return prevMessage;
-                        });
-                    });
-                    const thread = new ThreadCls(item.thread_id, item.thread_name, new Date());
-                    setThreads((prevThreads) => {
-                        return [...prevThreads, thread];
-                    });
-                } else if (item.type === 'choices') {
-                    setMessages((prevMessages) => {
-                        return prevMessages.map((prevMessage) => {
-                            if (prevMessage.id === item.message_id) {
-                                prevMessage.possible_outputs = (item as StreamMessageResponseChoices).possible_outputs;
-                            }
-                            return prevMessage;
-                    })});
-                } else {
-                    // Type is processed_info
-                    setMessages((prevMessages) => {
-                        return prevMessages.map((prevMessage) => {
-                            if (prevMessage.id === item.message_id) {
-                                prevMessage.processedInfos.push({id: (item as StreamMessageResponseProcessedInfo).id, info: (item as StreamMessageResponseProcessedInfo).info});
-                            }
-                            return prevMessage;
-                        });
-                    })
-                }
-            }
-        }
-    };
     return (
         <div className={styles.wrapper}>
             <Helmet>
                 <title>Home | FacTic</title>
             </Helmet>
-            <Messages messages={messages} questions={questions} className={styles.messages}></Messages>
-            <div className={styles.fixedWrapper}>
+            <SideMenu className={styles.sideMenu} type="threads" data={threads} myRef={sideMenuElement} active="home"></SideMenu>
+            <div className={styles.right}>
+                <Messages messages={messages} questions={questions} className={styles.messages}></Messages>
                 <div className={styles.inputWrapper}>
                     <UploadFile className={styles.uploadFile} files={files} setFiles={setFiles}/>
                     <LongTextInput myRef={longTextInput} label="Enter information" className={styles.longTextInput} value={longTextInputValue} setValue={setLongTextInputValue}/>
-                    <SubmitBtn className={styles.submit_btn} theme='dark' onClick={handleSubmit}/>
+                    <SubmitBtn className={styles.submit_btn} theme='dark' onClick={handleSubmitObj.handleSubmit}/>
                 </div>
-                <div className={styles.blurryModal} ref={blurryModal}></div>
-                <SideMenu className={styles.sideMenu} type="threads" data={threads} myRef={sideMenuElement} active="home"></SideMenu>
             </div>
+            <div className={styles.blurryModal} ref={blurryModal}></div>
         </div>
     )
 };

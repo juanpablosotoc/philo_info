@@ -1,0 +1,4 @@
+.icon path {
+    stroke: var(--shades_white_100);
+    stroke-width: 2;
+}

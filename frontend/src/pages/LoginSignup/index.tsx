@@ -4,7 +4,6 @@ import SubmitBtn from "../../components/submit_btn";
 import OrLine from "../../components/or_line";
 import OAuth from "../../components/oauth";
 import Footer from "../../components/footer";
-import black_anaglyphic_logo from '../../SVG/logo/black_v3.svg';
 import styles from './index.module.css';
 import { Form, redirect, useSearchParams, useRouteError} from "react-router-dom";
 import {getOAuth, getToken, post, saveToken} from "../../utils/http";
