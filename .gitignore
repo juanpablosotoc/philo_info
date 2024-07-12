@@ -1,4 +1,4 @@
 ./venv/*
 venv
-temp.txt
 ./backend/uploads/*
+./dockerHubCredentials.json
