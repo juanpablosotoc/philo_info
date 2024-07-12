@@ -63,23 +63,8 @@ def wrapper():
             output_combinations = await self.get_output_combinations(processed_info=processed_info)
             output_combinations = json.loads(output_combinations)
             yield json.dumps({'type': 'choices', **output_combinations})
-
-
-    async def save_file(file: UploadFile) -> str:
-        """Saves the file to the server and returns the file path.
-        file_path: The path to save the file to."""
-        file_extention = file.filename.split('.')[-1]
-        file_path = f"./uploads/{str(uuid.uuid4())}.{file_extention}"
-        with open(file_path, "wb+") as file_object:
-            content = await file.read()  # async read
-            await file_object.write(content)
-        if file_extention in InformationBundle.image_file_types:
-            # Will resize the image to maximum supported size by OpenAI 
-            # and change its extention if extention is not supported by OpenAI
-            file_path = ImageResizer.resize_image(file_path)
-        return file_path
     
-    async def user_input_factory(links_strs: list[str], texts_strs: list[str], file_storage_objs: list[UploadFile], 
+    async def user_input_factory(links_strs: list[str], texts_strs: list[str], files: list[Files], 
         session: AsyncSession, openai_thread: LocalOpenaiThreads, openai_db: LocalOpenaiDb):
         """This function is a factory function that creates a UserInput object from the
         user input. The user input can be in the form of 'links', 'texts', and files.
@@ -95,16 +80,8 @@ def wrapper():
         # Create the texts, links, questions, and files and add them to the database
         texts = [Texts(text=text, message_id=message.id) for text in texts_strs]
         links = [Links(link=link, message_id=message.id) for link in links_strs]
-        files = []
-        file_tasks = []
-        async with asyncio.TaskGroup() as tg:
-            for file_store_obj in file_storage_objs:
-                file_tasks.append(tg.create_task(save_file(file_store_obj)))
-        for new_file_path in [task.result() for task in file_tasks]:
-            files.append(Files(path=new_file_path, message_id=message.id))
         session.add_all(texts)
         session.add_all(links)
-        session.add_all(files)
         # Create the user input object
         user_input = UserInput(links=links, message=message, texts=texts, files=files, openai_thread=openai_thread, openai_db=openai_db)
         # Commit the changes to the database

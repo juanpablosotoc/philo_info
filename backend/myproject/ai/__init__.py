@@ -6,8 +6,8 @@ from openai import OpenAI
 from .prompts import Prompts
 from ..models import LocalOpenaiThreads, Files, LocalOpenaiThreads, LocalOpenaiDb
 from ..stream import parse_stream
+from ..config import Config
 from sqlalchemy.ext.asyncio import AsyncSession
-import json
 
 
 class Ask:
@@ -137,7 +137,7 @@ class Chat(Prompts):
     default_assistant_id = 'asst_rREgGseo2wATsN8VQI8MsdxL'
     def __init__(self) -> None:
         super().__init__()
-        self.client = OpenAI()
+        self.client = OpenAI(api_key=Config.OPENAI_KEY)
         self.ask = Ask(self.client)
     
     async def __create_openai_vector_db(self, db_name: str) -> dict:

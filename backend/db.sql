@@ -75,7 +75,8 @@ CREATE TABLE Links(
 CREATE TABLE Files(
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	path VARCHAR(100) NOT NULL UNIQUE,
-	message_id INT NOT NULL,
+    preview_path VARCHAR(100) UNIQUE,
+	message_id INT,
 	FOREIGN KEY (message_id) REFERENCES Messages(id) ON DELETE CASCADE
 );	
 CREATE TABLE LocalOpenaiDbFiles(

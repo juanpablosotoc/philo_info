@@ -174,12 +174,14 @@ class Files(Base):
     __tablename__ = 'Files'
     id = Column(Integer, primary_key=True, autoincrement=True)
     path = Column(String(100), unique=True, nullable=False)
-    message_id = Column(Integer, ForeignKey(Messages.id), nullable=False)
+    message_id = Column(Integer, ForeignKey(Messages.id), nullable=True)
+    preview_path = Column(String(100), nullable=True, unique=True)
 
-    def __init__(self, path: str, message_id: int) -> None:
+    def __init__(self, path: str, preview_path: str = None, message_id: int = None) -> None:
         super().__init__()
         self.path = path
-        self.message_id = message_id
+        if message_id: self.message_id = message_id
+        if preview_path: self.preview_path = preview_path
 
 
 class LocalOpenaiDbFiles(Base):

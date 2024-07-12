@@ -1,5 +1,5 @@
 import json
-from fastapi import APIRouter, UploadFile, Form
+from fastapi import APIRouter, Form
 from fastapi.responses import StreamingResponse
 from sqlalchemy.future import select
 from typing import Annotated
@@ -8,7 +8,7 @@ from myproject import user_db_dependancy
 from .schema import RequestType
 from ..schema import request_type_ids
 from ..ai import chat
-from ..models import Users, Threads, LocalOpenaiDb, LocalOpenaiThreads, Requests, Messages
+from ..models import Files, Users, Threads, LocalOpenaiDb, LocalOpenaiThreads, Requests, Messages
 from ..process_input import UserInputFactory
 
 
@@ -39,13 +39,12 @@ async def index(user_db: user_db_dependancy):
 
 @threads_route.post('/message')
 async def message_post(user_db: user_db_dependancy, local_thread_id: int = '',
-                        files: list[UploadFile] = [],
+                        fileIds: Annotated[list[int], Form()] = [],
                         text: Annotated[str, Form()] = []
                         ):
     """This endpoint is used to process a user's input.
     It will return the output_combinations and the thread_id.
-    The user input can be in the form of 'links', 'texts', and files.
-    The links and texts should be in the form of a list of strings."""
+    The user input can be in the form of 'texts', and files."""
     # Getting local_thread, openai_db, and openai_thread
     # Getting local_thread if it exists
     local_thread = None
@@ -111,7 +110,6 @@ async def message_post(user_db: user_db_dependancy, local_thread_id: int = '',
                 response = json.dumps({'type': 'other', 'data': value})
                 final_resp += value
                 yield f'data: {response}\n\n'
-            print('\n\n\n\n\n\n', final_resp, '\n\n\n\n\n\n')
             # Create the message and add it to the database
             message = Messages(thread_id=openai_thread.thread_id)
             user_db.session.add(message)
@@ -139,8 +137,11 @@ async def message_post(user_db: user_db_dependancy, local_thread_id: int = '',
                 else:
                     texts.append(word)
                 last_word_was_link = False
+        statement = select(Files).where(Files.id in fileIds)
+        query = await user_db.session.execute(statement)
+        files = [row[0] for row in files.append(query.all())]
         # Creating the user_input object
-        user_input = await UserInputFactory(links_strs=links, texts_strs=texts, file_storage_objs=files, session=user_db.session, openai_db=openai_db, openai_thread=openai_thread)
+        user_input = await UserInputFactory(links_strs=links, texts_strs=texts, files=files, session=user_db.session, openai_db=openai_db, openai_thread=openai_thread)
         # Porcess info and get the output_combinations
         output_combinations_async_gen = user_input.processed_info_output_combos(session=user_db.session)
         async def stream_resp():

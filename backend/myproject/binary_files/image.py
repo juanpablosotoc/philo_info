@@ -21,9 +21,8 @@ class ImageResizer:
         file_name = file_name_ext.split('.')[0]
         i = Image.open(file_path)
         new_image_size = cls.get_new_image_size(i)
-        if not new_image_size: return
-        i.thumbnail(new_image_size)
-        print(file_path)
+        if not new_image_size and ext not in InformationBundle.not_supported_image_file_types: return file_path
+        if new_image_size: i.thumbnail(new_image_size)
         if ext in InformationBundle.not_supported_image_file_types: 
             ext = 'jpeg'
             prev_path = file_path.split('/')

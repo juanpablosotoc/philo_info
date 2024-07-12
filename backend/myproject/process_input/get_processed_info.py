@@ -125,7 +125,7 @@ class InformationBundle:
     # File types supported by OpenAI's vision model
     vision_file_types = ['jpg', 'jpeg', 'png', 'gif', 'webp']
     # File types not supported by OpenAI's vision model
-    not_supported_image_file_types = vision_file_types + ['avif', 'heic']
+    not_supported_image_file_types = ['avif', 'heic']
     image_file_types = vision_file_types + not_supported_image_file_types
     # File types supported by OpenAI's file search
     file_search_file_types = ["c", "cs", "cpp", "doc", "docx", "html", "java", 
