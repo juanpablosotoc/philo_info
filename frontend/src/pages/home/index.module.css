@@ -25,27 +25,58 @@
 }
 
 .inputWrapper {
-    display: flex;
-    gap: 8px;
-    position: relative;
-    align-items: flex-end;
+    bottom: 32px;
+    background-color: var(--main_black);
+    border-radius: 40px;
     position: absolute;
-    bottom: 0;
     width: 100%;
-    height: calc(52px + 64px);
-    align-items: center;
+    height: fit-content;
 }
 
-.uploadFile {
-    width: 18%;
+.inputInnerWrapper {
+    height: 52px;
+    padding: 8px 32px;
+    position: relative;
+    gap: 8px;
+    display: flex;
+    height: fit-content;
+    align-items: flex-end;
+}
+
+.longTextInputWrapper {
+    width: 100%;
+    position: relative;
+    height: fit-content;
 }
 
 .longTextInput {
-    width: 60%;
+    width: calc(100% - 26.5px - 4px);
 }
 
-.submit_btn {
-    width: 22%;
+.submitBtn {
+    border: none;
+    background-color: transparent;
+    background-color: var(--tints_black_100);
+    height: 52px;
+    display: flex;
+    aspect-ratio: 1;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.submitBtn:hover {
+    cursor: pointer;
+    background-color: var(--main_white);
+}
+
+.submitBtn:hover svg path {
+    stroke: var(--main_black);
+}
+
+.submitBtn svg path, .submitBtn {
+    transition: all 0.3s ease;
+
 }
 
 .blurryModal {

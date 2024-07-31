@@ -1,12 +1,10 @@
 .input {
     border-radius: 5px;
-    overflow-y: hidden;
     color: var(--main_white);
-    background-color: var(--shades_black_150);
-    border: 2px solid var(--shades_white_100);
     font: var(--font_m);
-    padding: 13.25px;
+    padding: 15.25px;
     max-height: 20vh;
+    display:inline-block;
     overflow-y: scroll;
 }
 
@@ -17,12 +15,7 @@
     pointer-events: none;
 }
 
-.input.active::before {
-    display: none;
-}
-
-.input:focus, .active {
-    border-color: var(--main_white);
+.input:focus {
     outline: none;
 }
 
@@ -30,8 +23,6 @@
     color: var(--main_white);
 }
 
-.link {
-    background-color: var(--tints_black_100);
-    padding: 4px;
-    border-radius: 5px;
+.input.active::before {
+    display: none;
 }

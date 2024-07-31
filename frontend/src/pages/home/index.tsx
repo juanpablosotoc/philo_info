@@ -11,6 +11,7 @@ import Messages from "../../components/messages";
 import { Helmet } from "react-helmet";
 import SideMenu from "../../components/side_menu";
 import HandleSubmitCls from "./functions";
+import Send from "../../components/icons/send";
 
 function Home () {
     const longTextInput = useRef<HTMLDivElement>(null);
@@ -80,9 +81,15 @@ function Home () {
             <div className={styles.right}>
                 <Messages messages={messages} questions={questions} className={styles.messages}></Messages>
                 <div className={styles.inputWrapper}>
-                    <UploadFile className={styles.uploadFile} files={files} setFiles={setFiles}/>
-                    <LongTextInput myRef={longTextInput} label="Enter information" className={styles.longTextInput} value={longTextInputValue} setValue={setLongTextInputValue}/>
-                    <SubmitBtn className={styles.submit_btn} theme='dark' onClick={handleSubmitObj.handleSubmit}/>
+                    <div className={styles.inputInnerWrapper}>
+                        <UploadFile className={styles.uploadFile} files={files} setFiles={setFiles}/>
+                        <div className={styles.longTextInputWrapper}>
+                            <LongTextInput myRef={longTextInput} label="Enter information" className={styles.longTextInput} value={longTextInputValue} setValue={setLongTextInputValue}/>
+                        </div>
+                        <button className={styles.submitBtn} onClick={handleSubmitObj.handleSubmit}>
+                            <Send></Send>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div className={styles.blurryModal} ref={blurryModal}></div>

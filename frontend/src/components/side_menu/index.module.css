@@ -34,6 +34,7 @@
 }
 
 .wrapper:hover .modal {
+    transition-delay: 0;
     transform: translateX(-2px);
 }
 

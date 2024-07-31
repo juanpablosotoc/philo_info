@@ -1,1 +1,0 @@
-from .views import threads_route, get_users_threads

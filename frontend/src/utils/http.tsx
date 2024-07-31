@@ -1,5 +1,5 @@
 import { json } from "react-router-dom";
-import type { ErrorType, contentType, endpoint, methods, OAuthToken, OAuthProvider, BearerType } from "./types";
+import { type ErrorType, type contentType, type endpoint, type methods, type OAuthToken, type OAuthProvider, type BearerType } from "./types";
 import {parseStream} from "./functions";
 
 export const BASE_URL = "http://127.0.0.1:8000/";
@@ -46,13 +46,14 @@ export async function fetch_raw(
     let token;
     if (bearer === 'access_token') {
       token = getOAuth().identity;
-    } else {
+      headers["Authorization"] = `Bearer ${token}`;
+    } else if (bearer === 'alt_token') {
       token = getToken();
+      headers["Authorization"] = `Bearer ${token}`;
     }
     if (!token) {
       throw json({ message: "No token" }, { status: 401 });
     }
-    headers["Authorization"] = `Bearer ${token}`;
   }
   let response;
   try {

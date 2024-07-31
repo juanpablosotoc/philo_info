@@ -12,14 +12,12 @@
 }
 
 .dark {
-    border: 2px solid var(--shades_white_100);
     color: var(--shades_white_100);
     transition: all .3s ease;
-    background-color: var(--shades_black_150);
+    background-color: transparent;
 }
 
 .dark:hover {
-    border: 2px solid var(--main_white);
     color: var(--main_black);
     background-color: var(--main_white);
 }

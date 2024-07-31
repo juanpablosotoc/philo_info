@@ -1,63 +1,33 @@
-.wrapper {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--shades_black_150);
-    gap: 8px;
-}
-
 .btn {
     background-color: transparent;
-    border: 2px solid var(--shades_white_100);
-    border-radius: 5px;
     display: flex;
+    background-color: var(--tints_black_100);
+    border-radius: 50%;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
     color: var(--shades_white_100);
+    aspect-ratio: 1;
     font: var(--font_m_b);
     transition: all 0.2s;
+    border: none;
     padding: 12.75px;
     height: var(--s_card_height);
-}
 
-.btn:hover {
-    color: var(--main_white);
-    border-color: var(--main_white);
-    cursor: pointer;
-}
-
-.textWrapper {
-    padding-left: 8px;
-    position: relative;
-}
-
-.btn:hover .whiteUpload {
-    display: inline;
-}
-
-.btn:hover .greyUpload {
-    display: none;
 }
 
 .btn path {
-    transition: all 0.2s;
-    stroke: var(--shades_white_100);
+    stroke: var(--main_white);
+}
+
+.btn:hover {
+    cursor: pointer;
+    background-color: var(--main_white);
 }
 
 .btn:hover path{
-    stroke:var(--main_white) !important;
+    stroke:var(--main_black) !important;
 }
 
-.underline {
-    width: 0;
-    border: none;
-    height: 2px;
-    background-color: var(--main_white);
-    position: absolute;
-    border-radius: 20px;
-    margin-top: 2px;
-    transition: all 0.2s;
-}
-
-.btn:hover .underline {
-    width: calc(100% - 8px);
+.btn, .btn path {
+    transition: all 0.3s ease;
 }

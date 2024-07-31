@@ -18,7 +18,7 @@
 
 .input, .output {
     position: relative;
-    padding: 16px;
+    padding: 16px 16px 16px 48px;
     align-items: center;
     display: flex;
     width: fit-content;
@@ -54,8 +54,4 @@
 .iconsWrapper svg:hover {
     background-color: var(--tints_black_100);
     cursor: pointer;
-}
-
-.iconsWrapper {
-    transition: opacity 0.3s ease;
 }

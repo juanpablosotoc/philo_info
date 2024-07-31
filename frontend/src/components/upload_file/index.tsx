@@ -3,6 +3,7 @@ import styles from './index.module.css';
 import upload_white from '../../SVG/icons/upload_white.svg';
 import upload_grey from '../../SVG/icons/upload_grey.svg';
 import UploadedFiles from '../uploaded_files';
+import { uploadableFileTypes } from '../../utils/types';
 
 type Props = PropsWithChildren<{
     className?: string;
@@ -22,6 +23,9 @@ function UploadFile(props: Props) {
              return [...prevValue, ...Array.from(input.current!.files!)]   
     })
     }}
+    const acceptStr = uploadableFileTypes.map((type) => {
+        return '.' + type;
+    }).join(',');
     return (
         <div className={`${props.className ? props.className : ''} ${styles.wrapper}`}>
             {props.files.length > 0 ? (<UploadedFiles files={props.files} setFiles={props.setFiles}></UploadedFiles>) : null}
@@ -31,12 +35,8 @@ function UploadFile(props: Props) {
                     <path d="M17 8L12 3L7 8" stroke="#2F2F2F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     <path d="M12 3V15" stroke="#2F2F2F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                <div className={styles.textWrapper}>
-                    <span>Upload file</span>
-                    <hr className={styles.underline}/>
-                </div>
             </button>
-            <input type="file" ref={input} multiple hidden className={`${styles.input} ${props.className ? props.className : ''}`} onChange={handleChange}/>
+            <input type="file" ref={input} accept={acceptStr} multiple hidden className={`${styles.input} ${props.className ? props.className : ''}`} onChange={handleChange}/>
         </div>
     );
 }

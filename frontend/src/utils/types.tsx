@@ -96,3 +96,7 @@ export class MessageCls {
     constructor(public request_type?: StreamMessageRequestType, public content?: InfoMessageCls | RequestMessageCls,
         public id?: number , public threadId?: number, ) {}
 }
+export const uploadableFileTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'heic', 
+                "c", "cs", "cpp", "doc", "docx", "html", "java", 
+                "json", "md", "pdf", "php", "pptx", "py", "rb", 
+                "tex", "txt", "css", "js", "sh", "ts"]

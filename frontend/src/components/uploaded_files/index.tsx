@@ -1,5 +1,6 @@
 import styles from './index.module.css';
 import SmallCard from '../small_card';
+import FilePreviewWindow from '../filePreviewWindow';
 
 type Props = {
     files : File[];
@@ -18,9 +19,10 @@ function UploadedFiles(props: Props) {
     return (
         <div className={styles.wrapper}>
             {props.files.length ? props.files.map((file, index) => {
-                const newName = file.name.length > 6 ? file.name.slice(0, 6) + '...' : file.name;
+                // const newName = file.name.length > 6 ? file.name.slice(0, 6) + '...' : file.name;
                 return (
-                    <SmallCard key={`file-${index}`} label={newName} handleXClick={handleClick}></SmallCard>
+                    // <SmallCard key={`file-${index}`} label={newName} handleXClick={handleClick}></SmallCard>
+                    <FilePreviewWindow file={file}></FilePreviewWindow>
                 )
             }) : null}
         </div>
