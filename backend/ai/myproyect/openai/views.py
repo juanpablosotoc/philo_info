@@ -1,5 +1,5 @@
 import os
-import json
+import time
 import asyncio
 from youtube_transcript_api import YouTubeTranscriptApi
 from fastapi import APIRouter, HTTPException
@@ -11,6 +11,11 @@ from ..aws import s3
 
 
 ai_route = APIRouter(prefix='/api/ai', tags=['ai'])
+
+async def siu():
+    for i in range(10):
+        yield i
+        await asyncio.sleep(1)
 
 @ai_route.post('/')
 async def index_put(input: ProcessedInfoInput, thread_id: str = None):
@@ -74,13 +79,6 @@ async def index_put(input: ProcessedInfoInput, thread_id: str = None):
             text = text.replace(word, f'[[[Youtube video transcript:\n{transcript}]]]')
     additional_messages = chat.get_processed_info_messages(text=text, image_urls=vision_files)
     async def stream_response():
-        async for item in chat.ask.threads_stream(additional_messages=additional_messages, assistant_id=assistant_id, openai_thread_id=thread["id"]):
-            response = {
-                'role': 'assistant',
-                'content': item
-            }
-            response_str = json.dumps(response)
-            siu = 'data: hello\n\n'
-            print(siu)
-            yield siu
-    return StreamingResponse(stream_response(), media_type="text/event-stream")
+        async for item in siu():
+            yield f'data: 1\n\n'
+    return StreamingResponse(content=stream_response(), media_type="text/event-stream")
