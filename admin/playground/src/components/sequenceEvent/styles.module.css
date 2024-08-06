@@ -1,0 +1,27 @@
+.sequenceEvent {    
+    position: relative;
+    display: flex;
+    gap: 16px;
+    flex-direction: column;
+    background-color: var(--main_black);
+    width: calc((100% - 224px) / 4);
+    min-width: calc((100% - 224px) / 4);
+    padding: 32px;
+    border-radius: 10px;
+}
+
+.sequenceEvent:last-child .arrow {
+  display: none;
+}
+
+.arrow {
+  position: absolute;
+  right: -16px;
+  top: 50%;
+  transform: translateY(-50%) translateX(100%);
+  z-index: 1;
+}
+
+.title {
+  font: var(--font_m_b);
+}

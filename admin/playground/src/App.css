@@ -1,0 +1,98 @@
+:root {
+    /* Color variables */
+    --main_primary: #F2045D;
+    --main_white: #F7F7F7;
+    --main_black: #202123;
+    --main_secondary: #02F3DB;
+
+    --shades_white_100: #CCCACB;
+    --shades_white_200: #999697;
+    --shades_black_100: #1A1A1D;
+    --shades_black_150: #101012;
+    --shades_black_200: #000000;
+    --shades_primary_200: #BF0449;
+    --shades_primary_100: #D9004D;
+    --shades_tertiary_100: #1CD760;
+
+
+    --mixed_primary_black: #226A63;
+    
+    --tints_black_50: #252629;
+    --tints_black_100: #2F2F2F;
+    --tints_black_200: #404040;
+    --tints_black_300: #4D4D4D;
+    /* Font variables */
+    --font_family: 'SF Pro Display', sans-serif;
+    --font_s: 12px var(--font_family);
+    --font_sm: 14px var(--font_family);
+    --font_sm_b: bold 14px var(--font_family);
+    --font_m: 18px var(--font_family);
+    --font_m_b: bold 18px var(--font_family);
+    --font_l: 26px var(--font_family);
+    --font_l_b: bold 26px var(--font_family);
+    --font_xl_b: bold 36px var(--font_family);
+    --font_xxl_b: bold 52px var(--font_family);
+    /* Size variables */
+    --s_card_height: 52px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--shades_black_150);
+}
+
+p, th, td {
+    color: var(--main_white);
+}
+
+p {
+    font: var(--font_m);
+}
+
+th {
+    font: var(--font_sm_b);
+}
+
+td {
+    font:  var(--font_sm);
+}
+table {
+    border-collapse: separate; /* Ensures borders are not doubled */
+    border-radius: 10px;
+    border-spacing: 0;
+    border: 0.5px solid var(--tints_black_200);
+  }
+  
+  th, td {
+    border: 0.5px solid var(--tints_black_200);
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    background-color: var(--tints_black_100);
+  }
+  
+  /* Ensure that border-radius works correctly on table corners */
+  table tr:first-child th:first-child {
+    border-top-left-radius: 10px;
+  }
+  table tr:first-child th:last-child {
+    border-top-right-radius: 10px;
+  }
+  table tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+  }
+  table tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+  }
+  
+  button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+  }

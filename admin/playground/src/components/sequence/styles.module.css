@@ -1,0 +1,7 @@
+.sequence {
+    display: flex;
+    width: 100%;
+    position: relative;
+    gap: 56px;
+    overflow: scroll;
+}
