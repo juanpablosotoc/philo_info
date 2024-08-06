@@ -12,8 +12,9 @@ function App() {
   return (
     <div className="App">
       <Timeline>
-        <TimelineEvent color="primary" date='20/05/2005'><p><b>Something</b> happened</p></TimelineEvent>
-        <TimelineEvent color="primary" date='20/05/2005'><p>Something <b>happened</b></p></TimelineEvent>
+        <TimelineEvent date='20/05/2005'><p><b>Something</b> happened1</p></TimelineEvent>
+        <TimelineEvent date='20/05/2005'><p>Something <b>happened2</b></p></TimelineEvent>
+        <TimelineEvent date='20/05/2005 some more date info'><p>Something3 <b>happened</b></p></TimelineEvent>
       </Timeline>
       <table>
         <thead>
