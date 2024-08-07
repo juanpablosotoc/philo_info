@@ -23,7 +23,10 @@
   position: absolute;
   padding: 64px;
   right: 0;
-  background-color: var(--main_black);
+  /* background-color: var(--main_white); */
+  /* background-color: var(--shades_black_200); */
+  box-shadow: 0 0 30px 10px var(--main_primary);
+  /* border: 1px solid var(--main_primary); */
   border-radius: 10px;
   top: 50%;
   height: calc(80vh - 128px);

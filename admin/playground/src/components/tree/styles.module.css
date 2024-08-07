@@ -1,0 +1,36 @@
+.wrapper {
+    margin-left: 50%;
+    width: fit-content;
+    transform: translateX(-50%);
+}
+
+.node {
+    fill: var(--main_white) !important;
+    font: var(--font_sm_b);
+}
+
+.node text {
+    pointer-events: none;
+}
+
+.node rect{
+    fill: var(--main_black);
+    height: 60px;
+    transform: translateY(-30px);
+    /* For border radius */
+    rx: 5px;
+    ry: 5px;
+    transition: fill 0.2s;
+}
+
+
+.node rect:hover {
+    cursor: pointer;
+    fill: var(--main_primary);
+}
+
+.link {
+    fill: none;
+    stroke: var(--main_primary);
+    stroke-width: 2px;
+}

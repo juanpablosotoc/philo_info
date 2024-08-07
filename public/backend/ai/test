@@ -1,0 +1,17 @@
+// Advanced Graph
+digraph {
+	bgcolor=transparent
+	A [label="Some title" color="#F2045D" fontcolor="#F7F7F7" fontname="SF Pro Display Bold" fontsize=14 shape=box style=filled]
+	B [label=Process color="#202123" fontcolor="#F7F7F7" fontname="SF Pro Display Bold" fontsize=14 shape=box style=filled]
+	C [label=Process color="#202123" fontcolor="#F7F7F7" fontname="SF Pro Display Bold" fontsize=14 shape=box style=filled]
+	BA [label="Process LL" color="#202123" fontcolor="#F7F7F7" fontname="SF Pro Display Bold" fontsize=14 shape=box style=filled]
+	BB [label="Process LR" color="#202123" fontcolor="#F7F7F7" fontname="SF Pro Display Bold" fontsize=14 shape=box style=filled]
+	CA [label="Process RL" color="#202123" fontcolor="#F7F7F7" fontname="SF Pro Display Bold" fontsize=14 shape=box style=filled]
+	CB [label="Process RR" color="#202123" fontcolor="#F7F7F7" fontname="SF Pro Display Bold" fontsize=14 shape=box style=filled]
+	A -> B [arrowhead=none color="#202123" penwidth=2 style=invis]
+	A -> C [arrowhead=none color="#202123" penwidth=2 style=invis]
+	B -> BA [arrowhead=none color="#202123" penwidth=2 style=invis]
+	B -> BB [arrowhead=none color="#202123" penwidth=2 style=invis]
+	C -> CA [arrowhead=none color="#202123" penwidth=2 style=invis]
+	C -> CB [arrowhead=none color="#202123" penwidth=2 style=invis]
+}

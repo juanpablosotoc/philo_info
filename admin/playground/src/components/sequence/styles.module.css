@@ -1,6 +1,5 @@
 .sequence {
     display: flex;
-    margin: 5vh 64px;
     height: 100vh;
     position: relative;
 }

@@ -1,0 +1,12 @@
+.metadata {
+    padding: 32px 64px;
+}
+
+.title {
+    font: var(--font_sm);
+    letter-spacing: 2px;
+}
+
+.content {
+    padding: 16px 64px;
+}

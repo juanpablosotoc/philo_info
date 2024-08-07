@@ -4,25 +4,12 @@ import Pause from '../../icons/pause';
 import Play from '../../icons/play';
 import styles from './styles.module.css';
 import React, { useState, useEffect, useRef } from 'react';
-
+import { Word, Line } from '../../utils';
 
 interface AudioProps {
     src: string;
     transcript: Array<Word>;
     title: string;
-}
-
-interface Word {
-    word: string;
-    start: number;
-    end: number;
-}
-
-interface Line {
-    text: string;
-    start?: number;
-    end?: number;
-    wordCount: number;
 }
 
 

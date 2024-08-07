@@ -4,6 +4,7 @@
     padding: 64px;
     align-items: center;
     display: flex;
+    
 }
 
 .innerWrapper::before {
@@ -35,9 +36,13 @@
 
 .eventWrapper > div > div {
     opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
 }
 
 /* Targets the content div in timeline Event */
 .eventWrapper.active > div > div {
+    pointer-events: all;
     opacity: 1;
+    transition-delay: 0.2s;
 }
